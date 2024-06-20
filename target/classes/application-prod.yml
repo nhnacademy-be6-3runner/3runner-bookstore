@@ -1,6 +1,0 @@
-server:
-  port: 8082
-eureka:
-  instance:
-    hostname: localhost
-    instance-id: bookstore8082
