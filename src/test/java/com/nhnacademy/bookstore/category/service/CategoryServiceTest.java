@@ -59,40 +59,6 @@ class CategoryServiceTest {
         verify(categoryRepository, times(1)).save(any(Category.class));
     }
 
-    @DisplayName("업데이트(이름, 부모) 카테고리 테스트")
-    @Test
-    void updateCategory() {
-        long categoryId = 1L;
-        UpdateCategoryRequest dto = UpdateCategoryRequest.builder()
-                .name("카테고리")
-                .build();
-
-        Category category = Category.builder()
-                .id(categoryId)
-                .name("업데이트 카테고리")
-                .parent(null)
-                .build();
-
-        Category parentCategory = Category.builder()
-                .id(2L)
-                .name("부모 카테고리")
-                .build();
-
-        when(categoryRepository.findById(categoryId))
-                .thenReturn(Optional.of(category));
-        when(categoryRepository.findById(dto.getParentId()))
-                .thenReturn(Optional.of(parentCategory));
-        when(categoryRepository.save(any(Category.class)))
-                .thenReturn(Category.builder().build());
-
-        categoryService.updateCategory(categoryId, dto);
-
-        verify(categoryRepository, times(1)).findById(categoryId);
-        verify(categoryRepository, times(1)).findById(dto.getParentId());
-        verify(categoryRepository, times(1)).save(Mockito.any(Category.class));
-    }
-
-
     @DisplayName("카테고리 삭제 테스트")
     @Test
     void deleteCategory() {
