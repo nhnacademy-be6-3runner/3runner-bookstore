@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PurchaseMemberController {
     private final PurchaseMemberService purchaseMemberService;
+    private final PurchaseMemberService purchaseMemberService;
+    private final MemberService memberService;
 
     /**
      * 회원 주문 찾기.
@@ -31,10 +33,26 @@ public class PurchaseMemberController {
      */
     @GetMapping("/members/purchases/{purchaseId}")
     public ApiResponse<ReadPurchaseResponse> readPurchase (@RequestHeader("Member-Id") Long memberId,
-                                                           @PathVariable("purchaseId") Long purchaseId) {
+                                                           @PathVariable(value = "purchaseId", required = false) Long purchaseId) {
         ReadPurchaseResponse response = purchaseMemberService.readPurchase(memberId, purchaseId);
 
         return new ApiResponse<ReadPurchaseResponse>(
+                new ApiResponse.Header(true, 200),
+                new ApiResponse.Body<>(response)
+        );
+    }
+
+    /**
+     * 회원 모든 주문 찾기.
+     *
+     * @param memberId 맴버 아이디
+     * @return ApiResponse
+     */
+    @GetMapping("/members/purchases")
+    public ApiResponse<List<ReadPurchaseResponse>> readPurchases (@RequestHeader("Member-Id") Long memberId) {
+        List<ReadPurchaseResponse> response = memberService.getPurchasesByMemberId(memberId);
+
+        return new ApiResponse<List<ReadPurchaseResponse>>(
                 new ApiResponse.Header(true, 200),
                 new ApiResponse.Body<>(response)
         );
@@ -73,7 +91,7 @@ public class PurchaseMemberController {
      */
     @PutMapping("members/purchases/{purchaseId}")
     public ApiResponse<Void> updatePurchaseStatus (@RequestHeader("Member-Id") Long memberId,
-                                                   @Valid @RequestBody UpdatePurchaseMemberRequest updatePurchaseRequest,
+                                                   @Valid @RequestBody UpdatePurchaseRequest updatePurchaseRequest,
                                                    BindingResult bindingResult,
                                                    @PathVariable Long purchaseId) {
         if(bindingResult.hasErrors()){

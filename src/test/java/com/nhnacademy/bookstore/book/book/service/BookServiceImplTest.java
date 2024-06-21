@@ -35,12 +35,14 @@ class BookServiceImplTest {
                 1000,
                 10,
                 900,
-                0,
                 true,
                 "Test Author",
                 "123456789",
                 "Test Publisher",
-                ZonedDateTime.now()
+                null,
+                null,
+                null,
+                null
         );
 
         bookService.createBook(request);

@@ -8,6 +8,7 @@ import com.nhnacademy.bookstore.book.book.service.BookService;
 import com.nhnacademy.bookstore.entity.book.Book;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
 
@@ -28,6 +28,7 @@ public class BookServiceImpl implements BookService {
      */
     // Dto -> save book
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public Long createBook(CreateBookRequest createBookRequest) {
         Book book = new Book(
                 createBookRequest.title(),
@@ -36,7 +37,7 @@ public class BookServiceImpl implements BookService {
                 createBookRequest.price(),
                 createBookRequest.quantity(),
                 createBookRequest.sellingPrice(),
-                createBookRequest.viewCount(),
+                0,
                 createBookRequest.packing(),
                 createBookRequest.author(),
                 createBookRequest.isbn(),

@@ -9,6 +9,7 @@ import com.nhnacademy.bookstore.member.member.dto.request.UpdateMemberRequest;
 import com.nhnacademy.bookstore.member.member.exception.MemberNotExistsException;
 import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
 import com.nhnacademy.bookstore.member.member.service.MemberService;
+import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The type Member service.
@@ -148,10 +150,28 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.save(member);
     }
 
+    /**
+     * 주문 리스트 조회 멤버.
+     *
+     * @param memberId 맴버아이디
+     * @return 리스트
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public List<Purchase> getPurchasesByMemberId(Long memberId) {
+    public List<ReadPurchaseResponse> getPurchasesByMemberId(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotExistsException::new);
-        return purchaseRepository.findByMember(member);
+        return purchaseRepository.findByMember(member)
+                .stream()
+                .map(purchase -> ReadPurchaseResponse.builder()
+                                    .id(purchase.getId())
+                                    .status(purchase.getStatus())
+                                    .deliveryPrice(purchase.getDeliveryPrice())
+                                    .totalPrice(purchase.getTotalPrice())
+                                    .createdAt(purchase.getCreatedAt())
+                                    .road(purchase.getRoad())
+                                    .password(purchase.getPassword())
+                                    .memberType(purchase.getMemberType())
+                                    .build()
+                ).collect(Collectors.toList());
     }
 }

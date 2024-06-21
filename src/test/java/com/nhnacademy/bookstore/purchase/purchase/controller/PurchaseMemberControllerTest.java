@@ -78,6 +78,18 @@ class PurchaseMemberControllerTest {
     }
 
     @Test
+    void readPurchases() throws Exception {
+        when(memberService.getPurchasesByMemberId(anyLong())).thenReturn(java.util.List.of(readPurchaseResponse));
+
+        ResultActions result = mockMvc.perform(get("/members/purchases")
+                .header("Member-Id",1L)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk());
+    }
+
+
+    @Test
     void createPurchase() throws Exception{
         when(purchaseService.createPurchase(any(CreatePurchaseRequest.class), anyLong())).thenReturn(1L);
 

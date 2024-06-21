@@ -2,7 +2,7 @@ spring:
   data:
     elasticsearch:
       repositories:
-        enabled: true 
+        enabled: true
       url: localhost:9200
   jpa:
     open-in-view: false
@@ -12,25 +12,23 @@ spring:
 
     properties:
       hibernate:
-      format_sql: true
-      use_sql_comments: true
-      highlight_sql: true
-      auto_quote_keyword: true
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+        auto_quote_keyword: true
 
   datasource:
     url: jdbc:mysql://133.186.241.167:3306/be6_3runner_dev
     username: be6_3runner
     password: tHos2g5st4@XH7mT
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   profiles:
     active: dev
-
   lifecycle:
     timeout-per-shutdown-phase: 30s
-
   application:
     name: 3runner-bookstore
-
 eureka:
   client:
     fetch-registry: true
@@ -39,7 +37,6 @@ eureka:
       defaultZone: http://admin:1234@eureka:8761/eureka
   instance:
     prefer-ip-address: true
-
 management:
   endpoint:
     pause:
@@ -48,12 +45,19 @@ management:
       enabled: true
     restart:
       enabled: true
-
-
 server:
   shutdown: graceful
-
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
     org.springframework.transaction.interceptor: trace
+cloud:
+  aws:
+    credentials:
+      access-key: f0a3fad864f3468293faa98da2807b67
+      secret-key: 4f48b4901ffe47b0b64cb9d909e87364
+    region:
+      static: KR1
+    s3:
+      endpoint: https://kr1-api-object-storage.nhncloudservice.com
+      bucket: nhnacademy-be6-3runner

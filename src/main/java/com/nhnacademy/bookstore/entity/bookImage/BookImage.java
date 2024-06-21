@@ -29,7 +29,6 @@ public class BookImage {
     private BookImageType type;
 
 
-    @NotNull
     @MapsId
     @ManyToOne(cascade = CascadeType.ALL)
     private Book book;
