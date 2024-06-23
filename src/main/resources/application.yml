@@ -24,7 +24,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   profiles:
-    active: prod
+    active: dev
   lifecycle:
     timeout-per-shutdown-phase: 30s
   application:

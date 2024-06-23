@@ -6,6 +6,8 @@ import com.nhnacademy.bookstore.book.book.service.BookService;
 import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.book.book.dto.request.CreateBookRequest;
 import com.nhnacademy.bookstore.util.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
  *
  * @author 김병우
  */
+@Tag(name="책", description = "책 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookstore/books")
@@ -32,6 +35,7 @@ public class BookController {
      * @return ApiResponse<>
      */
     @PostMapping
+    @Operation(summary = "등록", description = "책 등록")
     public ApiResponse<Void> createBook(@Valid @RequestBody CreateBookRequest createBookRequest,
                                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
