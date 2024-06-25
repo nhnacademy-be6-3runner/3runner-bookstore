@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepositoryTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.851 s -- in com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepositoryTest

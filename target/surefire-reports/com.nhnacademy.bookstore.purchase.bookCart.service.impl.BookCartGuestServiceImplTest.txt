@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.nhnacademy.bookstore.purchase.bookCart.service.impl.BookCartGuestServiceImplTest
--------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.160 s -- in com.nhnacademy.bookstore.purchase.bookCart.service.impl.BookCartGuestServiceImplTest

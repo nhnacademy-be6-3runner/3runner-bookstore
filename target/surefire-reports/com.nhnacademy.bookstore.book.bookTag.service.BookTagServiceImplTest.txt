@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.nhnacademy.bookstore.book.booktag.service.BookTagServiceImplTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.060 s -- in com.nhnacademy.bookstore.book.booktag.service.BookTagServiceImplTest
