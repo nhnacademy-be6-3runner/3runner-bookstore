@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImageController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.book.image.controller</a> &gt; <span class="el_source">ImageController.java</span></div><h1>ImageController.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.book.image.controller;
+
+import com.amazonaws.services.s3.model.S3Object;
+import com.nhnacademy.bookstore.book.image.exception.NotFindImageException;
+import com.nhnacademy.bookstore.book.image.imageService.ImageService;
+import com.nhnacademy.bookstore.util.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
+import java.util.Objects;
+import java.util.UUID;
+
+/**
+ * @author 한민기
+ *
+ */
+@RestController
+<span class="fc" id="L25">@RequiredArgsConstructor</span>
+@RequestMapping(&quot;/bookstore/images&quot;)
+public class ImageController {
+
+    private final ImageService imageService;
+
+    /**
+     * front (toast ui)-&gt; this -&gt; nhn cloud (object storage)
+     * front 에서 보여주는 이미지를 서버에 저장
+     * @param image 받아올 이미지
+     * @param type 파일을 저장할 위치 -&gt; ex) book, review
+     * @return 저장할 파일명 (새로운 UUID.확장자)
+     */
+    @PostMapping(&quot;/{type}/upload&quot;)
+    public ApiResponse&lt;String&gt; uploadImage(@RequestParam MultipartFile image, @PathVariable String type){
+<span class="nc" id="L40">        String result  = imageService.createImage(image, type);</span>
+<span class="nc" id="L41">        return ApiResponse.success(result);</span>
+    }
+
+    /**
+     * front (fileName) -&gt; this -&gt; nhn cloud (object storage) -&gt; this -&gt; front (image)
+     * front 에서 요청한 이미지를 서버에서 받아서 보내기
+     * @param fileName 보여줄 파일의 이름
+     * @param type 파일을 보여줄 위치 -&gt; ex) book, review
+     * @return 서버에서 가져온 파일
+     */
+    @GetMapping(&quot;/{type}/download&quot;)
+    public ResponseEntity&lt;byte[]&gt; downloadFile(@RequestParam(&quot;fileName&quot;) String fileName, @PathVariable String type)  {
+        byte[] content;
+<span class="nc" id="L54">        try (S3Object s3Object = imageService.readImage(type + &quot;/&quot; + fileName)) {</span>
+
+<span class="nc" id="L56">            content = s3Object.getObjectContent().readAllBytes();</span>
+<span class="nc" id="L57">        } catch (IOException e) {</span>
+<span class="nc" id="L58">            throw new NotFindImageException();</span>
+<span class="nc" id="L59">        }</span>
+
+<span class="nc" id="L61">        HttpHeaders headers = new HttpHeaders();</span>
+<span class="nc" id="L62">        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);</span>
+<span class="nc" id="L63">        headers.setContentDispositionFormData(&quot;attachment&quot;, fileName);</span>
+
+
+<span class="nc" id="L66">        return new ResponseEntity&lt;&gt;(content, headers, HttpStatus.OK);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

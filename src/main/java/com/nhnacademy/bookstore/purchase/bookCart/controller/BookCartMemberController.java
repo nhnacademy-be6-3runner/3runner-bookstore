@@ -59,13 +59,9 @@ public class BookCartMemberController {
 	}
 
 	@DeleteMapping
-	public ApiResponse<Void> deleteBookCartMember(@RequestHeader(name = "Member-Id") Long userId) {
-		if(userId == null) {
-			throw new DeleteBookCartMemberRequestFormException();
-		}
-
-		bookCartMemberService.deleteBookCartMember(DeleteBookCartMemberRequest.builder().userId(userId).build());
-
+	public ApiResponse<Void> deleteBookCartMember(@RequestBody @Valid DeleteBookCartMemberRequest request, BindingResult bindingResult) {
+		ValidationUtils.validateBindingResult(bindingResult, new DeleteBookCartMemberRequestFormException());
+		bookCartMemberService.deleteBookCartMember(request);
 		return ApiResponse.deleteSuccess(null);
 	}
 }

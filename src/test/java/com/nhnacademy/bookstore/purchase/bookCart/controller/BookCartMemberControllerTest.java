@@ -57,14 +57,14 @@ public class BookCartMemberControllerTest {
 			.build();
 
 		updateBookCartMemberRequest = UpdateBookCartMemberRequest.builder()
-			.bookCartId(1L)
 			.quantity(2)
 			.bookId(1)
 			.cartId(1)
 			.build();
 
 		deleteBookCartMemberRequest = DeleteBookCartMemberRequest.builder()
-			.userId(1L)
+			.bookId(1L)
+			.cartId(1L)
 			.build();
 
 		readAllBookCartMemberRequest = ReadAllBookCartMemberRequest.builder()
@@ -83,9 +83,10 @@ public class BookCartMemberControllerTest {
 			.thenReturn(1L);
 
 		mockMvc.perform(post("/bookstore/cart")
+				.header("Member-Id", "1")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(createBookCartMemberRequest)))
-			.andExpect(content().contentType("application/json"))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.header.resultCode").value(201))
 			.andExpect(jsonPath("$.header.successful").value(true))
 			.andExpect(jsonPath("$.body.data").value(1L));
@@ -94,18 +95,18 @@ public class BookCartMemberControllerTest {
 	@Test
 	void testReadAllBookCartMember() throws Exception {
 		List<ReadAllBookCartMemberResponse> page = Collections.singletonList(readAllBookCartMemberResponse);
-		Pageable pageable = PageRequest.of(0, 10);
+
 
 		when(bookCartMemberService.readAllCartMember(any(ReadAllBookCartMemberRequest.class)))
 			.thenReturn(page);
 
 		mockMvc.perform(get("/bookstore/cart")
-				.header("Member-Id",1L)
-				.param("page", "0")
-				.param("size", "10")
-				.param("sort", ""))
+				.header("Member-Id", "1"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.body.data.content[0].quantity").value(1));
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.header.resultCode").value(200))
+			.andExpect(jsonPath("$.header.successful").value(true))
+			.andExpect(jsonPath("$.body.data[0].quantity").value(1));
 	}
 
 	@Test
@@ -125,8 +126,10 @@ public class BookCartMemberControllerTest {
 		Mockito.doNothing().when(bookCartMemberService).deleteBookCartMember(any(DeleteBookCartMemberRequest.class));
 
 		mockMvc.perform(delete("/bookstore/cart")
-				.header("Member-Id", "1"))
-			.andExpect(content().contentType("application/json"))
+				.header("Member-Id", "1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(deleteBookCartMemberRequest)))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.header.resultCode").value(204))
 			.andExpect(jsonPath("$.header.successful").value(true))
 			.andExpect(jsonPath("$.body.data").isEmpty());

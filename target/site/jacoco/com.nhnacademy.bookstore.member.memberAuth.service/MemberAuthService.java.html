@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MemberAuthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.member.memberAuth.service</a> &gt; <span class="el_source">MemberAuthService.java</span></div><h1>MemberAuthService.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.member.memberAuth.service;
+
+import com.nhnacademy.bookstore.entity.auth.Auth;
+import com.nhnacademy.bookstore.entity.member.Member;
+import com.nhnacademy.bookstore.entity.memberAuth.MemberAuth;
+import com.nhnacademy.bookstore.member.memberAuth.repository.MemberAuthRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+<span class="fc" id="L12">@RequiredArgsConstructor</span>
+@Service
+public class MemberAuthService {
+    private final MemberAuthRepository memberAuthRepository;
+
+    /**
+     * @Author -유지아
+     * Find all auths list. -멤버의 모든 권한을 리스트로 가져온다.
+     *
+     * @param memberId the member id -memberid값을 받는다.
+     * @return the list -권한이 담긴 리스트를 반환한다.
+     */
+    public List&lt;Auth&gt; findAllAuths(Long memberId) {
+<span class="nc" id="L25">        return memberAuthRepository.findByMemberId(memberId);</span>
+    }
+
+    /**
+     * @Author -유지아
+     * Save auth. -유저의 권한을 저장한다.
+     *
+     * @param member the member -Member를 가져온다.
+     * @param auth   the auth -Auth를 가져온다.
+     */
+    public void saveAuth(Member member, Auth auth){
+<span class="nc" id="L36">        MemberAuth memberAuth = new MemberAuth();</span>
+<span class="nc" id="L37">        memberAuth.setMember(member);</span>
+<span class="nc" id="L38">        memberAuth.setAuth(auth);</span>
+<span class="nc" id="L39">        memberAuthRepository.save(memberAuth);</span>
+<span class="nc" id="L40">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

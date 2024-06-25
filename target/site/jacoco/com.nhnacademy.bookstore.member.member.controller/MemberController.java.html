@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MemberController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.member.member.controller</a> &gt; <span class="el_source">MemberController.java</span></div><h1>MemberController.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.member.member.controller;
+
+
+import com.nhnacademy.bookstore.entity.auth.Auth;
+import com.nhnacademy.bookstore.entity.member.Member;
+import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
+import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
+import com.nhnacademy.bookstore.member.member.dto.request.UpdateMemberRequest;
+import com.nhnacademy.bookstore.member.member.dto.response.GetMemberResponse;
+import com.nhnacademy.bookstore.member.member.dto.response.UpdateMemberResponse;
+import com.nhnacademy.bookstore.member.auth.service.AuthService;
+import com.nhnacademy.bookstore.member.memberAuth.service.MemberAuthService;
+import com.nhnacademy.bookstore.member.pointRecord.service.PointService;
+import com.nhnacademy.bookstore.member.member.service.impl.MemberServiceImpl;
+import com.nhnacademy.bookstore.util.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+
+
+/**
+ * The type Member controller.
+ *
+ * @author 오연수, 유지아
+ */
+@RestController
+<span class="fc" id="L32">@RequiredArgsConstructor</span>
+public class MemberController {
+    private final MemberServiceImpl memberService;
+    private final PointService pointRecordService;
+    private final AuthService authService;
+    private final MemberAuthService memberAuthService;
+
+
+    /**
+     * Create member response entity.- 회원가입에 사용되는 함수이다.
+     *
+     * @param request the request - creatememberrequest를 받아 member를 생성한다.
+     * @author 유지아
+     */
+    @PostMapping(&quot;/members&quot;)
+    public ApiResponse&lt;Void&gt; createMember(@RequestBody CreateMemberRequest request) {
+<span class="nc" id="L48">                Member member = new Member(request);</span>
+<span class="nc" id="L49">                Auth auth = authService.getAuth(&quot;USER&quot;);</span>
+
+<span class="nc" id="L51">                PointRecord pointRecord = new PointRecord(null, 5000L, 5000L, ZonedDateTime.now(), &quot;회원가입 5000포인트 적립.&quot;, member);</span>
+<span class="nc" id="L52">                pointRecordService.save(pointRecord);</span>
+<span class="nc" id="L53">                memberAuthService.saveAuth(member, auth);</span>
+<span class="nc" id="L54">                memberService.save(member);</span>
+<span class="nc" id="L55">            return ApiResponse.success(null);</span>
+    }
+
+    /**
+     * Find by member id response entity. -멤버아이디를 기반으로 멤버정보를 가져온다.
+     *
+     * @param memberId the member id -long형인 memberId값을 request header로 받는다.
+     * @return the response entity -멤버 정보에 대한 응답을 담아서 apiresponse로 응답한다.
+     * @author 유지아
+     */
+    @GetMapping(&quot;/members&quot;)
+    public ApiResponse&lt;GetMemberResponse&gt; findById(@RequestHeader(&quot;member-id&quot;) Long memberId) {
+<span class="nc" id="L67">            Member member = memberService.findById(memberId);</span>
+<span class="nc" id="L68">            GetMemberResponse getMemberResponse = GetMemberResponse.builder()</span>
+<span class="nc" id="L69">                    .age(member.getAge())</span>
+<span class="nc" id="L70">                    .grade(member.getGrade())</span>
+<span class="nc" id="L71">                    .point(member.getPoint())</span>
+<span class="nc" id="L72">                    .phone(member.getPhone())</span>
+<span class="nc" id="L73">                    .created_at(member.getCreated_at())</span>
+<span class="nc" id="L74">                    .birthday(member.getBirthday())</span>
+<span class="nc" id="L75">                    .email(member.getEmail())</span>
+<span class="nc" id="L76">                    .name(member.getName())</span>
+<span class="nc" id="L77">                    .password(member.getPassword()).build();</span>
+
+<span class="nc" id="L79">            return ApiResponse.success(getMemberResponse);</span>
+    }
+
+    /**
+     * Find by email and password response entity. -이메일과 비밀번호에 맞는 멤버정보를 반환한다.
+     *
+     * @param email    the email -이메일값을 문자열로 받는다.
+     * @param password the password -비밀번호값을 문자열로 받는다.
+     * @return the response entity -멤버 정보에 대한 응답을 담아서 apiresponse로 응답한다.
+     * @author 유지아
+     */
+    @GetMapping(&quot;/members/login&quot;)
+    public ResponseEntity&lt;Member&gt; findByEmailAndPassword(
+            @RequestHeader(&quot;email&quot;) String email,
+            @RequestHeader(&quot;password&quot;) String password) {
+<span class="nc" id="L94">        return ResponseEntity.ok(memberService.findByEmailAndPassword(email, password));</span>
+    }
+
+    /**
+     * Find auths list. -권한에 대한 리스트를 받아온다.
+     *
+     * @param memberId the member id -멤버아이디를 받는다.
+     * @return the list -해당 유저에 대한 권한들을 응답에 담아 apiresponse로 응답한다.
+     * @author 유지아
+     */
+    @GetMapping(&quot;/members/auths&quot;)
+    public List&lt;Auth&gt; findAuths(@RequestHeader(&quot;member-id&quot;)Long memberId){
+<span class="nc" id="L106">        return memberAuthService.findAllAuths(memberId);</span>
+    }
+
+    /**
+     * 멤버 업데이트
+     *
+     * @param memberId            멤버 id
+     * @param updateMemberRequest password, name, age, phone, email, birthday
+     * @return the api response - updateMemberResponse
+     * @author 오연수
+     */
+    @PutMapping(&quot;/members&quot;)
+    public ApiResponse&lt;UpdateMemberResponse&gt; updateMember(@RequestHeader(name = &quot;Member-Id&quot;) String memberId,
+                                                          @Valid @RequestBody UpdateMemberRequest updateMemberRequest) {
+
+<span class="nc" id="L121">            Member updatedMember = memberService.updateMember(memberId, updateMemberRequest);</span>
+<span class="nc" id="L122">            UpdateMemberResponse updateMemberResponse = UpdateMemberResponse.builder()</span>
+<span class="nc" id="L123">                    .id(String.valueOf(updatedMember.getId()))</span>
+<span class="nc" id="L124">                    .name(updatedMember.getName()).build();</span>
+<span class="nc" id="L125">            return ApiResponse.success(updateMemberResponse);</span>
+    }
+
+    /**
+     * 멤버 탈퇴 처리
+     *
+     * @param memberId 멤버 id
+     * @return the api response - Void
+     * @author 오연수
+     */
+    @DeleteMapping(&quot;/members&quot;)
+    public ApiResponse&lt;Void&gt; deleteMember(@RequestHeader(name = &quot;Member-Id&quot;) String memberId) {
+<span class="nc" id="L137">            memberService.deleteMember(memberId);</span>
+<span class="nc" id="L138">            return new ApiResponse&lt;&gt;(new ApiResponse.Header(true, HttpStatus.NO_CONTENT.value()));</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

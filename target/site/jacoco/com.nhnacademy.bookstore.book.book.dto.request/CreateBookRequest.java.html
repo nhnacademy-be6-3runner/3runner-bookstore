@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateBookRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.book.book.dto.request</a> &gt; <span class="el_source">CreateBookRequest.java</span></div><h1>CreateBookRequest.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.book.book.dto.request;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+
+
+/**
+ * book request form validate.
+ *
+ * @author 김병우
+ * @param title
+ * @param description
+ * @param publishedDate
+ * @param price
+ * @param quantity
+ * @param sellingPrice
+ * @param packing
+ * @param author
+ * @param isbn
+ * @param publisher
+ */
+<span class="fc" id="L28">public record CreateBookRequest(</span>
+        @NotBlank(message = &quot;title is mandatory&quot;) String title,
+        @NotBlank(message = &quot;description is mandatory&quot;)  String description,
+        @NotNull(message = &quot;publishedDate is mandatory&quot;) ZonedDateTime publishedDate,
+        @Min(value = 0, message = &quot;price must be bigger then 0&quot;) int price,
+        @Min(value = 0, message = &quot;quantity must be bigger then 0&quot;) int quantity,
+        @Min(value = 0, message = &quot;sellingPrice must be bigger then 0&quot;) int sellingPrice,
+        @NotNull(message = &quot;packing is mandatory&quot;) boolean packing,
+        @NotBlank(message = &quot;author is mandatory&quot;) String author,
+        @NotBlank(message = &quot;isbn is mandatory&quot;) String isbn,
+        @NotBlank(message = &quot;publisher is mandatory&quot;) String publisher,
+        String imageName,
+        List&lt;String&gt; imageList,
+        List&lt;Long&gt; tagIds,
+//        @NotBlank(message = &quot;category is mandatory&quot;)
+        List&lt;Long&gt;  categoryIds) {
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

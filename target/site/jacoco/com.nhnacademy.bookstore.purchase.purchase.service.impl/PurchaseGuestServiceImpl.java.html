@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PurchaseGuestServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.purchase.purchase.service.impl</a> &gt; <span class="el_source">PurchaseGuestServiceImpl.java</span></div><h1>PurchaseGuestServiceImpl.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.purchase.purchase.service.impl;
+
+import com.nhnacademy.bookstore.entity.purchase.Purchase;
+import com.nhnacademy.bookstore.entity.purchase.enums.MemberType;
+import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
+import com.nhnacademy.bookstore.purchase.purchase.dto.request.CreatePurchaseRequest;
+import com.nhnacademy.bookstore.purchase.purchase.dto.request.UpdatePurchaseGuestRequest;
+import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
+import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseAlreadyExistException;
+import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseNoAuthorizationException;
+import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
+import com.nhnacademy.bookstore.purchase.purchase.service.PurchaseGuestService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
+/**
+ * 비회원 주문 서비스.
+ *
+ * @author 김병우
+ */
+@Service
+@Transactional(readOnly = true)
+<span class="fc" id="L31">@RequiredArgsConstructor</span>
+public class PurchaseGuestServiceImpl implements PurchaseGuestService {
+    private final PurchaseRepository purchaseRepository;
+    private final PasswordEncoder encoder;
+
+    /**
+     * 비회원 주문 생성
+     *
+     * @param createPurchaseRequest 생성 폼
+     * @return 주문아이디
+     */
+    @Override
+    public Long createPurchase(CreatePurchaseRequest createPurchaseRequest) {
+<span class="fc" id="L44">        Purchase purchase = new Purchase(</span>
+<span class="fc" id="L45">                UUID.randomUUID(),</span>
+                PurchaseStatus.PROCESSING,
+<span class="fc" id="L47">                createPurchaseRequest.deliveryPrice(),</span>
+<span class="fc" id="L48">                createPurchaseRequest.totalPrice(),</span>
+<span class="fc" id="L49">                ZonedDateTime.now(),</span>
+<span class="fc" id="L50">                createPurchaseRequest.road(),</span>
+<span class="fc" id="L51">                encoder.encode(createPurchaseRequest.password()),</span>
+                MemberType.NONMEMBER,
+                null,
+                null, //TODO : Point 구현 후 연결 필요
+                null,
+                null
+        );
+
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if(purchaseRepository.existsPurchaseByOrderNumber(purchase.getOrderNumber())) {</span>
+<span class="fc" id="L60">            throw new PurchaseAlreadyExistException(&quot;주문 번호가 중복되었습니다.&quot;);</span>
+        }
+
+<span class="fc" id="L63">        purchaseRepository.save(purchase);</span>
+<span class="fc" id="L64">        return purchase.getId();</span>
+    }
+
+    /**
+     * 비회원 주문 업데이트.
+     *
+     * @param updatePurchaseGuestRequest 업데이트 폼
+     * @return 주문아이디
+     */
+    @Override
+    public Long updatePurchase(UpdatePurchaseGuestRequest updatePurchaseGuestRequest) {
+<span class="fc" id="L75">        Optional&lt;Purchase&gt; purchaseOptional = purchaseRepository.findPurchaseByOrderNumber(updatePurchaseGuestRequest.orderNumber());</span>
+<span class="fc" id="L76">        Purchase purchase = validateGuest(purchaseOptional, updatePurchaseGuestRequest.password());</span>
+
+<span class="fc" id="L78">        purchase.setStatus(updatePurchaseGuestRequest.purchaseStatus());</span>
+
+<span class="fc" id="L80">        purchaseRepository.save(purchase);</span>
+
+<span class="fc" id="L82">        return purchase.getId();</span>
+    }
+
+    /**
+     * 비회원 주문 조회
+     *
+     * @param orderNumber 주문번호
+     * @param password 주문 비밀번호
+     * @return 비회원 주문
+     */
+    @Override
+    public ReadPurchaseResponse readPurchase(UUID orderNumber, String password) {
+<span class="fc" id="L94">        Optional&lt;Purchase&gt; purchaseOptional = purchaseRepository.findPurchaseByOrderNumber(orderNumber);</span>
+<span class="fc" id="L95">        Purchase purchase = validateGuest(purchaseOptional,password);</span>
+
+<span class="fc" id="L97">        return ReadPurchaseResponse.builder()</span>
+<span class="fc" id="L98">                .id(purchase.getId())</span>
+<span class="fc" id="L99">                .status(purchase.getStatus())</span>
+<span class="fc" id="L100">                .deliveryPrice(purchase.getDeliveryPrice())</span>
+<span class="fc" id="L101">                .totalPrice(purchase.getTotalPrice())</span>
+<span class="fc" id="L102">                .createdAt(purchase.getCreatedAt())</span>
+<span class="fc" id="L103">                .road(purchase.getRoad())</span>
+<span class="fc" id="L104">                .password(purchase.getPassword())</span>
+<span class="fc" id="L105">                .memberType(purchase.getMemberType())</span>
+<span class="fc" id="L106">                .build();</span>
+    }
+
+    /**
+     * 비회원 주문 삭제.
+     *
+     * @param orderNumber 주문번호
+     * @param password 주문 비밀번호
+     */
+    @Override
+    public void deletePurchase(UUID orderNumber, String password) {
+<span class="fc" id="L117">        Optional&lt;Purchase&gt; purchaseOptional = purchaseRepository.findPurchaseByOrderNumber(orderNumber);</span>
+<span class="fc" id="L118">        Purchase purchase = validateGuest(purchaseOptional,password);</span>
+<span class="fc" id="L119">        purchaseRepository.delete(purchase);</span>
+<span class="fc" id="L120">    }</span>
+
+    /**
+     * 비회원 주문 번호, 비밀번호 검증
+     *
+     * @param purchaseOptional 주문
+     * @param password 비밀번호
+     * @return 주문
+     */
+    private Purchase validateGuest(Optional&lt;Purchase&gt; purchaseOptional, String password){
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        if(purchaseOptional.isEmpty()){</span>
+<span class="fc" id="L131">            throw new PurchaseDoesNotExistException(&quot;주문이 없습니다.&quot;);</span>
+        }
+
+<span class="fc" id="L134">        Purchase purchase = purchaseOptional.get();</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if(!encoder.matches(password, purchase.getPassword())){</span>
+<span class="fc" id="L136">            throw new PurchaseNoAuthorizationException(&quot;권한이 없습니다.&quot;);</span>
+        }
+<span class="fc" id="L138">        return purchase;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

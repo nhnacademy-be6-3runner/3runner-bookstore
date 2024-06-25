@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PurchaseBookServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.purchase.purchaseBook.service.impl</a> &gt; <span class="el_source">PurchaseBookServiceImpl.java</span></div><h1>PurchaseBookServiceImpl.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.purchase.purchaseBook.service.impl;
+
+import com.nhnacademy.bookstore.book.book.repository.BookRepository;
+import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
+import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
+import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.CreatePurchaseBookRequest;
+import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.DeletePurchaseBookRequest;
+import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsBook;
+import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsPurchase;
+import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsPurchaseBook;
+import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.ReadPurchaseIdRequest;
+import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.UpdatePurchaseBookRequest;
+import com.nhnacademy.bookstore.purchase.purchaseBook.dto.response.ReadBookByPurchase;
+import com.nhnacademy.bookstore.purchase.purchaseBook.dto.response.ReadPurchaseBookResponse;
+import com.nhnacademy.bookstore.purchase.purchaseBook.repository.PurchaseBookRepository;
+import com.nhnacademy.bookstore.purchase.purchaseBook.service.PurchaseBookService;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+
+/**
+ * 주문-책 서비스
+ *
+ * @author 정주혁
+ */
+@Transactional
+@Service
+public class PurchaseBookServiceImpl implements PurchaseBookService {
+    private final PurchaseBookRepository purchaseBookRepository;
+    private final PurchaseRepository purchaseRepository;
+    private final BookRepository bookRepository;
+
+    @Autowired
+<span class="fc" id="L42">    public PurchaseBookServiceImpl(PurchaseBookRepository purchaseBookRepository,PurchaseRepository purchaseRepository,BookRepository bookRepository) {</span>
+<span class="fc" id="L43">        this.purchaseBookRepository = purchaseBookRepository;</span>
+<span class="fc" id="L44">        this.purchaseRepository = purchaseRepository;</span>
+<span class="fc" id="L45">        this.bookRepository = bookRepository;</span>
+<span class="fc" id="L46">    }</span>
+
+
+    /**
+     * 주문으로 해당 주문의 책들을 조회
+     *
+     * @param readPurchaseIdRequest 주문 id
+     * @return 해당 주문의 책 리스트를 반환
+     */
+    @Override
+    public Page&lt;ReadPurchaseBookResponse&gt; readBookByPurchaseResponses(ReadPurchaseIdRequest readPurchaseIdRequest, Pageable pageable){
+<span class="fc" id="L57">        Page&lt;PurchaseBook&gt; purchaseBooks = purchaseBookRepository.findAllByPurchaseId(readPurchaseIdRequest.purchaseId(),pageable);</span>
+<span class="fc" id="L58">        return purchaseBooks.map(purchaseBook-&gt;ReadPurchaseBookResponse.builder().</span>
+<span class="fc" id="L59">                readBookByPurchase(ReadBookByPurchase.builder()</span>
+<span class="fc" id="L60">                        .title(purchaseBook.getBook().getTitle())</span>
+<span class="fc" id="L61">                        .description(purchaseBook.getBook().getDescription())</span>
+<span class="fc" id="L62">                        .bookCategories(purchaseBook.getBook().getBookCategoryList())</span>
+<span class="fc" id="L63">                        .bookImages(purchaseBook.getBook().getBookImageList())</span>
+<span class="fc" id="L64">                        .sellingPrice(purchaseBook.getBook().getSellingPrice())</span>
+<span class="fc" id="L65">                        .packing(purchaseBook.getBook().isPacking())</span>
+<span class="fc" id="L66">                        .bookTags(purchaseBook.getBook().getBookTagList())</span>
+<span class="fc" id="L67">                        .publisher(purchaseBook.getBook().getPublisher())</span>
+<span class="fc" id="L68">                        .price(purchaseBook.getBook().getPrice())</span>
+<span class="fc" id="L69">                        .build())</span>
+<span class="fc" id="L70">                .quantity(purchaseBook.getQuantity())</span>
+<span class="fc" id="L71">                .price(purchaseBook.getPrice())</span>
+<span class="fc" id="L72">                .build());</span>
+    }
+
+    /**
+     * bookId와 purchaseId로 수정한 주문-책을 조회한후 update
+     *
+     * @param updatePurchaseBookRequest bookId와 purchaseId,수정사항이 있는 requestDto
+     * @return 수정한 주문-책 Id
+     */
+    @Override
+    public Long updatePurchaseBook(UpdatePurchaseBookRequest updatePurchaseBookRequest){
+<span class="fc" id="L83">        PurchaseBook purchaseBook = purchaseBookRepository.findByPurchaseIdAndBookId(updatePurchaseBookRequest.purchaseId(),updatePurchaseBookRequest.bookId()).orElse(null);</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if(purchaseBook == null){</span>
+<span class="nc" id="L85">            throw new NotExistsPurchaseBook();</span>
+        }
+<span class="fc" id="L87">        purchaseBook.setQuantity(updatePurchaseBookRequest.quantity());</span>
+<span class="fc" id="L88">        purchaseBook.setPrice(updatePurchaseBookRequest.price());</span>
+<span class="fc" id="L89">        purchaseBookRepository.save(purchaseBook);</span>
+<span class="fc" id="L90">        return purchaseBook.getId();</span>
+    }
+
+    /**
+     * 주문-책 생성, 책id로 책을 조회하고,주문id로 주문을 조회한다음 추가적인 사항 추가하여 생성
+     *
+     * @param createPurchaseBookRequest bookId와 purchaseId, 추가 사항이있는 requestDto
+     * @return 생성한 id 반환
+     */
+    @Override
+    public Long createPurchaseBook(CreatePurchaseBookRequest createPurchaseBookRequest){
+<span class="fc" id="L101">        PurchaseBook purchaseBook = new PurchaseBook(bookRepository.findById(createPurchaseBookRequest.bookId()).orElseThrow(NotExistsBook::new)</span>
+<span class="fc" id="L102">                ,createPurchaseBookRequest.quantity()</span>
+<span class="fc" id="L103">                ,createPurchaseBookRequest.price()</span>
+<span class="fc" id="L104">                ,purchaseRepository.findById(createPurchaseBookRequest.purchaseId()).orElseThrow(NotExistsPurchase::new));</span>
+
+<span class="fc" id="L106">        return purchaseBookRepository.save(purchaseBook).getId();</span>
+    }
+
+    /**
+     * 주문-책 삭제
+     *
+     * @param purchaseBookRequest 삭제할 주문-책id requestDto
+     */
+    @Override
+    public void deletePurchaseBook(DeletePurchaseBookRequest purchaseBookRequest){
+<span class="fc" id="L116">        purchaseBookRepository.deleteById(purchaseBookRequest.purchaseBookId());</span>
+<span class="fc" id="L117">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

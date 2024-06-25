@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Book.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.entity.book</a> &gt; <span class="el_source">Book.java</span></div><h1>Book.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.entity.book;
+
+import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
+import com.nhnacademy.bookstore.entity.bookImage.BookImage;
+import com.nhnacademy.bookstore.entity.bookTag.BookTag;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+<span class="nc" id="L20">@AllArgsConstructor</span>
+<span class="fc" id="L21">@NoArgsConstructor</span>
+@Getter
+<span class="pc" id="L23">@Setter</span>
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="fc" id="L28">    @Setter</span>
+<span class="fc" id="L29">    private long id;</span>
+
+    @Size(min = 1, max = 50)
+    @NotNull
+<span class="fc" id="L33">    private String title;</span>
+
+    @Lob
+    @Column(columnDefinition = &quot;TEXT&quot;)
+<span class="fc" id="L37">    private String description;</span>
+
+
+<span class="fc" id="L40">    private ZonedDateTime publishedDate;</span>
+
+    @NotNull
+    @Min(0)
+<span class="fc" id="L44">    private int price;</span>
+
+    @NotNull
+    @Min(0)
+<span class="fc" id="L48">    private int quantity;</span>
+
+    @NotNull
+    @Min(0)
+<span class="fc" id="L52">    private int sellingPrice;</span>
+
+    @NotNull
+    @Min(0)
+    @Column(columnDefinition = &quot;int default 0&quot;)
+<span class="fc" id="L57">    private int viewCount;</span>
+
+    //    @Column(nullable = false, columnDefinition = &quot;bit(1) default 1&quot;)
+    @NotNull
+<span class="fc" id="L61">    private boolean packing;</span>
+
+    @NotNull
+    @Size(min = 1, max = 50)
+<span class="fc" id="L65">    private String author;</span>
+
+    @NotNull
+    @Size(min = 1, max = 20)
+<span class="fc" id="L69">    private String isbn;</span>
+
+    @NotNull
+    @Size(min = 1, max = 50)
+<span class="fc" id="L73">    private String publisher;</span>
+
+    @NotNull
+<span class="fc" id="L76">    private ZonedDateTime createdAt;</span>
+
+//    public Book(long id, String title, String description, ZonedDateTime publishedDate, )
+    //연결
+
+<span class="pc" id="L81">    @Setter</span>
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = &quot;book&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+<span class="fc" id="L83">    private List&lt;BookCategory&gt; bookCategoryList = new ArrayList&lt;&gt;();</span>
+
+<span class="pc" id="L85">    @OneToMany(fetch = FetchType.LAZY, mappedBy = &quot;book&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</span>
+<span class="nc" id="L86">    private List&lt;BookTag&gt; bookTagList = new ArrayList&lt;&gt;();</span>
+
+<span class="pc" id="L88">    @OneToMany(fetch = FetchType.LAZY, mappedBy = &quot;book&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</span>
+<span class="nc" id="L89">    private List&lt;BookImage&gt; bookImageList = new ArrayList&lt;&gt;();</span>
+
+    @PrePersist
+    protected void onCreate() {
+<span class="fc" id="L93">        this.createdAt = ZonedDateTime.now();</span>
+<span class="fc" id="L94">    }</span>
+
+    public Book(String title, String description, ZonedDateTime publishedDate, int price,
+                int quantity, int sellingPrice, int viewCount, boolean packing, String author, String isbn,
+                String publisher, List&lt;BookCategory&gt; bookCategoryList, List&lt;BookTag&gt; bookTagList,
+<span class="fc" id="L99">                List&lt;BookImage&gt; bookImageList) {</span>
+<span class="fc" id="L100">        this.title = title;</span>
+<span class="fc" id="L101">        this.description = description;</span>
+<span class="fc" id="L102">        this.publishedDate = publishedDate;</span>
+<span class="fc" id="L103">        this.price = price;</span>
+<span class="fc" id="L104">        this.quantity = quantity;</span>
+<span class="fc" id="L105">        this.sellingPrice = sellingPrice;</span>
+<span class="fc" id="L106">        this.viewCount = viewCount;</span>
+<span class="fc" id="L107">        this.packing = packing;</span>
+<span class="fc" id="L108">        this.author = author;</span>
+<span class="fc" id="L109">        this.isbn = isbn;</span>
+<span class="fc" id="L110">        this.publisher = publisher;</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        this.bookCategoryList = bookCategoryList != null ? bookCategoryList : new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        this.bookTagList = bookTagList != null ? bookTagList : new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        this.bookImageList = bookImageList != null ? bookImageList : new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L114">    }</span>
+
+    /**
+     * 도서 카테고리 추가 메서드.
+     *
+     * @param bookCategory 도서-카테고리
+     */
+    public void addBookCategory(BookCategory bookCategory) {
+<span class="fc" id="L122">        this.bookCategoryList.add(bookCategory);</span>
+<span class="fc" id="L123">        bookCategory.setBook(this);</span>
+<span class="fc" id="L124">    }</span>
+
+    /**
+     * 도서 카테고리 삭제 메서드.
+     *
+     * @param bookCategory 도서-카테고리
+     */
+    public void removeBookCategory(BookCategory bookCategory) {
+<span class="fc" id="L132">        this.bookCategoryList.remove(bookCategory);</span>
+<span class="fc" id="L133">        bookCategory.setBook(null); // 양방향 해제</span>
+<span class="fc" id="L134">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

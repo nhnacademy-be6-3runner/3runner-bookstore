@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.util</a> &gt; <span class="el_source">ApiResponse.java</span></div><h1>ApiResponse.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.util;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
+
+
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
+<span class="nc" id="L13">@Setter</span>
+
+public class ApiResponse&lt;T&gt;{
+<span class="fc" id="L16">    private Header header;</span>
+
+<span class="fc" id="L18">    private Body&lt;T&gt; body;</span>
+
+<span class="fc" id="L20">    public ApiResponse(Header header, Body&lt;T&gt; body) {</span>
+<span class="fc" id="L21">        this.header = header;</span>
+<span class="fc" id="L22">        this.body = body;</span>
+<span class="fc" id="L23">    }</span>
+
+<span class="fc" id="L25">    public ApiResponse(Header header) {</span>
+<span class="fc" id="L26">        this.header = header;</span>
+<span class="fc" id="L27">    }</span>
+
+
+<span class="nc" id="L30">    @Setter</span>
+    @Getter
+<span class="fc" id="L32">    @AllArgsConstructor</span>
+    public static class Header {
+<span class="fc" id="L34">        private boolean isSuccessful;</span>
+<span class="fc" id="L35">        private int resultCode;</span>
+    }
+
+<span class="nc" id="L38">    @Setter</span>
+    @Getter
+    public static class Body&lt;T&gt; {
+<span class="fc" id="L41">        private T data;</span>
+
+<span class="fc" id="L43">        public Body(T data) {</span>
+<span class="fc" id="L44">            this.data = data;</span>
+<span class="fc" id="L45">        }</span>
+    }
+
+    public static &lt;T&gt; ApiResponse&lt;T&gt; success(T data) {
+<span class="fc" id="L49">        return new ApiResponse&lt;&gt;(</span>
+<span class="fc" id="L50">                new Header(true, HttpStatus.OK.value()),</span>
+                new Body&lt;&gt;(data)
+        );
+    }
+    public static &lt;T&gt; ApiResponse&lt;T&gt; createSuccess(T data) {
+<span class="fc" id="L55">        return new ApiResponse&lt;&gt;(</span>
+<span class="fc" id="L56">                new Header(true, HttpStatus.CREATED.value()),</span>
+                new Body&lt;&gt;(data)
+        );
+    }
+    public static &lt;T&gt; ApiResponse&lt;T&gt; deleteSuccess(T data) {
+<span class="fc" id="L61">        return new ApiResponse&lt;&gt;(</span>
+<span class="fc" id="L62">                new Header(true, HttpStatus.NO_CONTENT.value()),</span>
+                new Body&lt;&gt;(data)
+        );
+    }
+
+
+
+    public static &lt;T&gt; ApiResponse&lt;T&gt; fail(int errorCode, Body&lt;T&gt; body) {
+<span class="nc" id="L70">        return new ApiResponse&lt;&gt;(</span>
+                new Header(false, errorCode),body
+        );
+    }
+    public static &lt;T&gt; ApiResponse&lt;T&gt; notFoundFail(Body&lt;T&gt; body) {
+<span class="nc" id="L75">        return new ApiResponse&lt;&gt;(</span>
+<span class="nc" id="L76">                new Header(false, HttpStatus.NOT_FOUND.value()),body</span>
+        );
+    }
+    public static &lt;T&gt; ApiResponse&lt;T&gt; badRequestFail(Body&lt;T&gt; body) {
+<span class="nc" id="L80">        return new ApiResponse&lt;&gt;(</span>
+<span class="nc" id="L81">                new Header(false, HttpStatus.BAD_REQUEST.value()),body</span>
+        );
+    }
+    public static &lt;T&gt; ApiResponse&lt;T&gt; forbiddenFail(Body&lt;T&gt; body) {
+<span class="nc" id="L85">        return new ApiResponse&lt;&gt;(</span>
+<span class="nc" id="L86">                new Header(false, HttpStatus.FORBIDDEN.value()),body</span>
+        );
+    }
+    public static &lt;T&gt; ApiResponse&lt;T&gt; serverErrorFail(Body&lt;T&gt; body) {
+<span class="nc" id="L90">        return new ApiResponse&lt;&gt;(</span>
+<span class="nc" id="L91">                new Header(false, HttpStatus.INTERNAL_SERVER_ERROR.value()),body</span>
+        );
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

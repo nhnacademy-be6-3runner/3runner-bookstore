@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebControllerAdvice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.global.exceptionHandler</a> &gt; <span class="el_source">WebControllerAdvice.java</span></div><h1>WebControllerAdvice.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.global.exceptionHandler;
+import com.nhnacademy.bookstore.book.book.exception.BookDoesNotExistException;
+import com.nhnacademy.bookstore.book.book.exception.CreateBookRequestFormException;
+import com.nhnacademy.bookstore.purchase.bookCart.exception.BookCartArgumentErrorException;
+import com.nhnacademy.bookstore.purchase.bookCart.exception.BookCartDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.cart.exception.CartDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseAlreadyExistException;
+import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseFormArgumentErrorException;
+import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseNoAuthorizationException;
+import com.nhnacademy.bookstore.util.ApiResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.nio.channels.AlreadyBoundException;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Error Handler Controller
+ * @author 김병우
+ */
+@RestControllerAdvice
+<span class="fc" id="L29">public class WebControllerAdvice {</span>
+    /**
+     * INTERNAL_SERVER_ERROR 처리 메소드
+     * @param ex
+     * @param model
+     * @return ApiResponse&lt;ErrorResponseForm&gt;
+     */
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiResponse&lt;ErrorResponseForm&gt; runtimeExceptionHandler(Exception ex, Model model) {
+
+<span class="nc" id="L40">        return ApiResponse.fail(500,</span>
+                new ApiResponse.Body&lt;&gt;(
+<span class="nc" id="L42">                        ErrorResponseForm.builder()</span>
+<span class="nc" id="L43">                                .title(ex.getMessage())</span>
+<span class="nc" id="L44">                                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())</span>
+<span class="nc" id="L45">                                .timestamp(ZonedDateTime.now().toString())</span>
+<span class="nc" id="L46">                                .build())</span>
+        );
+    }
+
+    /**
+     * BAD_REQUEST 처리 메소드
+     * @param ex
+     * @param model
+     * @return ApiResponse&lt;ErrorResponseForm&gt;
+     */
+    @ExceptionHandler({
+            CreateBookRequestFormException.class,
+            AlreadyBoundException.class,
+            PurchaseFormArgumentErrorException.class,
+            PurchaseAlreadyExistException.class,
+            BookCartArgumentErrorException.class
+    })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse&lt;ErrorResponseForm&gt; badRequestHandler(Exception ex, Model model) {
+<span class="nc" id="L65">        return ApiResponse.badRequestFail(</span>
+<span class="nc" id="L66">                new ApiResponse.Body&lt;&gt;(ErrorResponseForm.builder()</span>
+<span class="nc" id="L67">                        .title(ex.getMessage())</span>
+<span class="nc" id="L68">                        .status(HttpStatus.BAD_REQUEST.value())</span>
+<span class="nc" id="L69">                        .timestamp(ZonedDateTime.now().toString())</span>
+<span class="nc" id="L70">                        .build())</span>
+        );
+
+    }
+
+    /**
+     * NOT_FOUND 처리 메소드
+     * @param ex
+     * @param model
+     * @return ApiResponse&lt;ErrorResponseForm&gt;
+     *
+     * @author 정주혁
+     */
+    @ExceptionHandler({
+            PurchaseDoesNotExistException.class,
+            BookDoesNotExistException.class,
+            BookCartDoesNotExistException.class,
+            CartDoesNotExistException.class
+    })
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse&lt;ErrorResponseForm&gt; notFoundHandler(Exception ex, Model model) {
+<span class="nc" id="L91">        return ApiResponse.notFoundFail(</span>
+<span class="nc" id="L92">                new ApiResponse.Body&lt;&gt;(ErrorResponseForm.builder()</span>
+<span class="nc" id="L93">                        .title(ex.getMessage())</span>
+<span class="nc" id="L94">                        .status(HttpStatus.NOT_FOUND.value())</span>
+<span class="nc" id="L95">                        .timestamp(ZonedDateTime.now().toString())</span>
+<span class="nc" id="L96">                        .build())</span>
+        );
+    }
+    /**
+     * METHOD_NOT_ALLOWED 처리 메소드
+     * @param ex
+     * @param model
+     * @return ApiResponse&lt;ErrorResponseForm&gt;
+     *
+     * @author 정주혁
+     */
+
+    @ExceptionHandler({
+            PurchaseNoAuthorizationException.class
+    })
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiResponse&lt;ErrorResponseForm&gt; unauthorizedHandler(Exception ex, Model model) {
+<span class="nc" id="L113">        return new ApiResponse&lt;&gt;(</span>
+<span class="nc" id="L114">                new ApiResponse.Header(false, HttpStatus.METHOD_NOT_ALLOWED.value()),</span>
+<span class="nc" id="L115">                new ApiResponse.Body&lt;&gt;(ErrorResponseForm.builder()</span>
+<span class="nc" id="L116">                        .title(ex.getMessage())</span>
+<span class="nc" id="L117">                        .status(HttpStatus.UNAUTHORIZED.value())</span>
+<span class="nc" id="L118">                        .timestamp(ZonedDateTime.now().toString())</span>
+<span class="nc" id="L119">                        .build())</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

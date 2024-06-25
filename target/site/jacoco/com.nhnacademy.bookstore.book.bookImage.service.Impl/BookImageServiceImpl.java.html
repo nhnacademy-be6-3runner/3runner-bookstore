@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookImageServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.book.bookImage.service.Impl</a> &gt; <span class="el_source">BookImageServiceImpl.java</span></div><h1>BookImageServiceImpl.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.book.bookImage.service.Impl;
+
+import com.nhnacademy.bookstore.book.book.repository.BookRepository;
+import com.nhnacademy.bookstore.book.bookImage.dto.request.CreateBookImageRequest;
+import com.nhnacademy.bookstore.book.bookImage.repository.BookImageRepository;
+import com.nhnacademy.bookstore.book.bookImage.service.BookImageService;
+import com.nhnacademy.bookstore.book.image.exception.NotFindImageException;
+import com.nhnacademy.bookstore.entity.book.Book;
+import com.nhnacademy.bookstore.entity.bookImage.BookImage;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+import java.util.Optional;
+
+@Service
+<span class="fc" id="L19">@RequiredArgsConstructor</span>
+@Transactional
+public class BookImageServiceImpl implements BookImageService {
+
+    private final BookImageRepository bookImageRepository;
+    private final BookRepository bookRepository;
+
+
+    @Override
+    public void createBookImage(CreateBookImageRequest bookImageRequest) {
+<span class="nc" id="L29">        Optional&lt;Book&gt; book = bookRepository.findById(bookImageRequest.bookId());</span>
+//        if(Objects.isNull(book)){
+//            throw new NotFindImageException();
+//        }
+<span class="nc" id="L33">        BookImage bookImageEntity = new BookImage(bookImageRequest.bookId(),</span>
+<span class="nc" id="L34">                bookImageRequest.url(),</span>
+<span class="nc" id="L35">                bookImageRequest.type(),</span>
+                null);
+<span class="nc" id="L37">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

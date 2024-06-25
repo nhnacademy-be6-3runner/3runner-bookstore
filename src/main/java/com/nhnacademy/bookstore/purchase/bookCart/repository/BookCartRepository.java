@@ -3,6 +3,8 @@ package com.nhnacademy.bookstore.purchase.bookCart.repository;
 import com.nhnacademy.bookstore.entity.bookCart.BookCart;
 import com.nhnacademy.bookstore.entity.cart.Cart;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +18,6 @@ public interface BookCartRepository extends JpaRepository<BookCart, Long> {
 
 	void deleteByCart(Cart cart);
 
-	BookCart findBookCartByBookIdAndCartId(Long bookId, Long cartId);
+	Optional<BookCart> findBookCartByBookIdAndCartId(Long bookId, Long cartId);
 
 }

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PurchaseGuestController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.purchase.purchase.controller</a> &gt; <span class="el_source">PurchaseGuestController.java</span></div><h1>PurchaseGuestController.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.purchase.purchase.controller;
+
+import com.nhnacademy.bookstore.purchase.purchase.dto.request.CreatePurchaseRequest;
+import com.nhnacademy.bookstore.purchase.purchase.dto.request.ReadDeletePurchaseGuestRequest;
+import com.nhnacademy.bookstore.purchase.purchase.dto.request.UpdatePurchaseGuestRequest;
+import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
+import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseFormArgumentErrorException;
+import com.nhnacademy.bookstore.purchase.purchase.service.PurchaseGuestService;
+import com.nhnacademy.bookstore.util.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * 비회원 주문 컨트롤러.
+ *
+ * @author 김병우
+ */
+@RestController
+<span class="fc" id="L22">@RequiredArgsConstructor</span>
+public class PurchaseGuestController {
+    private final PurchaseGuestService purchaseGuestService;
+
+    /**
+     * 비회원 주문 읽기.
+     *
+     * @param readPurchaseRequest 주문 폼
+     * @param bindingResult validator
+     * @return ReadPurchaseResponse
+     */
+    @GetMapping(&quot;/guests/purchases&quot;)
+    public ApiResponse&lt;ReadPurchaseResponse&gt; readPurchase (@Valid @RequestBody ReadDeletePurchaseGuestRequest readPurchaseRequest,
+                                                           BindingResult bindingResult) {
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if (bindingResult.hasErrors()) {</span>
+<span class="nc" id="L37">            throw new PurchaseFormArgumentErrorException(bindingResult.getFieldErrors().toString());</span>
+        }
+
+<span class="fc" id="L40">        ReadPurchaseResponse response = purchaseGuestService.readPurchase(readPurchaseRequest.orderNumber(), readPurchaseRequest.password());</span>
+
+<span class="fc" id="L42">        return new ApiResponse&lt;ReadPurchaseResponse&gt;(</span>
+                new ApiResponse.Header(true, 200),
+                new ApiResponse.Body&lt;&gt;(response)
+        );
+    }
+
+    /**
+     * 비회원 주문 등록.
+     *
+     * @param createPurchaseRequest 맴버 등록 폼(password 추가)
+     * @param bindingResult 오류검증
+     * @return ApiResponse
+     */
+    @PostMapping(&quot;/guests/purchases&quot;)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse&lt;Void&gt; createPurchase (@Valid @RequestBody CreatePurchaseRequest createPurchaseRequest,
+                                             BindingResult bindingResult) {
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (bindingResult.hasErrors()) {</span>
+<span class="nc" id="L60">            throw new PurchaseFormArgumentErrorException(bindingResult.getFieldErrors().toString());</span>
+        }
+
+        //TODO : 폼에 비밀번호 넣을 수 있도록 뷰에서 따로 설정
+<span class="fc" id="L64">        purchaseGuestService.createPurchase(createPurchaseRequest);</span>
+
+<span class="fc" id="L66">        return new ApiResponse&lt;Void&gt;(new ApiResponse.Header(true, 201));</span>
+    }
+
+    /**
+     * 비회원주문 상태 변경.
+     *
+     * @param updatePurchaseGuestRequest 비회원 상태 수정 폼
+     * @param bindingResult Validator
+     * @return ApiResponse
+     */
+    @PutMapping(&quot;/guests/purchases&quot;)
+    public ApiResponse&lt;Void&gt; updatePurchaseStatus (@Valid @RequestBody UpdatePurchaseGuestRequest updatePurchaseGuestRequest,
+                                                   BindingResult bindingResult) {
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if(bindingResult.hasErrors()){</span>
+<span class="nc" id="L80">            throw new PurchaseFormArgumentErrorException(bindingResult.getFieldErrors().toString());</span>
+        }
+<span class="fc" id="L82">        purchaseGuestService.updatePurchase(updatePurchaseGuestRequest);</span>
+
+<span class="fc" id="L84">        return new ApiResponse&lt;&gt;(new ApiResponse.Header(true, 200));</span>
+    }
+
+    /**
+     * 비회원 주문 삭제.
+     *
+     * @param readDeletePurchaseGuestRequest 주문폼
+     * @param bindingResult 오류검증
+     * @return ApiResponse
+     */
+    @DeleteMapping(&quot;/guests/purchases&quot;)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ApiResponse&lt;Void&gt; deletePurchases (@Valid @RequestBody ReadDeletePurchaseGuestRequest readDeletePurchaseGuestRequest,
+                                              BindingResult bindingResult) {
+
+<span class="fc" id="L99">        purchaseGuestService.deletePurchase(readDeletePurchaseGuestRequest.orderNumber(), readDeletePurchaseGuestRequest.password());</span>
+
+<span class="fc" id="L101">        return new ApiResponse&lt;&gt;(new ApiResponse.Header(true, 204));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

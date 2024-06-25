@@ -6,5 +6,5 @@ import com.nhnacademy.bookstore.entity.cart.Cart;
 import lombok.Builder;
 
 @Builder
-public record UpdateBookCartMemberRequest(long bookCartId, int quantity, long bookId, long cartId) {
+public record UpdateBookCartMemberRequest( int quantity, long bookId, long cartId) {
 }

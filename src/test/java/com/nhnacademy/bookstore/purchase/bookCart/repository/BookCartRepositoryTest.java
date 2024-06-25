@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -100,5 +102,13 @@ public class BookCartRepositoryTest {
 		// Then
 		Optional<BookCart> deletedBookCart = bookCartRepository.findById(bookCart.getId());
 		assertTrue(deletedBookCart.isEmpty());
+	}
+
+	@Test
+	void testFindBookCartByBookIdAndCartId() {
+		Optional<BookCart> foundBookCart = bookCartRepository.findBookCartByBookIdAndCartId(book.getId(), cart.getId());
+		assertThat(foundBookCart).isPresent();
+		assertThat(foundBookCart.get().getBook().getId()).isEqualTo(book.getId());
+		assertThat(foundBookCart.get().getCart().getId()).isEqualTo(cart.getId());
 	}
 }

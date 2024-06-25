@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookCategoryServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.book.bookCartegory.service.impl</a> &gt; <span class="el_source">BookCategoryServiceImpl.java</span></div><h1>BookCategoryServiceImpl.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.book.bookCartegory.service.impl;
+
+import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
+import com.nhnacademy.bookstore.book.book.exception.BookDoesNotExistException;
+import com.nhnacademy.bookstore.book.book.repository.BookRepository;
+import com.nhnacademy.bookstore.book.bookCartegory.dto.request.CreateBookCategoryRequest;
+import com.nhnacademy.bookstore.book.bookCartegory.dto.request.UpdateBookCategoryRequest;
+import com.nhnacademy.bookstore.book.bookCartegory.dto.response.BookCategoriesResponse;
+import com.nhnacademy.bookstore.book.bookCartegory.exception.BookCategoryAlreadyExistsException;
+import com.nhnacademy.bookstore.book.bookCartegory.exception.BookCategoryNotFoundException;
+import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
+import com.nhnacademy.bookstore.book.bookCartegory.service.BookCategoryService;
+import com.nhnacademy.bookstore.book.category.exception.CategoryNotFoundException;
+import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
+import com.nhnacademy.bookstore.entity.book.Book;
+import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
+import com.nhnacademy.bookstore.entity.category.Category;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * 도서-카테고리 service
+ *
+ * @author 김은비
+ */
+<span class="fc" id="L34">@Slf4j</span>
+@Service
+<span class="fc" id="L36">@RequiredArgsConstructor</span>
+@Transactional
+public class BookCategoryServiceImpl implements BookCategoryService {
+
+    private final BookRepository bookRepository;
+    private final CategoryRepository categoryRepository;
+    private final BookCategoryRepository bookCategoryRepository;
+
+    /**
+     * 도서-카테고리 생성 메서드
+     *
+     * @param dto 생성 내용
+     */
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void createBookCategory(CreateBookCategoryRequest dto) {
+<span class="fc" id="L52">        Book book = getBookById(dto.bookId());</span>
+<span class="fc" id="L53">        List&lt;Category&gt; categories = getCategoriesByIds(dto.categoryIds());</span>
+
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        for (Category category : categories) {</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            if (bookCategoryRepository.existsByBookAndCategory(book, category)) {</span>
+<span class="nc" id="L57">                throw new BookCategoryAlreadyExistsException(&quot;이미 등록된 카테고리입니다.&quot;);</span>
+            }
+<span class="fc" id="L59">        }</span>
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (Category category : categories) {</span>
+<span class="fc" id="L62">            BookCategory bookCategory = BookCategory.create(book, category);</span>
+<span class="fc" id="L63">            book.addBookCategory(bookCategory);</span>
+<span class="fc" id="L64">        }</span>
+
+<span class="fc" id="L66">        bookRepository.save(book);</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * 도서-카테고리 수정 메서드
+     *
+     * @param dto 수정 내용
+     */
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void updateBookCategory(long bookId, UpdateBookCategoryRequest dto) {
+<span class="fc" id="L77">        Book book = bookRepository.findById(bookId)</span>
+<span class="pc" id="L78">                .orElseThrow(() -&gt; new BookDoesNotExistException(&quot;존재하지 않는 도서입니다.&quot;));</span>
+<span class="fc" id="L79">        List&lt;Category&gt; categories = categoryRepository.findAllById(dto.categoryIds());</span>
+<span class="fc" id="L80">        log.info(&quot;Requested categories: {}&quot;, dto.categoryIds());</span>
+<span class="fc" id="L81">        log.info(&quot;Found categories: {}&quot;, categories.stream().map(Category::getId).collect(Collectors.toList()));</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if (categories.size() != dto.categoryIds().size()) {</span>
+<span class="nc" id="L83">            throw new CategoryNotFoundException(&quot;존재하지 않는 카테고리입니다.&quot;);</span>
+        }
+
+        // 기존의 모든 카테고리 삭제
+<span class="fc" id="L87">        book.getBookCategoryList().clear();</span>
+<span class="fc" id="L88">        log.info(&quot;book categories : {} &quot;, book.getBookCategoryList().size());</span>
+
+
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        for (Category category : categories) {</span>
+<span class="fc" id="L92">            BookCategory bookCategory = new BookCategory();</span>
+<span class="fc" id="L93">            bookCategory.setBook(book);</span>
+<span class="fc" id="L94">            bookCategory.setCategory(category);</span>
+<span class="fc" id="L95">            book.addBookCategory(bookCategory);</span>
+<span class="fc" id="L96">            log.info(&quot;카테고리 추가: {} to book: {}&quot;, category.getId(), bookId);</span>
+<span class="fc" id="L97">        }</span>
+
+<span class="fc" id="L99">        bookRepository.save(book);</span>
+<span class="fc" id="L100">        log.info(&quot;Updated book categories for bookId: {}&quot;, bookId);</span>
+<span class="fc" id="L101">        log.info(&quot;categories : {}&quot;, book.getBookCategoryList().size());</span>
+<span class="fc" id="L102">    }</span>
+
+
+    @Override
+    public void deletedBookCategory(Long id) {
+<span class="fc" id="L107">        BookCategory bookCategory = bookCategoryRepository.findById(id)</span>
+<span class="pc" id="L108">                .orElseThrow(() -&gt; new BookCategoryNotFoundException(&quot;도서에 등록되지 않은 카테고리입니다.&quot;));</span>
+
+<span class="fc" id="L110">        Book book = bookCategory.getBook();</span>
+<span class="fc" id="L111">        book.removeBookCategory(bookCategory);</span>
+
+<span class="fc" id="L113">        bookCategoryRepository.deleteById(id);</span>
+<span class="fc" id="L114">    }</span>
+
+
+    /**
+     * 도서에 해당하는 카테고리 목록 불러오는 메서드
+     *
+     * @param bookId 책 아이디
+     * @return 책에 해당하는 카테고리 list
+     */
+    @Override
+    public List&lt;BookCategoriesResponse&gt; readBookWithCategoryList(Long bookId) {
+<span class="fc" id="L125">        return bookCategoryRepository.bookWithCategoryList(bookId);</span>
+    }
+
+    /**
+     * 카테고리에 해당하는 도서 목록 불러오는 메서드
+     *
+     * @param categoryIds 카테고리 아이디 목록
+     * @param pageable    페이지
+     * @return 카테고리에 해당하는 도서 list
+     */
+    @Override
+    public Page&lt;BookListResponse&gt; readCategoriesWithBookList(List&lt;Long&gt; categoryIds,
+                                                             Pageable pageable) {
+<span class="fc" id="L138">        List&lt;Category&gt; categories = categoryRepository.findAllById(categoryIds);</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (categories.size() != categoryIds.size()) {</span>
+<span class="nc" id="L140">            throw new CategoryNotFoundException(&quot;존재하지 않는 카테고리가 있습니다.&quot;);</span>
+        }
+<span class="fc" id="L142">        return bookCategoryRepository.categoriesWithBookList(categoryIds, pageable);</span>
+    }
+
+    private Book getBookById(Long bookId) {
+<span class="fc" id="L146">        return bookRepository.findById(bookId)</span>
+<span class="fc" id="L147">                .orElseThrow(() -&gt; new BookDoesNotExistException(&quot;존재하지 않는 책입니다.&quot;));</span>
+    }
+
+    private List&lt;Category&gt; getCategoriesByIds(List&lt;Long&gt; categoryIds) {
+<span class="fc" id="L151">        List&lt;Category&gt; categories = categoryRepository.findAllById(categoryIds);</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if (categories.size() != categoryIds.size()) {</span>
+<span class="fc" id="L153">            throw new CategoryNotFoundException(&quot;존재하지 않는 카테고리입니다.&quot;);</span>
+        }
+<span class="fc" id="L155">        return categories;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookCartGuestServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.purchase.bookCart.service.impl</a> &gt; <span class="el_source">BookCartGuestServiceImpl.java</span></div><h1>BookCartGuestServiceImpl.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.purchase.bookCart.service.impl;
+
+import com.nhnacademy.bookstore.book.book.exception.BookDoesNotExistException;
+import com.nhnacademy.bookstore.book.book.repository.BookRepository;
+import com.nhnacademy.bookstore.entity.book.Book;
+import com.nhnacademy.bookstore.entity.bookCart.BookCart;
+import com.nhnacademy.bookstore.entity.cart.Cart;
+import com.nhnacademy.bookstore.purchase.bookCart.dto.response.ReadBookCartGuestResponse;
+import com.nhnacademy.bookstore.purchase.bookCart.exception.BookCartDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.bookCart.repository.BookCartRedisRepository;
+import com.nhnacademy.bookstore.purchase.bookCart.repository.BookCartRepository;
+import com.nhnacademy.bookstore.purchase.bookCart.service.BookCartGuestService;
+import com.nhnacademy.bookstore.purchase.cart.exception.CartDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.cart.repository.CartRepository;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+
+import lombok.RequiredArgsConstructor;
+
+/**
+ * 도서장바구니 서비스 구현체.
+ *
+ * @author 김병우
+ */
+@Transactional
+@Service
+<span class="fc" id="L33">@RequiredArgsConstructor</span>
+public class BookCartGuestServiceImpl implements BookCartGuestService {
+    private final BookCartRedisRepository bookCartRedisRepository;
+    private final BookCartRepository bookCartRepository;
+    private final BookRepository bookRepository;
+    private final CartRepository cartRepository;
+
+    /**
+     * 도서장바구니 추가.
+     *
+     * @param bookId 도서아이디
+     * @param cartId 장바구니아이디
+     * @param quantity 수량
+     * @return bookCartId
+     */
+    @Override
+    public Long createBookCart(Long bookId, Long cartId, int quantity) {
+<span class="fc" id="L50">        Book book = bookRepository.findById(bookId)</span>
+<span class="fc" id="L51">                .orElseThrow(() -&gt; new BookDoesNotExistException(&quot;도서가 존재하지 않습니다&quot;));</span>
+
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if (Objects.isNull(cartId)) {</span>
+<span class="nc" id="L54">            Cart newCart = new Cart();</span>
+<span class="nc" id="L55">            cartRepository.save(newCart);</span>
+<span class="nc" id="L56">            cartId = newCart.getId();</span>
+        }
+
+<span class="fc" id="L59">        Cart cart = cartRepository.findById(cartId)</span>
+<span class="pc" id="L60">                .orElseThrow(() -&gt; new CartDoesNotExistException(&quot;카트가 존재하지 않습니다&quot;));</span>
+
+<span class="fc" id="L62">        hasDataToLoad(cart.getId());</span>
+
+<span class="fc" id="L64">        BookCart bookCart = new BookCart(quantity, ZonedDateTime.now(), book, cart);</span>
+
+<span class="fc" id="L66">        bookCartRepository.save(bookCart);</span>
+
+<span class="fc" id="L68">        bookCartRedisRepository.create(</span>
+<span class="fc" id="L69">                cartId.toString(),</span>
+<span class="fc" id="L70">                bookCart.getId(),</span>
+<span class="fc" id="L71">                ReadBookCartGuestResponse.builder()</span>
+<span class="fc" id="L72">                        .bookCartId(bookCart.getId())</span>
+<span class="fc" id="L73">                        .bookId(bookCart.getBook().getId())</span>
+<span class="fc" id="L74">                        .cartId(bookCart.getCart().getId())</span>
+<span class="fc" id="L75">                        .quantity(bookCart.getQuantity())</span>
+<span class="fc" id="L76">                        .build()</span>
+        );
+
+<span class="fc" id="L79">        return bookCart.getId();</span>
+    }
+
+    /**
+     * 도서장바구니 업데이트.
+     *
+     * @param bookId 도서아이디
+     * @param cartId 장바구니아이디
+     * @param quantity 수량
+     * @return bookCartId
+     */
+    @Override
+    public Long updateBookCart(Long bookId, Long cartId, int quantity) {
+<span class="fc" id="L92">        Book book = bookRepository.findById(bookId)</span>
+<span class="pc" id="L93">                .orElseThrow(() -&gt; new BookDoesNotExistException(bookId + &quot;가 존재하지 않습니다&quot;));</span>
+
+<span class="fc" id="L95">        Cart cart = cartRepository.findById(cartId)</span>
+<span class="pc" id="L96">                .orElseThrow(() -&gt; new CartDoesNotExistException(cartId + &quot;가 존재하지 않습니다&quot;));</span>
+
+<span class="fc" id="L98">        BookCart bookCart = bookCartRepository.findByBookAndCart(book, cart)</span>
+<span class="fc" id="L99">                .orElseThrow(() -&gt; new BookCartDoesNotExistException(&quot;북카트 존재하지 않습니다.&quot;));</span>
+
+<span class="fc" id="L101">        hasDataToLoad(cartId);</span>
+
+<span class="fc" id="L103">        int amount = bookCart.getQuantity() + quantity;</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if (amount &gt; 0) {</span>
+<span class="fc" id="L105">            bookCart.setQuantity(amount);</span>
+<span class="fc" id="L106">            bookCartRepository.save(bookCart);</span>
+<span class="fc" id="L107">            bookCartRedisRepository.update(cartId.toString(), bookCart.getId(), amount);</span>
+        } else {
+<span class="nc" id="L109">            bookCartRepository.delete(bookCart);</span>
+<span class="nc" id="L110">            bookCartRedisRepository.delete(cartId.toString(), bookCart.getId());</span>
+        }
+
+<span class="fc" id="L113">        return bookCart.getId();</span>
+    }
+
+    /**
+     * 도서장바구니 목록 읽기.
+     *
+     * @param cartId 카트아이디
+     * @return 도서장바구니 목록
+     */
+    @Override
+    public List&lt;ReadBookCartGuestResponse&gt; readAllBookCart(Long cartId) {
+<span class="fc" id="L124">        List&lt;ReadBookCartGuestResponse&gt; bookCartGuestResponseList = bookCartRedisRepository.readAllHashName(cartId.toString());</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if (!bookCartGuestResponseList.isEmpty()) {</span>
+<span class="nc" id="L126">            return  bookCartGuestResponseList;</span>
+        }
+
+<span class="fc" id="L129">        return  hasDataToLoad(cartId);</span>
+
+    }
+
+    /**
+     * 레디스 데이터 업데이트 메서드.
+     *
+     * @param cartId 장바구니아이디
+     * @return 도서장바구니 목록
+     */
+    private List&lt;ReadBookCartGuestResponse&gt; hasDataToLoad(Long cartId) {
+<span class="fc" id="L140">        List&lt;ReadBookCartGuestResponse&gt; readBookCartGuestResponses = readAllFromDb(cartId);</span>
+<span class="pc bpc" id="L141" title="1 of 4 branches missed.">        if (bookCartRedisRepository.isMiss(cartId.toString()) &amp;&amp; !readBookCartGuestResponses.isEmpty()) {</span>
+<span class="fc" id="L142">            bookCartRedisRepository.loadData(readBookCartGuestResponses, cartId.toString());</span>
+        }
+<span class="fc" id="L144">        return readBookCartGuestResponses;</span>
+    }
+
+    /**
+     * DB에서 데이터 목록 불러오기.
+     *
+     * @param cartId 카트 아이디
+     * @return DB 도서 장바구니 목록
+     */
+    private List&lt;ReadBookCartGuestResponse&gt; readAllFromDb(Long cartId) {
+<span class="fc" id="L154">        Optional&lt;Cart&gt; cart = cartRepository.findById(cartId);</span>
+
+<span class="fc" id="L156">        return cart.map(value -&gt; bookCartRepository.findAllByCart(value)</span>
+<span class="fc" id="L157">                .stream()</span>
+<span class="fc" id="L158">                .map(bookCart -&gt; ReadBookCartGuestResponse.builder()</span>
+<span class="fc" id="L159">                        .bookCartId(bookCart.getId())</span>
+<span class="fc" id="L160">                        .bookId(bookCart.getBook().getId())</span>
+<span class="fc" id="L161">                        .cartId(bookCart.getCart().getId())</span>
+<span class="fc" id="L162">                        .quantity(bookCart.getQuantity())</span>
+<span class="fc" id="L163">                        .build())</span>
+<span class="fc" id="L164">                .toList()).orElseGet(List::of);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

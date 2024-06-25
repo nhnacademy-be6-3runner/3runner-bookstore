@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.book.book.controller</a> &gt; <span class="el_source">BookController.java</span></div><h1>BookController.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.book.book.controller;
+
+import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
+import com.nhnacademy.bookstore.book.book.exception.CreateBookRequestFormException;
+import com.nhnacademy.bookstore.book.book.service.BookService;
+import com.nhnacademy.bookstore.entity.book.Book;
+import com.nhnacademy.bookstore.book.book.dto.request.CreateBookRequest;
+import com.nhnacademy.bookstore.util.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * 책 요청 컨트롤러.
+ *
+ * @author 김병우
+ */
+@RestController
+<span class="fc" id="L22">@RequiredArgsConstructor</span>
+@RequestMapping(&quot;/bookstore/books&quot;)
+public class BookController {
+    private final BookService bookService;
+
+    /**
+     * 책 등록 요청 처리.
+     *
+     * @param createBookRequest request form
+     * @param bindingResult binding result
+     * @return ApiResponse&lt;&gt;
+     */
+    @PostMapping
+    public ApiResponse&lt;Void&gt; createBook(@Valid @RequestBody CreateBookRequest createBookRequest,
+                                        BindingResult bindingResult) {
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (bindingResult.hasErrors()) {</span>
+<span class="nc" id="L38">            throw new CreateBookRequestFormException(bindingResult.getFieldErrors().toString());</span>
+        }
+
+<span class="nc" id="L41">        bookService.createBook(createBookRequest);</span>
+        //TODO 북 카테고리 서비스로 추가
+        //TODO 북 태그 서비스로 추가
+        //TODO 북 이미지 서비스로 추가
+
+<span class="nc" id="L46">        return new ApiResponse&lt;Void&gt;(new ApiResponse.Header(true, 201));</span>
+    }
+
+    @GetMapping(&quot;/{bookId}&quot;)
+    public ApiResponse&lt;ReadBookResponse&gt; readBook(@PathVariable(&quot;bookId&quot;) Long bookId) {
+<span class="nc" id="L51">        ReadBookResponse book = bookService.readBookById(bookId);</span>
+
+<span class="nc" id="L53">        return new ApiResponse&lt;ReadBookResponse&gt;(</span>
+                new ApiResponse.Header(true, 200),
+                new ApiResponse.Body&lt;ReadBookResponse&gt;(book)
+        );
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

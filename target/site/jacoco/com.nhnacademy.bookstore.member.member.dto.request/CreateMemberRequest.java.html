@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateMemberRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.member.member.dto.request</a> &gt; <span class="el_source">CreateMemberRequest.java</span></div><h1>CreateMemberRequest.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.member.member.dto.request;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+
+import java.time.ZonedDateTime;
+
+
+/**
+ * @Author -유지아
+ * The type Create member request.-회원가입에 대한 요청 record이다.
+ */
+<span class="pc" id="L14">@Builder</span>
+<span class="fc" id="L15">public record CreateMemberRequest(</span>
+    @NotNull(message = &quot;이메일을 입력해주세요.&quot;)
+    String email,
+
+    @NotNull(message = &quot;비밀번호를 입력해주세요.&quot;)
+    @Size(min = 6, max = 50, message = &quot;비밀번호는 6자 이상 50자 이하로 설정해주세요.&quot;)
+    String password,
+
+    @NotNull(message = &quot;이름을 입력해주세요.&quot;)
+    @Size(min = 1, max = 10, message = &quot;이름은 1자 이상 10자 이하로 설정해주세요.&quot;)
+    String name,
+
+    @NotNull(message = &quot;전화번호를 입력해주세요.&quot;)
+    @Size(min = 10, max = 11, message = &quot;전화번호는 10자리 또는 11자리여야 합니다.&quot;)
+    String phone,
+
+    int age,
+
+    ZonedDateTime birthday
+
+){}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Member.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.entity.member</a> &gt; <span class="el_source">Member.java</span></div><h1>Member.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.entity.member;
+
+
+import com.nhnacademy.bookstore.entity.address.Address;
+import com.nhnacademy.bookstore.entity.member.enums.Grade;
+import com.nhnacademy.bookstore.entity.member.enums.Status;
+import com.nhnacademy.bookstore.entity.memberAuth.MemberAuth;
+import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
+import com.nhnacademy.bookstore.entity.purchase.Purchase;
+import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+<span class="nc" id="L21">@AllArgsConstructor</span>
+<span class="fc" id="L22">@NoArgsConstructor</span>
+@Getter
+<span class="pc" id="L24">@Setter</span>
+public class Member {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="fc" id="L28">    private Long id;</span>
+
+    @NotNull
+    @Size(min = 1, max = 50)
+<span class="nc" id="L32">    private String password;</span>
+
+    @NotNull
+<span class="nc" id="L35">    private Long point;</span>
+
+    @NotNull
+    @Size(min = 1, max = 10)
+<span class="nc" id="L39">    private String name;</span>
+
+<span class="nc" id="L41">    private int age;</span>
+
+    @NotNull
+    @Size(min = 1, max = 11)
+<span class="nc" id="L45">    private String phone;</span>
+
+    @NotNull
+    @Column(unique = true)
+<span class="nc" id="L49">    private String email;</span>
+
+<span class="nc" id="L51">    private ZonedDateTime birthday;</span>
+
+    @NotNull
+<span class="nc" id="L54">    private Grade grade;</span>
+
+    @NotNull
+<span class="nc" id="L57">    private Status status;</span>
+
+<span class="nc" id="L59">    private ZonedDateTime last_login_date;</span>
+
+    @NotNull
+<span class="nc" id="L62">    private ZonedDateTime created_at;</span>
+
+<span class="nc" id="L64">    private ZonedDateTime modified_at;</span>
+<span class="nc" id="L65">    private ZonedDateTime deleted_at;</span>
+
+
+<span class="pc" id="L68">    @OneToMany(mappedBy = &quot;member&quot;, cascade = CascadeType.ALL,orphanRemoval = true)</span>
+<span class="nc" id="L69">    private List&lt;Address&gt; addressList = new ArrayList&lt;&gt;();</span>
+
+<span class="pc" id="L71">    @OneToMany(mappedBy = &quot;member&quot;,cascade = CascadeType.ALL,orphanRemoval = true)</span>
+<span class="nc" id="L72">    private List&lt;MemberAuth&gt; memberAuthList = new ArrayList&lt;&gt;();</span>
+
+<span class="pc" id="L74">    @OneToMany(mappedBy = &quot;member&quot;,cascade = CascadeType.ALL,orphanRemoval = true)</span>
+<span class="nc" id="L75">    private List&lt;PointRecord&gt; pointRecordList = new ArrayList&lt;&gt;();</span>
+
+<span class="pc" id="L77">    @OneToMany(mappedBy = &quot;member&quot;,cascade = CascadeType.ALL,orphanRemoval = true)</span>
+<span class="nc" id="L78">    private List&lt;Purchase&gt; purchaseList = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L80">    public Member(CreateMemberRequest request){</span>
+<span class="fc" id="L81">        this.setPassword(request.password());</span>
+<span class="fc" id="L82">        this.setPoint(5000L);</span>
+<span class="fc" id="L83">        this.setName(request.name());</span>
+<span class="fc" id="L84">        this.setAge(request.age());</span>
+<span class="fc" id="L85">        this.setStatus(Status.Active);</span>
+<span class="fc" id="L86">        this.setPhone(request.phone());</span>
+<span class="fc" id="L87">        this.setEmail(request.email());</span>
+<span class="fc" id="L88">        this.setBirthday(request.birthday());</span>
+<span class="fc" id="L89">        this.setGrade(Grade.General);</span>
+<span class="fc" id="L90">        this.setCreated_at(ZonedDateTime.now());</span>
+<span class="fc" id="L91">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

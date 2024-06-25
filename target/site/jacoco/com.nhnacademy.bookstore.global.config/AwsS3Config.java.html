@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AwsS3Config.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bookstore</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.bookstore.global.config</a> &gt; <span class="el_source">AwsS3Config.java</span></div><h1>AwsS3Config.java</h1><pre class="source lang-java linenums">package com.nhnacademy.bookstore.global.config;
+
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * @author 한민기
+ *
+ * accessKey =&gt; S3 API 자격 증명 -&gt; 발급 받은 accessKey
+ * secretKey =&gt; S3 API 자격 증명 -&gt; 발급 받은 secretKey
+ * region =&gt; nhn object storage 가 저장되어있는 지역
+ * endpointUrl =&gt; 이걸 어디로 보낼건지 =&gt; nhn
+ */
+@Configuration
+<span class="fc" id="L21">public class AwsS3Config {</span>
+
+    @Value(&quot;${cloud.aws.credentials.access-key}&quot;)
+    private String accessKey;
+
+    @Value(&quot;${cloud.aws.credentials.secret-key}&quot;)
+    private String secretKey;
+
+    @Value(&quot;${cloud.aws.region.static}&quot;)
+    private String region;
+
+    @Value(&quot;${cloud.aws.s3.endpoint}&quot;)
+    private String endpointUrl;
+
+    @Bean
+    public AmazonS3 amazonS3() {
+<span class="fc" id="L37">        BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey, secretKey);</span>
+<span class="fc" id="L38">        return AmazonS3ClientBuilder.standard()</span>
+<span class="fc" id="L39">                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpointUrl, region))</span>
+<span class="fc" id="L40">                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))</span>
+<span class="fc" id="L41">                .withPathStyleAccessEnabled(true) // Path-style URL을 사용해야 합니다</span>
+<span class="fc" id="L42">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
