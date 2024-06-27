@@ -3,8 +3,10 @@ package com.nhnacademy.bookstore.member.member.controller;
 
 import com.nhnacademy.bookstore.entity.auth.Auth;
 import com.nhnacademy.bookstore.entity.member.Member;
+import com.nhnacademy.bookstore.entity.member.enums.Grade;
 import com.nhnacademy.bookstore.entity.member.enums.Status;
 import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
+import com.nhnacademy.bookstore.member.address.dto.response.UserProfile;
 import com.nhnacademy.bookstore.member.auth.dto.AuthResponse;
 import com.nhnacademy.bookstore.member.auth.service.impl.AuthServiceImpl;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
@@ -45,6 +47,30 @@ public class MemberController {
     private final MemberAuthServiceImpl memberAuthService;
     private final PasswordEncoder passwordEncoder;
 
+    @PostMapping("/bookstore/members/payco")
+    public ApiResponse<MemberAuthResponse> paycoLogin(@RequestBody @Valid UserProfile userProfile) {
+        Member member = new Member();
+            if(memberService.readByEmail(userProfile.getIdNo()) != null){
+                member =  memberService.readByEmail(userProfile.getIdNo());
+            }//이미 있는 아이디면 그냥 값찾은거
+         else{
+
+            member.setName(userProfile.getName());
+            member.setEmail(userProfile.getEmail());
+            member.setPhone(userProfile.getMobile());
+            member.setPassword(userProfile.getIdNo());//이메일은 겹치지 않는다. payco로 로그인하면 email겹쳐도 되지않나?
+            member.setGrade(Grade.General);
+            Auth auth = authService.getAuth("USER");
+            PointRecord pointRecord = new PointRecord(null, 5000L, 5000L, ZonedDateTime.now(), "회원가입 5000포인트 적립.",
+                member);
+            pointRecordService.save(pointRecord);
+            memberAuthService.saveAuth(member, auth);
+        }
+            /*token만드는데 필요한 값들 보낸다.
+        MemberAuthResponse response = new MemberAuthResponse.builder().setEmail().se
+        */
+    }//payco 인증이 성공하면 성공값 받아서 데이터베이스에 저장한다. 이미 있을 경우 아무것도 반환하지 않는다.
+    //이메일이 아니면 값이 들어가지 않을 가능성 있다.
 
     /**
      * Create member response entity.- 회원가입에 사용되는 함수이다.

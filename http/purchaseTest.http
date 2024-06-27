@@ -12,3 +12,16 @@ Member-Id: 1
   "road": "광주",
   "password": "1234"
 }
+
+###
+POST http://localhost:8081/bookstore/members
+Content-Type: application/json
+
+{
+  "email":"abc@naver.com",
+  "password":"password",
+  "name": "abc",
+"phone":"01012345678",
+  "age":10
+}
+

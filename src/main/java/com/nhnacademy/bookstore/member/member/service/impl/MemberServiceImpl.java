@@ -89,7 +89,13 @@ public class MemberServiceImpl implements MemberService {
         }
         throw new LoginFailException();
     }
-
+    public Member readByEmail(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if(member.isPresent()){
+            return member.get();
+        }
+        throw new MemberNotExistsException();
+    }
     /**
      * 멤버 업데이트
      *

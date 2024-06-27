@@ -29,23 +29,30 @@ spring:
         highlight_sql: true
         auto_quote_keyword: true
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  datasource:
+    url: jdbc:mysql://133.186.241.167:3306/be6_3runner_dev
+    username: be6_3runner
+    password: tHos2g5st4@XH7mT
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   profiles:
-    active: dev
+    active: prod
   lifecycle:
     timeout-per-shutdown-phase: 30s
   application:
     name: 3runner-bookstore
-
 server:
   shutdown: graceful
   port: 8081
-
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
     org.springframework.transaction.interceptor: trace
-
 cloud:
   aws:
     credentials:
@@ -58,3 +65,7 @@ cloud:
       bucket: nhnacademy-be6-3runner
 
 
+springdoc:
+  swagger-ui:
+    url: /docs/openapi-3.0.json
+    path: /bookstore/docs/swagger

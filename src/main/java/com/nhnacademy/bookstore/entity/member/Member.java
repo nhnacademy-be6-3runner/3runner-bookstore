@@ -28,7 +28,6 @@ public class Member {
     private Long id;
 
     @NotNull
-    @Size(min = 1, max = 50)
     private String password;
 
     @NotNull
