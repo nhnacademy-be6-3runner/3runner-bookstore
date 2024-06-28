@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -49,13 +50,20 @@ class PurchaseMemberControllerTest {
 
     @BeforeEach
     void setUp() {
-        createPurchaseRequest = CreatePurchaseRequest.builder().deliveryPrice(100).totalPrice(10).road("orad").build();
+        createPurchaseRequest = CreatePurchaseRequest.builder()
+                .password("member")
+                .orderId(UUID.randomUUID().toString())
+                .deliveryPrice(100)
+                .totalPrice(10)
+                .road("orad")
+                .build();
         updatePurchaseRequest = UpdatePurchaseMemberRequest.builder().purchaseStatus(PurchaseStatus.SHIPPED).build();
         readPurchaseResponse = ReadPurchaseResponse.builder().
                 id(1L).
                 status(PurchaseStatus.SHIPPED).
                 deliveryPrice(11).
                 totalPrice(1).
+                orderNumber(UUID.randomUUID()).
                 createdAt(ZonedDateTime.now()).
                 road("road").
                 password("pass").
@@ -67,7 +75,7 @@ class PurchaseMemberControllerTest {
     void readPurchase() throws Exception {
         when(purchaseService.readPurchase(anyLong(),anyLong())).thenReturn(readPurchaseResponse);
 
-        ResultActions result = mockMvc.perform(get("/members/purchases/1")
+        ResultActions result = mockMvc.perform(get("/bookstore/members/purchases/1")
                 .header("Member-Id",1L)
                 .contentType(MediaType.APPLICATION_JSON));
 
@@ -83,7 +91,7 @@ class PurchaseMemberControllerTest {
     void readPurchases() throws Exception {
         when(memberService.getPurchasesByMemberId(anyLong())).thenReturn(java.util.List.of(readPurchaseResponse));
 
-        ResultActions result = mockMvc.perform(get("/members/purchases")
+        ResultActions result = mockMvc.perform(get("/bookstore/members/purchases")
                 .header("Member-Id",1L)
                 .contentType(MediaType.APPLICATION_JSON));
 
@@ -95,7 +103,7 @@ class PurchaseMemberControllerTest {
     void createPurchase() throws Exception{
         when(purchaseService.createPurchase(any(CreatePurchaseRequest.class), anyLong())).thenReturn(1L);
 
-        ResultActions result = mockMvc.perform(post("/members/purchases")
+        ResultActions result = mockMvc.perform(post("/bookstore/members/purchases")
                 .header("Member-Id", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createPurchaseRequest)));
@@ -107,7 +115,7 @@ class PurchaseMemberControllerTest {
     void updatePurchaseStatus() throws Exception{
         when(purchaseService.updatePurchase(any(UpdatePurchaseMemberRequest.class), anyLong(), anyLong())).thenReturn(1L);
 
-        ResultActions result = mockMvc.perform(put("/members/purchases/1")
+        ResultActions result = mockMvc.perform(put("/bookstore/members/purchases/1")
                 .header("Member-Id", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatePurchaseRequest)));
@@ -119,7 +127,7 @@ class PurchaseMemberControllerTest {
     void deletePurchases() throws Exception{
         doNothing().when(purchaseService).deletePurchase(anyLong(), anyLong());
 
-        ResultActions result = mockMvc.perform(delete("/members/purchases/1")
+        ResultActions result = mockMvc.perform(delete("/bookstore/members/purchases/1")
                 .header("Member-Id", 1L)
                 .contentType(MediaType.APPLICATION_JSON));
 

@@ -29,5 +29,5 @@ public interface BookCartRepository extends JpaRepository<BookCart, Long> {
 
     Optional<BookCart> findByBookAndCart(Book book, Cart cart);
 
-    List<BookCart> findAllByCart(Cart cart);
+	boolean existsBookCartByBookAndCart(Book book, Cart cart);
 }

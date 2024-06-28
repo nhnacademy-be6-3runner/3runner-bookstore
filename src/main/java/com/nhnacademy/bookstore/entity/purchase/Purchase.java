@@ -41,6 +41,9 @@ public class Purchase {
     @NotNull
     private ZonedDateTime createdAt;
 
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     @NotNull
     private String road;
 

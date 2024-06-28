@@ -76,6 +76,16 @@ public class BookCartRedisRepositoryImpl implements BookCartRedisRepository {
     }
 
     /**
+     * 도서 장바구니 레디스 해쉬 전체 삭제.
+     *
+     * @param hashName 해쉬
+     */
+    @Override
+    public void deleteAll(String hashName) {
+        redisTemplate.delete(hashName + ":");
+    }
+
+    /**
      * 도서장바구니 레디스 목록 읽기.
      *
      * @param hashName 해쉬

@@ -46,7 +46,6 @@ class BookCartGuestControllerTest {
 	private UpdateBookCartRequest updateBookCartRequest;
 	private DeleteBookCartRequest deleteBookCartRequest;
 	private ReadAllBookCartMemberRequest readAllBookCartMemberRequest;
-	private ReadAllBookCartMemberResponse readAllBookCartMemberResponse;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -74,10 +73,6 @@ class BookCartGuestControllerTest {
 			.userId(1L)
 			.build();
 
-		readAllBookCartMemberResponse = ReadAllBookCartMemberResponse.builder()
-			.quantity(1)
-			.book(null)
-			.build();
 	}
 
     @Test

@@ -27,6 +27,12 @@ public class Payment {
 
     private PaymentStatus paymentStatus;
 
+
+    @PrePersist
+    protected void onCreate() {
+        this.paidAt = ZonedDateTime.now();
+    }
+
     @ManyToOne
     private Purchase purchase;
 

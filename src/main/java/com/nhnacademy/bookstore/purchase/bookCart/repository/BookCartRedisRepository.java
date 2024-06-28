@@ -11,10 +11,18 @@ import java.util.List;
  */
 public interface BookCartRedisRepository {
     Long create(String hashName, Long id, ReadBookCartGuestResponse readBookCartGuestResponse);
+
     Long update(String hashName, Long id, int quantity);
+
     Long delete(String hashName, Long id);
+
+    void deleteAll(String hashName);
+
     List<ReadBookCartGuestResponse> readAllHashName(String hashName);
+
     boolean isHit(String hashName);
+
     boolean isMiss(String hashName);
+
     void loadData(List<ReadBookCartGuestResponse> bookCartGuestResponses,String hashName);
 }

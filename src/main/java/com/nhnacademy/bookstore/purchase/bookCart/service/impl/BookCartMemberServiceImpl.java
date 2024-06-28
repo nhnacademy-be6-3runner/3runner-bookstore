@@ -5,6 +5,8 @@ import com.nhnacademy.bookstore.purchase.bookCart.dto.request.DeleteBookCartRequ
 import com.nhnacademy.bookstore.purchase.bookCart.exception.NotExistsBookCartException;
 import com.nhnacademy.bookstore.purchase.bookCart.exception.NotExistsBookException;
 import com.nhnacademy.bookstore.purchase.bookCart.exception.NotExistsCartException;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -39,6 +41,7 @@ public class BookCartMemberServiceImpl implements BookCartMemberService {
     @Override
     public List<ReadAllBookCartMemberResponse> readAllCartMember(
             ReadAllBookCartMemberRequest readAllCartMemberRequest) {
+        List<ReadAllBookCartMemberResponse> responses = new ArrayList<>();
         Cart cart = cartRepository.findByMemberId(readAllCartMemberRequest.userId()).orElse(null);
 
         if (Objects.isNull(cart)) {
@@ -47,20 +50,21 @@ public class BookCartMemberServiceImpl implements BookCartMemberService {
 
         List<BookCart> allBookCarts = bookCartRepository.findAllByCartId(Objects.requireNonNull(cart).getId());
 
-        return allBookCarts.stream().map(bookCart -> ReadAllBookCartMemberResponse.builder()
-            .quantity(bookCart.getQuantity())
-            .book(ReadBookCartBook.builder()
-                .title(bookCart.getBook().getTitle())
-                .author(bookCart.getBook().getAuthor())
-                .price(bookCart.getBook().getPrice())
-                .description(bookCart.getBook().getDescription())
-                .publisher(bookCart.getBook().getPublisher())
-                .packing(bookCart.getBook().isPacking())
-                .publishedDate(bookCart.getBook().getPublishedDate())
-                .sellingPrice(bookCart.getBook().getSellingPrice())
-                .quantity(bookCart.getBook().getQuantity())
-                .build())
-            .build()).collect(Collectors.toList());
+        for(BookCart bookCart : allBookCarts){
+            String url = "/img/no-image.png";
+            if (bookCart.getBook().getBookImageList()!=null && !bookCart.getBook().getBookImageList().isEmpty()) {
+                url = bookCart.getBook().getBookImageList().getFirst().getUrl();
+            }
+            responses.add(ReadAllBookCartMemberResponse.builder()
+                    .quantity(bookCart.getQuantity())
+                    .bookCartId(bookCart.getId())
+                    .bookId(bookCart.getBook().getId())
+                    .price(bookCart.getBook().getPrice())
+                    .url(url)
+                    .title(bookCart.getBook().getTitle())
+                    .build());
+        }
+        return  responses;
     }
 
     @Override

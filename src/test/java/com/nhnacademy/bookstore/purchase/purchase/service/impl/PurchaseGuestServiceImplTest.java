@@ -48,7 +48,7 @@ class PurchaseGuestServiceImplTest {
     void setUp() {
         purchase = new Purchase(UUID.randomUUID(), PurchaseStatus.SHIPPED, 100, 10, ZonedDateTime.now(), "road", "password", MemberType.NONMEMBER, null,null,null,null);
 
-        request = CreatePurchaseRequest.builder().deliveryPrice(100).totalPrice(1000).road("dfdfd").password("abcdefg").build();
+        request = CreatePurchaseRequest.builder().orderId(UUID.randomUUID().toString()).deliveryPrice(100).totalPrice(1000).road("dfdfd").password("abcdefg").build();
         updateRequest = UpdatePurchaseGuestRequest.builder().purchaseStatus(PurchaseStatus.SHIPPED).orderNumber(UUID.randomUUID()).password("password").build();
     }
 
