@@ -19,4 +19,9 @@ public class ReviewImage {
 
     @OneToOne(cascade = CascadeType.ALL)
     private TotalImage totalImage;
+
+    public ReviewImage(Review review, TotalImage totalImage) {
+        this.review = review;
+        this.totalImage = totalImage;
+    }
 }

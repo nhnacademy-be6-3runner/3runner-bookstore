@@ -135,7 +135,10 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
         return cartId;
     }
 
-
+    @Override
+    public Long deleteAllBookCart(Long cartId) {
+        return 0L;
+    }
 
     /**
      * 도서장바구니 목록 읽기.

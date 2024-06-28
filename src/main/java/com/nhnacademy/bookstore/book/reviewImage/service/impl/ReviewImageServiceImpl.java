@@ -7,6 +7,8 @@ import com.nhnacademy.bookstore.book.reviewImage.repository.ReviewImageRepositor
 import com.nhnacademy.bookstore.book.reviewImage.service.ReviewImageService;
 import com.nhnacademy.bookstore.entity.review.Review;
 import com.nhnacademy.bookstore.entity.reviewImage.ReviewImage;
+import com.nhnacademy.bookstore.entity.totalImage.TotalImage;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -36,10 +38,10 @@ public class ReviewImageServiceImpl implements ReviewImageService {
             throw new NotFindImageException();
         }
         for (CreateReviewImageRequest createReviewImageRequest : createReviewImageRequestList) {
+            TotalImage totalImage = new TotalImage(createReviewImageRequest.url());
             ReviewImage reviewImage = new ReviewImage(
-                    createReviewImageRequest.reviewId(),
-                    createReviewImageRequest.url(),
-                    review.get());
+                    review.get(),
+                totalImage);
             reviewImageRepository.save(reviewImage);
         }
     }
@@ -60,9 +62,10 @@ public class ReviewImageServiceImpl implements ReviewImageService {
         if (review.isEmpty()) {
             throw new NotFindImageException();
         }
-        ReviewImage reviewImage = new ReviewImage(createReviewImageRequest.reviewId(),
-                createReviewImageRequest.url(),
-                review.get());
+        TotalImage totalImage = new TotalImage(createReviewImageRequest.url());
+        ReviewImage reviewImage = new ReviewImage(
+            review.get(),
+            totalImage);
         reviewImageRepository.save(reviewImage);
     }
 }
