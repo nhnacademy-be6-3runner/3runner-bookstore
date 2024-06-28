@@ -1,6 +1,8 @@
 package com.nhnacademy.bookstore.book.book.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.nhnacademy.bookstore.book.book.dto.request.CreateBookRequest;
 import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
@@ -28,6 +30,8 @@ public class BookServiceImpl implements BookService {
 	 */
 	// Dto -> save book
 	@Override
+	@Transactional(propagation = Propagation.MANDATORY)
+
 	public Long createBook(CreateBookRequest createBookRequest) {
 		Book book = new Book(
 			createBookRequest.title(),

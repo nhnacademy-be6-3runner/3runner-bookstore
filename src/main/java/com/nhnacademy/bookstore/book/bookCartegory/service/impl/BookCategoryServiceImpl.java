@@ -40,7 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class BookCategoryServiceImpl implements BookCategoryService {
 
 	private final BookRepository bookRepository;

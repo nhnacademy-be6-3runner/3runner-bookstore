@@ -37,15 +37,17 @@ public class Member {
 	private Long id;
 
 	@NotNull
+	@Size(min = 60, max = 255)
 	private String password;
 
 	@NotNull
 	private Long point;
 
 	@NotNull
-	@Size(min = 1, max = 10)
+	@Size(min = 1, max = 255)
 	private String name;
 
+	@Column
 	private int age;
 
 	@NotNull
@@ -64,13 +66,13 @@ public class Member {
 	@NotNull
 	private Status status;
 
-	private ZonedDateTime last_login_date;
+	private ZonedDateTime lastLoginDate;
 
 	@NotNull
-	private ZonedDateTime created_at;
+	private ZonedDateTime createdAt;
 
-	private ZonedDateTime modified_at;
-	private ZonedDateTime deleted_at;
+	private ZonedDateTime modifiedAt;
+	private ZonedDateTime deletedAt;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Address> addressList = new ArrayList<>();
@@ -94,7 +96,7 @@ public class Member {
 		this.setEmail(request.email());
 		this.setBirthday(request.birthday());
 		this.setGrade(Grade.General);
-		this.setCreated_at(ZonedDateTime.now());
+		this.setCreatedAt(ZonedDateTime.now());
 	}
 
 }
