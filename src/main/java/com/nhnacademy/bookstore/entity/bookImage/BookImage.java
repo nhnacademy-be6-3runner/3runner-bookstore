@@ -2,36 +2,51 @@ package com.nhnacademy.bookstore.entity.bookImage;
 
 import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.entity.bookImage.enums.BookImageType;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import com.nhnacademy.bookstore.entity.totalImage.TotalImage;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
+@Table(name = "book_image", indexes = {
+	@Index(name = "idx_book_id", columnList = "book_id")
+})
+
 public class BookImage {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(unique = true)
-    private String url;
+	@NotNull
+	private BookImageType type;
 
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Book book;
 
-    @NotNull
-    private BookImageType type;
+	@OneToOne(cascade = CascadeType.ALL)
+	private TotalImage totalImage;
 
-
-    @NotNull
-    @MapsId
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Book book;
+	public BookImage(BookImageType type, Book book, TotalImage totalImage) {
+		this.type = type;
+		this.book = book;
+		this.totalImage = totalImage;
+	}
 
 }

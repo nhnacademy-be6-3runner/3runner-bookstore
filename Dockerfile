@@ -1,10 +1,10 @@
 FROM eclipse-temurin:21-jre
 
-WORKDIR /app
+WORKDIR /bookstore
 
-COPY target/bookstore-0.0.1-SNAPSHOT.jar /bookstore/bookstore.jar
+COPY ./target/bookstore.jar /bookstore/bookstore.jar
 
-EXPOSE 8080
+EXPOSE 8081 8082
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh

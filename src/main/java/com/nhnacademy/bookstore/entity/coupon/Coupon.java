@@ -8,8 +8,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Coupon {
@@ -22,7 +22,7 @@ public class Coupon {
 
 
     @NotNull
-    private CouponStatus coupon_status;
+    private CouponStatus couponStatus;
 
     @NotNull
     private ZonedDateTime issuedAt;
@@ -32,7 +32,7 @@ public class Coupon {
 
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "coupon", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PurchaseCoupon> purchaseCouponSet = new HashSet<>();
+    private List<PurchaseCoupon> purchaseCouponList = new ArrayList<>();
 
 
 }

@@ -19,11 +19,11 @@ public class PointRecord {
     private Long id;
 
     @NotNull
-    private Long member_point;
+    private Long memberPoint;
     @NotNull
-    private Long remnant_point;
+    private Long remnantPoint;
     @NotNull
-    private ZonedDateTime created_at;
+    private ZonedDateTime createdAt;
     @NotNull
     @Size(min = 1, max = 100)
     private String content;

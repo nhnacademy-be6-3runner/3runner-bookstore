@@ -1,0 +1,14 @@
+###
+GET http://localhost:8081/bookstore/members/purchases?memberId=1
+
+###
+POST http://localhost:8081/bookstore/members/purchases
+Content-Type: application/json
+Member-Id: 1
+
+{
+  "deliveryPrice" : 100,
+  "totalPrice": 100000,
+  "road": "광주",
+  "password": "1234"
+}
