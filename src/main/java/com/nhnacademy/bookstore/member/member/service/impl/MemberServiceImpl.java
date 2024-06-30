@@ -43,9 +43,9 @@ public class MemberServiceImpl implements MemberService {
 	private final PurchaseRepository purchaseRepository;
 	private final PasswordEncoder passwordEncoder;
 
-    @Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
     public Member saveOrGetPaycoMember(UserProfile userProfile) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(userProfile.getIdNo());
+        Optional<Member> optionalMember = memberRepository.findByEmail(userProfile.getEmail());
         if(optionalMember.isPresent()){
             return optionalMember.get();//존재하는경우, 그냥 멤버를 가져온다.
         }else{
@@ -54,20 +54,20 @@ public class MemberServiceImpl implements MemberService {
             member.setPassword(passwordEncoder.encode(userProfile.getIdNo()));
             member.setGrade(Grade.General);
             member.setStatus(Status.Active);
-            member.setName(userProfile.getName());
-            member.setPhone(userProfile.getMobile());
+            member.setName(userProfile.getName()!=null?userProfile.getName():"Payco");
+            member.setPhone(userProfile.getMobile()!=null?userProfile.getMobile():"EmptyNumber");
             member.setPoint(5000L);
             member.setCreatedAt(ZonedDateTime.now());
+			member.setLastLoginDate(ZonedDateTime.now());
             memberRepository.save(member);
-            //없는경우 새로 가져온다.
+            return member;
         }
-        return null;
     }
 
     /**
      * Save member.
      *
-     * @param member the member -Member값을 받아온다.
+     * @param request the member -Member값을 받아온다.
      * @return the member -저장 후 member값을 그대로 반환한다.
      * @author 유지아 Save member. -멤버값을 받아와 저장한다.(이메일 중복하는걸로 확인하면 좋을듯)
      */
