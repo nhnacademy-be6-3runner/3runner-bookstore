@@ -7,31 +7,34 @@ import java.util.List;
 import com.nhnacademy.bookstore.entity.member.Member;
 import com.nhnacademy.bookstore.entity.member.enums.Grade;
 import com.nhnacademy.bookstore.entity.member.enums.Status;
-import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UpdateMemberRequest;
-import com.nhnacademy.bookstore.member.member.dto.request.UserProfile;
 import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
 
 import org.springframework.stereotype.Service;
 
 @Service
 public interface MemberService {
+	Member save(Member member);
     Member save(CreateMemberRequest createMemberRequest);
 
-    Member readById(Long id);
+	Member readById(Long id);
 
-    Member readByEmailAndPassword(String email, String password);
+	Member readByEmailAndPassword(String email, String password);
 
-    Member updateMember(Long memberId, UpdateMemberRequest updateMemberRequest);
+	Member updateMember(Long memberId, UpdateMemberRequest updateMemberRequest);
 
-    void deleteMember(Long memberId);
+	Member readByEmail(String email);
 
-    Member updateStatus(Long memberId, Status status);
+	void deleteMember(Long memberId);
 
-    Member updateGrade(Long memberId, Grade grade);
-    Member updateLastLogin(Long memberId, ZonedDateTime lastLogin);
+	Member updateStatus(Long memberId, Status status);
+
+	Member updateGrade(Long memberId, Grade grade);
+
+	Member updateLastLogin(Long memberId, ZonedDateTime lastLogin);
 
     List<ReadPurchaseResponse> getPurchasesByMemberId(Long memberId);
 
     Member saveOrGetPaycoMember(UserProfile userProfile);
+	List<ReadPurchaseResponse> getPurchasesByMemberId(Long memberId);
 }

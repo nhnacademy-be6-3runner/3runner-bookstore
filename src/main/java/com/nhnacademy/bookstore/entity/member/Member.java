@@ -1,8 +1,5 @@
 package com.nhnacademy.bookstore.entity.member;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.nhnacademy.bookstore.entity.address.Address;
 import com.nhnacademy.bookstore.entity.member.enums.AuthProvider;
@@ -48,7 +45,6 @@ public class Member {
 	@Size(min = 1, max = 255)
 	private String name;
 
-	@Column
 	private int age;
 
 	@NotNull
@@ -82,8 +78,8 @@ public class Member {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MemberAuth> memberAuthList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PointRecord> pointRecordList = new ArrayList<>();
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<PointRecord> pointRecordList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Purchase> purchaseList = new ArrayList<>();

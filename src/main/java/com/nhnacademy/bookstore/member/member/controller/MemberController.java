@@ -14,16 +14,14 @@ import com.nhnacademy.bookstore.member.member.dto.request.UserProfile;
 import com.nhnacademy.bookstore.member.member.dto.response.GetMemberResponse;
 import com.nhnacademy.bookstore.member.member.dto.response.MemberAuthResponse;
 import com.nhnacademy.bookstore.member.member.dto.response.UpdateMemberResponse;
-import com.nhnacademy.bookstore.member.auth.service.AuthService;
-import com.nhnacademy.bookstore.member.memberAuth.service.MemberAuthService;
-import com.nhnacademy.bookstore.member.memberAuth.service.impl.MemberAuthServiceImpl;
-import com.nhnacademy.bookstore.member.pointRecord.service.PointService;
 import com.nhnacademy.bookstore.member.member.service.impl.MemberServiceImpl;
+import com.nhnacademy.bookstore.member.memberAuth.service.impl.MemberAuthServiceImpl;
 import com.nhnacademy.bookstore.member.pointRecord.service.impl.PointServiceImpl;
 import com.nhnacademy.bookstore.util.ApiResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,17 +32,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-/**
- * The type Member controller.
- *
- * @author 오연수, 유지아
- */
-@RestController
 @RequiredArgsConstructor
+@Controller
 public class MemberController {
 	private final MemberServiceImpl memberService;
 	private final PointServiceImpl pointRecordService;
@@ -143,7 +132,7 @@ public class MemberController {
 				.collect(
 					Collectors.toList())));
 
-    }
+	}
 
 	/**
 	 * 멤버 업데이트
@@ -192,5 +181,6 @@ public class MemberController {
 			member.getId()).stream().map(a -> a + "").collect(Collectors.toList())).password(member.getPassword()).build();
 		return memberAuthResponse;
 	}
+
 }
 

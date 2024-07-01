@@ -10,12 +10,10 @@ spring:
       database: 8
       password: "*N2vya7H@muDTwdNMR!"
 
-
-
   jpa:
     open-in-view: false
-#        hibernate:
-#          ddl-auto: update
+    #    hibernate:
+    #      ddl-auto: update
     show-sql: true
 
     properties:
@@ -24,23 +22,16 @@ spring:
         use_sql_comments: true
         highlight_sql: true
         auto_quote_keyword: true
-#    hibernate:
-#      ddl-auto: update
 
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 
-#  datasource:
-#    url: jdbc:mysql://133.186.241.167:3306/be6_3runner_dev
-#    username: be6_3runner
-#    password: tHos2g5st4@XH7mT
-#    driver-class-name: com.mysql.cj.jdbc.Driver
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/be6_3runner_dev
-    username: root
-    password: 875321
+    url: jdbc:mysql://133.186.241.167:3306/be6_3runner_dev
+    username: be6_3runner
+    password: tHos2g5st4@XH7mT
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   profiles:
@@ -72,11 +63,3 @@ springdoc:
   swagger-ui:
     url: /docs/openapi-3.0.json
     path: /bookstore/docs/swagger
-eureka:
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://admin:1234@localhost:8761/eureka
-  instance:
-    prefer-ip-address: true
