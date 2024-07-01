@@ -7,12 +7,11 @@ import java.util.stream.Collectors;
 
 import com.nhnacademy.bookstore.entity.auth.Auth;
 import com.nhnacademy.bookstore.entity.member.Member;
-import com.nhnacademy.bookstore.entity.member.enums.Status;
 import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
 import com.nhnacademy.bookstore.member.auth.dto.AuthResponse;
 import com.nhnacademy.bookstore.member.auth.service.impl.AuthServiceImpl;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
-import com.nhnacademy.bookstore.member.member.dto.request.LoginRequest;
+
 import com.nhnacademy.bookstore.member.member.dto.request.UpdateMemberRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UserProfile;
 import com.nhnacademy.bookstore.member.member.dto.response.GetMemberResponse;
@@ -24,13 +23,10 @@ import com.nhnacademy.bookstore.member.pointRecord.service.impl.PointServiceImpl
 import com.nhnacademy.bookstore.util.ApiResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -91,34 +87,7 @@ public class MemberController {
 
 	}
 
-	/**
-	 * Find by email and password response entity. -이메일과 비밀번호에 맞는 멤버정보를 반환한다.
-	 *
-	 * @param
-	 * @return the response entity -멤버 정보에 대한 응답을 담아서 apiresponse로 응답한다.
-	 * @author 유지아
-	 */
-	@PostMapping("/bookstore/members/login")
-	public ApiResponse<GetMemberResponse> readByEmailAndPassword(
-		@RequestBody @Valid LoginRequest loginRequest) {
-		Member member = memberService.readByEmailAndPassword(loginRequest.email(), loginRequest.password());
-		GetMemberResponse getMemberResponse = GetMemberResponse.builder()
-			.age(member.getAge())
-			.grade(member.getGrade())
-			.point(member.getPoint())
-			.phone(member.getPhone())
-			.created_at(member.getCreatedAt())
-			.birthday(member.getBirthday())
-			.email(member.getEmail())
-			.name(member.getName())
-			.password(member.getPassword()).build();
-		memberService.updateStatus(member.getId(), Status.Active);//응답이 만들어 졌다는거는 로그인성공이란 소리니까 멤버를 업데이트 해야할 것같다..
-		memberService.updateLastLogin(member.getId(), ZonedDateTime.now());
 
-		return new ApiResponse<GetMemberResponse>(new ApiResponse.Header(true, 200),
-			new ApiResponse.Body<>(getMemberResponse));
-
-    }
 
 	/**
 	 * Find auths list. -권한에 대한 리스트를 받아온다.
