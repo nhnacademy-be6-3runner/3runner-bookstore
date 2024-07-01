@@ -1,6 +1,10 @@
 package com.nhnacademy.bookstore.entity.member;
 
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.nhnacademy.bookstore.entity.address.Address;
 import com.nhnacademy.bookstore.entity.member.enums.AuthProvider;
 import com.nhnacademy.bookstore.entity.member.enums.Grade;
