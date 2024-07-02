@@ -65,7 +65,7 @@ public class MemberController {
 	 * @param request the request - creatememberrequest를 받아 member를 생성한다.
 	 * @author 유지아
 	 */
-	@Transactional
+
 	@PostMapping("/bookstore/members")
 	public ApiResponse<Void> createMember(@RequestBody @Valid CreateMemberRequest request) {
 		CreateMemberRequest encodedRequest = new CreateMemberRequest(request.email(),
@@ -73,9 +73,10 @@ public class MemberController {
 			request.birthday());
 		Member member = new Member(encodedRequest);
 		Auth auth = authService.getAuth("USER");
-		Member savedMember =memberService.save(encodedRequest);
-		pointRecordService.save(5000L,"회원가입 5000포인트 적립",savedMember.getId(),null);
-		memberAuthService.saveAuth(member, auth);
+			Member savedMember = memberService.save(encodedRequest);
+			//pointRecordService.save(5000L,"회원가입 5000포인트 적립",savedMember.getId(),null);
+			//만들어주시면 넣자.
+			memberAuthService.saveAuth(member, auth);
 
 		return new ApiResponse<Void>(new ApiResponse.Header(true, 201), new ApiResponse.Body<Void>(null));
 	}
@@ -200,6 +201,15 @@ public class MemberController {
 		MemberAuthResponse memberAuthResponse = MemberAuthResponse.builder().email(member.getEmail()).memberId(member.getId()).auth(memberAuthService.readAllAuths(
 			member.getId()).stream().map(a -> a + "").collect(Collectors.toList())).password(member.getPassword()).build();
 		return memberAuthResponse;
+	}
+	@GetMapping("/bookstore/members/email")
+	public ApiResponse<Boolean> emailExists(@RequestParam String email){
+		try {
+			Member member = memberService.readByEmail(email);
+			return new ApiResponse<>(new ApiResponse.Header(true, 200), new ApiResponse.Body<>(Boolean.TRUE));
+		}catch (Exception e){
+			return new ApiResponse<>(new ApiResponse.Header(true, 500), new ApiResponse.Body<>(Boolean.FALSE));
+		}
 	}
 }
 

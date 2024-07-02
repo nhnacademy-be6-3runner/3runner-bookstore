@@ -76,10 +76,7 @@ public class MemberServiceImpl implements MemberService {
     public Member save(CreateMemberRequest request) {
         CreateMemberRequest encodedRequest = new CreateMemberRequest(request.email(),passwordEncoder.encode(request.password()),request.name(),request.phone(),request.age(),request.birthday());
         Member member = new Member(encodedRequest);
-        Optional<Member> findmember = memberRepository.findByEmail(member.getEmail());
-        if(findmember.isPresent()){
-            throw new AlreadyExistsEmailException();
-        }
+
         return memberRepository.save(member);
     }
 

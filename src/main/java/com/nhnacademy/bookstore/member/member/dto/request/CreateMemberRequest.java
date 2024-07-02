@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
  * @Author -유지아
  * The type Create member request.-회원가입에 대한 요청 record이다.
  */
+
 @Builder
 public record CreateMemberRequest(
     @NotNull(message = "이메일을 입력해주세요.")
