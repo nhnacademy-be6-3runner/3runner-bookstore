@@ -39,14 +39,13 @@ public class Member {
 	private Long id;
 
 	@NotNull
-	@Size(min = 6, max = 255)
 	private String password;
 
 	@NotNull
 	private Long point;
 
 	@NotNull
-	@Size(min = 1, max = 255)
+	@Size(min = 1, max = 10)
 	private String name;
 
 	private int age;
@@ -76,14 +75,15 @@ public class Member {
 	private ZonedDateTime deletedAt;
 	@NotNull
 	private AuthProvider authProvider;
+
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Address> addressList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MemberAuth> memberAuthList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<PointRecord> pointRecordList = new ArrayList<>();
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PointRecord> pointRecordList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Purchase> purchaseList = new ArrayList<>();

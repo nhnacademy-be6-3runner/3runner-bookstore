@@ -12,9 +12,9 @@ public class Refund {
 
     private int price;
 
-    private String refund_content;
+    private String refundContent;
 
-    private RefundStatus refund_status;
+    private RefundStatus refundStatus;
 
     @ManyToOne
     private Purchase purchase;

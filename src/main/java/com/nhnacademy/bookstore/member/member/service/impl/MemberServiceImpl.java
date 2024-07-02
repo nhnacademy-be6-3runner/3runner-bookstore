@@ -122,31 +122,20 @@ public class MemberServiceImpl implements MemberService {
 	public Member readByEmail(String email) {
 		Optional<Member> member = memberRepository.findByEmail(email);
 		if (member.isPresent()) {
+			if (passwordEncoder.matches(password, member.get().getPassword())) {
+				return member.get();
+			}
+		}
+		throw new LoginFailException();
+	}
+
+	public Member readByEmail(String email) {
+		Optional<Member> member = memberRepository.findByEmail(email);
+		if (member.isPresent()) {
 			return member.get();
 		}
 		throw new LoginFailException();
 	}
-    /**
-     * Find by email and password member.
-     *
-     * @param email    the email -string 이메일 값을 받는다.
-     * @param password the password -string 비밀번호 값을 받는다.
-     * @return the member -해당하는 member를 반환한다.
-     * @author 유지아 Find by email and password member. -이메일과 패스워드 값으로 조회한다.
-     */
-    public Member readByEmailAndPassword(String email, String password) {
-        Optional<Member> member = memberRepository.findByEmail(email);
-
-        if(member.isPresent()){
-            if(member.get().getAuthProvider() != AuthProvider.General){
-                throw new LoginOauthEmailException(member.get().getAuthProvider());
-            }
-            if(passwordEncoder.matches(password, member.get().getPassword())){
-                return member.get();
-            }
-        }
-        throw new LoginFailException();
-    }
 
 	/**
 	 * 멤버 업데이트

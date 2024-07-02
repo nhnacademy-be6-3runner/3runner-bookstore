@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,8 @@ import com.nhnacademy.bookstore.book.bookCartegory.dto.request.CreateBookCategor
 import com.nhnacademy.bookstore.book.bookCartegory.dto.request.UpdateBookCategoryRequest;
 import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
 import com.nhnacademy.bookstore.book.bookCartegory.service.impl.BookCategoryServiceImpl;
+import com.nhnacademy.bookstore.book.category.dto.response.BookDetailCategoryResponse;
+import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
 import com.nhnacademy.bookstore.book.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
@@ -161,87 +164,85 @@ class BookCategoryServiceTest {
 		verify(bookCategoryRepository, times(1)).deleteById(anyLong());
 	}
 
-	// @DisplayName("도서에 해당하는 카테고리 목록 조회 테스트")
-	// @Test
-	// void readBookWithCategoryList() {
-	// 	List<Category> categoriesResponseList = new ArrayList<>();
-	// 	categoriesResponseList.add(Category.builder().id(1L).name("국내").parent(null).build());
-	// 	categoriesResponseList.add(BookCategoriesResponse.builder().id(2L).categoryName("해외").parentId(null).build());
-	// 	categoriesResponseList.add(BookCategoriesResponse.builder().id(3L).categoryName("소설").parentId(2L).build());
-	// 	categoriesResponseList.add(BookCategoriesResponse.builder().id(4L).categoryName("SF").parentId(3L).build());
-	// 	categoriesResponseList.add(BookCategoriesResponse.builder().id(5L).categoryName("추리").parentId(4L).build());
-	// 	categoriesResponseList.add(BookCategoriesResponse.builder().id(6L).categoryName("다이어트").parentId(10L).build());
-	// 	categoriesResponseList.add(BookCategoriesResponse.builder().id(7L).categoryName("정보").parentId(1L).build());
-	// 	categoriesResponseList.add(BookCategoriesResponse.builder().id(8L).categoryName("주식").parentId(7L).build());
-	// 	categoriesResponseList.add(BookCategoriesResponse.builder().id(9L).categoryName("여행").parentId(10L).build());
-	// 	categoriesResponseList.add(BookCategoriesResponse.builder().id(10L).categoryName("건강/취미").parentId(1L).build());
-	//
-	// 	CategoryParentWithChildrenResponse childrenResponse1 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(8L)
-	// 		.name("주식")
-	// 		.childrenList(null)
-	// 		.build();
-	// 	CategoryParentWithChildrenResponse childrenResponse2 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(6L)
-	// 		.name("다이어트")
-	// 		.childrenList(null)
-	// 		.build();
-	// 	CategoryParentWithChildrenResponse childrenResponse3 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(9L)
-	// 		.name("여행")
-	// 		.childrenList(null)
-	// 		.build();
-	// 	CategoryParentWithChildrenResponse childrenResponse4 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(5L)
-	// 		.name("추리")
-	// 		.childrenList(null)
-	// 		.build();
-	//
-	// 	CategoryParentWithChildrenResponse childrenResponse5 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(7L)
-	// 		.name("정보")
-	// 		.childrenList(List.of(childrenResponse1))
-	// 		.build();
-	// 	CategoryParentWithChildrenResponse childrenResponse6 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(10L)
-	// 		.name("건강/취미")
-	// 		.childrenList(List.of(childrenResponse2, childrenResponse3))
-	// 		.build();
-	// 	CategoryParentWithChildrenResponse childrenResponse7 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(4L)
-	// 		.name("SF")
-	// 		.childrenList(List.of(childrenResponse4))
-	// 		.build();
-	//
-	// 	CategoryParentWithChildrenResponse childrenResponse8 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(3L)
-	// 		.name("소설")
-	// 		.childrenList(List.of(childrenResponse7))
-	// 		.build();
-	//
-	// 	CategoryParentWithChildrenResponse childrenResponse9 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(1L)
-	// 		.name("국내")
-	// 		.childrenList(List.of(childrenResponse5, childrenResponse6))
-	// 		.build();
-	// 	CategoryParentWithChildrenResponse childrenResponse10 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(2L)
-	// 		.name("해외")
-	// 		.childrenList(List.of(childrenResponse8))
-	// 		.build();
-	//
-	// 	List<CategoryParentWithChildrenResponse> bookCategoriesChildrenResponseList = List.of(childrenResponse9,
-	// 		childrenResponse10);
-	//
-	// 	when(bookCategoryRepository.bookWithCategoryList(anyLong())).thenReturn(categoriesResponseList);
-	//
-	// 	List<CategoryParentWithChildrenResponse> getResponse = bookCategoryService.readBookWithCategoryList(1L);
-	//
-	// 	assertEquals(getResponse.size(), bookCategoriesChildrenResponseList.size());
-	// 	assertEquals(getResponse.getFirst().id(), bookCategoriesChildrenResponseList.getFirst().id());
-	// 	assertEquals(getResponse.getFirst().name(), bookCategoriesChildrenResponseList.getFirst().name());
-	//
-	// }
+	@DisplayName("도서에 해당하는 카테고리 목록 조회 테스트")
+	@Test
+	void readBookWithCategoryList() {
+		List<BookDetailCategoryResponse> categoriesResponseList = new ArrayList<>();
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(1L).name("국내").parentId(null).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(2L).name("해외").parentId(null).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(3L).name("소설").parentId(2L).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(4L).name("SF").parentId(3L).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(5L).name("추리").parentId(4L).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(6L).name("다이어트").parentId(10L).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(7L).name("정보").parentId(1L).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(8L).name("주식").parentId(7L).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(9L).name("여행").parentId(10L).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(10L).name("건강/취미").parentId(1L).build());
+
+		CategoryParentWithChildrenResponse childrenResponse1 = CategoryParentWithChildrenResponse.builder()
+			.id(8L)
+			.name("주식")
+			.childrenList(null)
+			.build();
+		CategoryParentWithChildrenResponse childrenResponse2 = CategoryParentWithChildrenResponse.builder()
+			.id(6L)
+			.name("다이어트")
+			.childrenList(null)
+			.build();
+		CategoryParentWithChildrenResponse childrenResponse3 = CategoryParentWithChildrenResponse.builder()
+			.id(9L)
+			.name("여행")
+			.childrenList(null)
+			.build();
+		CategoryParentWithChildrenResponse childrenResponse4 = CategoryParentWithChildrenResponse.builder()
+			.id(5L)
+			.name("추리")
+			.childrenList(null)
+			.build();
+
+		CategoryParentWithChildrenResponse childrenResponse5 = CategoryParentWithChildrenResponse.builder()
+			.id(7L)
+			.name("정보")
+			.childrenList(List.of(childrenResponse1))
+			.build();
+		CategoryParentWithChildrenResponse childrenResponse6 = CategoryParentWithChildrenResponse.builder()
+			.id(10L)
+			.name("건강/취미")
+			.childrenList(List.of(childrenResponse2, childrenResponse3))
+			.build();
+		CategoryParentWithChildrenResponse childrenResponse7 = CategoryParentWithChildrenResponse.builder()
+			.id(4L)
+			.name("SF")
+			.childrenList(List.of(childrenResponse4))
+			.build();
+
+		CategoryParentWithChildrenResponse childrenResponse8 = CategoryParentWithChildrenResponse.builder()
+			.id(3L)
+			.name("소설")
+			.childrenList(List.of(childrenResponse7))
+			.build();
+
+		CategoryParentWithChildrenResponse childrenResponse9 = CategoryParentWithChildrenResponse.builder()
+			.id(1L)
+			.name("국내")
+			.childrenList(List.of(childrenResponse5, childrenResponse6))
+			.build();
+		CategoryParentWithChildrenResponse childrenResponse10 = CategoryParentWithChildrenResponse.builder()
+			.id(2L)
+			.name("해외")
+			.childrenList(List.of(childrenResponse8))
+			.build();
+
+		List<CategoryParentWithChildrenResponse> bookCategoriesChildrenResponseList = List.of(childrenResponse9,
+			childrenResponse10);
+
+		when(bookCategoryRepository.bookWithCategoryList(anyLong())).thenReturn(categoriesResponseList);
+
+		List<CategoryParentWithChildrenResponse> getResponse = bookCategoryService.readBookWithCategoryList(1L);
+
+		assertEquals(getResponse.size(), bookCategoriesChildrenResponseList.size());
+
+	}
 
 	@DisplayName("카테고리에 해당하는 도서 목록 조회 테스트")
 	@Test
@@ -261,5 +262,32 @@ class BookCategoryServiceTest {
 			categoryList.stream().map(Category::getId).collect(Collectors.toList()), pageable);
 
 		assertEquals(expectedPage, actualPage);
+	}
+
+	@DisplayName("도서에 해당하는 카테고리 목록 불러오기")
+	@Test
+	void readCategoriesWithCategoryList() {
+		CategoryParentWithChildrenResponse childrenResponse1 = CategoryParentWithChildrenResponse.builder()
+			.id(8L)
+			.name("주식")
+			.childrenList(null)
+			.build();
+		CategoryParentWithChildrenResponse childrenResponse2 = CategoryParentWithChildrenResponse.builder()
+			.id(6L)
+			.name("다이어트")
+			.childrenList(null)
+			.build();
+
+		List<CategoryParentWithChildrenResponse> categoryList = List.of(childrenResponse1, childrenResponse2);
+
+		List<BookDetailCategoryResponse> categoriesResponseList = new ArrayList<>();
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(1L).name("국내").parentId(null).build());
+		categoriesResponseList.add(BookDetailCategoryResponse.builder().id(2L).name("해외").parentId(null).build());
+
+		when(bookCategoryRepository.bookWithCategoryList(anyLong())).thenReturn(categoriesResponseList);
+
+		List<CategoryParentWithChildrenResponse> getContent = bookCategoryService.readBookWithCategoryList(1L);
+		assertEquals(getContent.size(), categoryList.size());
+
 	}
 }

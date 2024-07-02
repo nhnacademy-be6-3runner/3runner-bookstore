@@ -79,7 +79,7 @@ class PurchaseBookControllerTest {
             .thenReturn(responsePage);
 
         // Perform GET request
-        mockMvc.perform(MockMvcRequestBuilders.get("/purchase/book")
+        mockMvc.perform(MockMvcRequestBuilders.get("/bookstore/purchase/book")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(request)))
             .andExpect(status().isOk())

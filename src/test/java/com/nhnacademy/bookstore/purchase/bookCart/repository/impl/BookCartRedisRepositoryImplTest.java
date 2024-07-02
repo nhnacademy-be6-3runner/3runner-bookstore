@@ -111,4 +111,13 @@ class BookCartRedisRepositoryImplTest {
         verify(hashOperations, times(1)).put(hashName + ":", response1.bookCartId().toString(), response1);
         verify(hashOperations, times(1)).put(hashName + ":", response2.bookCartId().toString(), response2);
     }
+
+    @Test
+    void deleteAll() {
+        String hashName = "cart";
+
+        bookCartRedisRepository.deleteAll(hashName);
+
+        verify(redisTemplate, times(1)).delete(hashName + ":");
+    }
 }

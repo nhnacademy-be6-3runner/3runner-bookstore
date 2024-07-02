@@ -3,6 +3,7 @@ package com.nhnacademy.bookstore.global.exceptionHandler;
 import java.nio.channels.AlreadyBoundException;
 import java.time.ZonedDateTime;
 
+import com.nhnacademy.bookstore.purchase.payment.exception.TossPaymentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -72,7 +73,8 @@ public class WebControllerAdvice {
             AlreadyBoundException.class,
             PurchaseFormArgumentErrorException.class,
             PurchaseAlreadyExistException.class,
-            BookCartArgumentErrorException.class
+            BookCartArgumentErrorException.class,
+			TossPaymentException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<ErrorResponseForm> badRequestHandler(Exception ex, Model model) {

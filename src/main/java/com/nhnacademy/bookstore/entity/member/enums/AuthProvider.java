@@ -1,5 +1,5 @@
 package com.nhnacademy.bookstore.entity.member.enums;
 
 public enum AuthProvider {
-	General, Payco
+	GENERAL, PAYCO
 }

@@ -15,6 +15,9 @@ import java.time.ZonedDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "book_like", indexes = {
+    @Index(name = "idx_book_id", columnList = "book_id")
+})
 public class BookLike {
 
     @Id

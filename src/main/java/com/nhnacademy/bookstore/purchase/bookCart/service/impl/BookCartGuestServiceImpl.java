@@ -56,29 +56,31 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
         cartRepository.save(cart);
         long cartId = cart.getId();
 
-        hasDataToLoad(cart.getId());
+        if (bookCartRepository.existsBookCartByBookAndCart(book, cart)) {
+            updateBookCart(bookId, cartId, quantity);
+        } else {
+            BookCart bookCart = new BookCart(quantity, ZonedDateTime.now(), book, cart);
 
-        BookCart bookCart = new BookCart(quantity, ZonedDateTime.now(), book, cart);
-
-        bookCartRepository.save(bookCart);
+            bookCartRepository.save(bookCart);
 
 
-        String url = "/img/no-image.png";
-        if (bookCart.getBook().getBookImageList()!=null && !bookCart.getBook().getBookImageList().isEmpty()) {
-            url = bookCart.getBook().getBookImageList().getFirst().getUrl();
+            String url = "/img/no-image.png";
+            if (bookCart.getBook().getBookImageList()!=null && !bookCart.getBook().getBookImageList().isEmpty()) {
+                url = bookCart.getBook().getBookImageList().getFirst().getTotalImage().getUrl();
+            }
+
+            bookCartRedisRepository.create(
+                    Long.toString(cartId),
+                    bookCart.getId(),
+                    ReadBookCartGuestResponse.builder()
+                            .bookCartId(bookCart.getId())
+                            .price(book.getPrice())
+                            .url(url)
+                            .title(book.getTitle())
+                            .quantity(bookCart.getQuantity())
+                            .build()
+            );
         }
-
-        bookCartRedisRepository.create(
-                Long.toString(cartId),
-                bookCart.getId(),
-                ReadBookCartGuestResponse.builder()
-                        .bookCartId(bookCart.getId())
-                        .price(book.getPrice())
-                        .url(url)
-                        .title(book.getTitle())
-                        .quantity(bookCart.getQuantity())
-                        .build()
-        );
 
         return cartId;
     }
@@ -101,8 +103,9 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
 
 
         Optional<BookCart> optionalBookCart = bookCartRepository.findByBookAndCart(book, cart);
+
         if (optionalBookCart.isEmpty()) {
-            bookCartRepository.save(new BookCart(quantity,book,cart));
+            bookCartRepository.save(new BookCart(quantity, book, cart));
             return cartId;
         }
 
@@ -135,7 +138,22 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
         return cartId;
     }
 
+    /**
+     * 북카트 전체 삭제.
+     *
+     * @param cartId 카트아이디
+     * @return 카트아이디
+     */
+    @Override
+    public Long deleteAllBookCart(Long cartId) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartDoesNotExistException(cartId + "가 존재하지 않습니다"));
 
+        bookCartRepository.deleteByCart(cart);
+        bookCartRedisRepository.deleteAll(cartId.toString());
+
+        return cartId;
+    }
 
     /**
      * 도서장바구니 목록 읽기.
@@ -153,6 +171,7 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
         return  hasDataToLoad(cartId);
         //return readAllFromDb(cartId);
     }
+
 
     /**
      * 레디스 데이터 업데이트 메서드.
@@ -181,7 +200,7 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
         for (BookCart bookCart : list) {
             String url = "/img/no-image.png";
             if (bookCart.getBook().getBookImageList()!=null && !bookCart.getBook().getBookImageList().isEmpty()) {
-                url = bookCart.getBook().getBookImageList().getFirst().getUrl();
+                url = bookCart.getBook().getBookImageList().getFirst().getTotalImage().getUrl();
             }
 
             listDto.add(ReadBookCartGuestResponse.builder()

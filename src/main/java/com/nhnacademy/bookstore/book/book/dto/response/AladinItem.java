@@ -11,6 +11,7 @@ public record AladinItem(
 	String author,
 	String description,
 	String isbn13,
+	String pubDate,
 	int priceSales,
 	int priceStandard,
 	String cover,

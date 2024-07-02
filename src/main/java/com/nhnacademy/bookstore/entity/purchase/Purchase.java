@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter@Setter
 @Entity
 public class Purchase {
@@ -41,6 +41,9 @@ public class Purchase {
     @NotNull
     private ZonedDateTime createdAt;
 
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     @NotNull
     private String road;
 
@@ -52,10 +55,6 @@ public class Purchase {
     @ManyToOne
     private Member member;
 
-    @OneToOne
-    PointRecord pointRecord;
-
-
     //연결
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseBook> purchaseBookList = new ArrayList<>();
@@ -63,7 +62,10 @@ public class Purchase {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseCoupon> purchaseCouponList = new ArrayList<>();
 
-    public Purchase(UUID orderNumber, PurchaseStatus status, int deliveryPrice, int totalPrice, ZonedDateTime createdAt, String road, String password, MemberType memberType, Member member, PointRecord pointRecord, List<PurchaseBook> purchaseBookList, List<PurchaseCoupon> purchaseCouponList) {
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PointRecord> pointRecordList = new ArrayList<>();
+
+    public Purchase(UUID orderNumber, PurchaseStatus status, int deliveryPrice, int totalPrice, ZonedDateTime createdAt, String road, String password, MemberType memberType, Member member, List<PointRecord> pointRecord, List<PurchaseBook> purchaseBookList, List<PurchaseCoupon> purchaseCouponList) {
         this.orderNumber = orderNumber;
         this.status = status;
         this.deliveryPrice = deliveryPrice;
@@ -73,7 +75,7 @@ public class Purchase {
         this.password = password;
         this.memberType = memberType;
         this.member = member;
-        this.pointRecord = pointRecord;
+        this.pointRecordList = pointRecord;
         this.purchaseBookList = purchaseBookList;
         this.purchaseCouponList = purchaseCouponList;
     }

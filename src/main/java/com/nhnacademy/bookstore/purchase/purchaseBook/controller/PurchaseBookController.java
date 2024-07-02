@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author 정주혁
  */
 @RestController
-@RequestMapping("/purchase/book")
+@RequestMapping("/bookstore/purchase/book")
 public class PurchaseBookController {
 
 	private PurchaseBookService purchaseBookService;

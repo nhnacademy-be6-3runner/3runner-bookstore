@@ -2,6 +2,10 @@ spring:
   config:
     activate:
       on-profile: dev
+
+server:
+  shutdown: graceful
+  port: 8081
 eureka:
   client:
     fetch-registry: true

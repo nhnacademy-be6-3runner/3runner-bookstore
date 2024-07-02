@@ -70,14 +70,15 @@ public class MemberAuthControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"email\":\"" + email + "\"}"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.email").value(email))
-			.andExpect(jsonPath("$.password").value(password))
-			.andExpect(jsonPath("$.auth").isArray())
-			.andExpect(jsonPath("$.auth[0]").value("USER"))
-			.andExpect(jsonPath("$.auth[1]").value("ADMIN"))
-			.andExpect(jsonPath("$.memberId").value(memberId));
+			.andExpect(jsonPath("$.header.resultCode").value(200))
+			.andExpect(jsonPath("$.header.successful").value(true))
+			.andExpect(jsonPath("$.body.data.email").value(email))
+			.andExpect(jsonPath("$.body.data.password").value(password))
+			.andExpect(jsonPath("$.body.data.auth").isArray())
+			.andExpect(jsonPath("$.body.data.auth[0]").value("USER"))
+			.andExpect(jsonPath("$.body.data.memberId").value(memberId));
 	}
-	
+
 	@DisplayName("없는 멤버 이메일을 통해 MemberAuth 를 가져오는 경우")
 	@Test
 	void testGetMemberAuth_MemberNotFound() throws Exception {

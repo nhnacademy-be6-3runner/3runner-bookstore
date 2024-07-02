@@ -42,7 +42,7 @@ public class PurchaseGuestServiceImpl implements PurchaseGuestService {
     @Override
     public Long createPurchase(CreatePurchaseRequest createPurchaseRequest) {
         Purchase purchase = new Purchase(
-                UUID.randomUUID(),
+                UUID.fromString(createPurchaseRequest.orderId()),
                 PurchaseStatus.PROCESSING,
                 createPurchaseRequest.deliveryPrice(),
                 createPurchaseRequest.totalPrice(),

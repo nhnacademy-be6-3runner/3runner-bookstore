@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/bookstore")
 public class PurchaseGuestController {
     private final PurchaseGuestService purchaseGuestService;
 

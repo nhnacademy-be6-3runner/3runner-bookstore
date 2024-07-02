@@ -6,7 +6,6 @@ import java.util.List;
 import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -34,7 +33,6 @@ public class Category {
 
 	@NotNull
 	@Size(min = 1, max = 30)
-	@Column(unique = true)
 	@Setter
 	private String name;
 

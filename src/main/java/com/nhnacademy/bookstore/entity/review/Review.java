@@ -28,7 +28,8 @@ public class Review {
     private String title;
 
     @NotNull
-    @Size(min = 1, max = 200)
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @NotNull

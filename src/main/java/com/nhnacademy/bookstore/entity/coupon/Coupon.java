@@ -6,12 +6,14 @@ import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.purchaseCoupon.PurchaseCoupon;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity@Getter@Setter
 public class Coupon {
 
     @Id
@@ -22,7 +24,7 @@ public class Coupon {
 
 
     @NotNull
-    private CouponStatus coupon_status;
+    private CouponStatus couponStatus;
 
     @NotNull
     private ZonedDateTime issuedAt;

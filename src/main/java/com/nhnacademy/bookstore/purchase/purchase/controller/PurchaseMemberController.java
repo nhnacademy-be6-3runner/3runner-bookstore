@@ -25,6 +25,7 @@ import java.util.Objects;
  */
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/bookstore")
 public class PurchaseMemberController {
     private final PurchaseMemberService purchaseMemberService;
     private final MemberService memberService;

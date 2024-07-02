@@ -90,7 +90,7 @@ class MemberServiceTest {
 
 		Member deletedMember = memberCaptor.getValue();
 		assertEquals(Status.Withdrawn, deletedMember.getStatus());
-		assertNotNull(deletedMember.getDeleted_at());
+		assertNotNull(deletedMember.getDeletedAt());
 	}
 
 	@Test

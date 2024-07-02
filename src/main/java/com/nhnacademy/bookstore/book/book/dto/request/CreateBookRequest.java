@@ -38,7 +38,6 @@ public record CreateBookRequest(
 	String imageName,
 	List<String> imageList,
 	List<Long> tagIds,
-	//        @NotBlank(message = "category is mandatory")
 	List<Long> categoryIds) {
 }
 

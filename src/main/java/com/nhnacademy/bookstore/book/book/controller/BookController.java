@@ -3,16 +3,20 @@ package com.nhnacademy.bookstore.book.book.controller;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nhnacademy.bookstore.book.book.dto.request.CreateBookRequest;
+import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.UserReadBookResponse;
 import com.nhnacademy.bookstore.book.book.exception.CreateBookRequestFormException;
@@ -51,10 +55,9 @@ public class BookController {
 	 * 책 등록 요청 처리.
 	 *
 	 * @param createBookRequest request form
-	 * @param bindingResult binding result
+	 * @param bindingResult     binding result
 	 * @return ApiResponse<>
 	 */
-	@Transactional
 	@PostMapping
 	public ApiResponse<Void> createBook(@Valid @RequestBody CreateBookRequest createBookRequest,
 		BindingResult bindingResult) {
@@ -74,10 +77,22 @@ public class BookController {
 		return new ApiResponse<>(new ApiResponse.Header(true, 201));
 	}
 
+	@GetMapping
+	public ApiResponse<Page<BookListResponse>> readAllBooks(@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<BookListResponse> bookList = bookService.readAllBooks(pageable);
+		return new ApiResponse<>(
+			new ApiResponse.Header(true, 200),
+			new ApiResponse.Body<>(bookList)
+		);
+	}
+
 	@GetMapping("/{bookId}")
 	public ApiResponse<UserReadBookResponse> readBook(@PathVariable("bookId") Long bookId) {
 		ReadBookResponse detailBook = bookService.readBookById(bookId);
 		List<CategoryParentWithChildrenResponse> categoryList = bookCategoryService.readBookWithCategoryList(bookId);
+
 		List<ReadTagByBookResponse> tagList =
 			bookTagService.readTagByBookId(
 				ReadBookIdRequest.builder().bookId(bookId).build());
@@ -103,11 +118,3 @@ public class BookController {
 		return ApiResponse.success(book);
 	}
 }
-
-/**
- *
- * 비트코인 창시자인 사토시 나카모토가 비트코인 출시 후 기반을 다지던 2년여 동안 주고받은 이메일과 포럼에 남긴 게시물을 담았다. 비트코인과 제작자의 사고방식이 궁금하다면 매우 흥미로울 것이다. 컴퓨터 소프트웨어 배경지식이 있는 사람이 쉽게 읽을 수 있도록 구성되었고, 글 일부는 경제학적 개념을 담고 있어 정보 기술에 대한 배경지식이 없는 경제학자나 투자자도 관심 있게 볼 수 있다.
- *
- *
- * ![image alt attribute](/api/images/book/download?fileName=5f5fc4f4342911ef9c491598c408ca79.jpg)
- */

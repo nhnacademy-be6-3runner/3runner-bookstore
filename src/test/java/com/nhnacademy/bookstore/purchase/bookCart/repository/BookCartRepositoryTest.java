@@ -59,7 +59,7 @@ public class BookCartRepositoryTest {
 			1000,
 			10,
 			800,
-			0,
+			1,
 			true,
 			"Author Name",
 			"1234567890123",
