@@ -73,9 +73,8 @@ public class MemberController {
 			request.birthday());
 		Member member = new Member(encodedRequest);
 		Auth auth = authService.getAuth("USER");
-		memberService.save(member);
-		PointRecord pointRecord = new PointRecord(null, 5000L, 5000L, ZonedDateTime.now(), "회원가입 5000포인트 적립.", member);
-		pointRecordService.save(pointRecord);
+		Member savedMember =memberService.save(encodedRequest);
+		pointRecordService.save(5000L,"회원가입 5000포인트 적립",savedMember.getId(),null);
 		memberAuthService.saveAuth(member, auth);
 
 		return new ApiResponse<Void>(new ApiResponse.Header(true, 201), new ApiResponse.Body<Void>(null));
@@ -196,8 +195,7 @@ public class MemberController {
 		//일단 무조건 auth는 general일꺼고..
 		Auth auth = authService.getAuth("USER");
 		Member member = memberService.saveOrGetPaycoMember(userProfile);
-		PointRecord pointRecord = new PointRecord(null, 5000L, 5000L, ZonedDateTime.now(), "회원가입 5000포인트 적립.", member);
-		pointRecordService.save(pointRecord);
+		pointRecordService.save(5000L,"회원가입 5000포인트 적립", member.getId(), null);
 		memberAuthService.saveAuth(member, auth);
 		MemberAuthResponse memberAuthResponse = MemberAuthResponse.builder().email(member.getEmail()).memberId(member.getId()).auth(memberAuthService.readAllAuths(
 			member.getId()).stream().map(a -> a + "").collect(Collectors.toList())).password(member.getPassword()).build();

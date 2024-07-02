@@ -18,11 +18,9 @@ import org.springframework.stereotype.Service;
 public interface MemberService {
     Member save(CreateMemberRequest createMemberRequest);
 
-    Member save(CreateMemberRequest createMemberRequest);
 
 	Member readById(Long id);
 
-	Member readByEmailAndPassword(String email, String password);
 
 	Member updateMember(Long memberId, UpdateMemberRequest updateMemberRequest);
 

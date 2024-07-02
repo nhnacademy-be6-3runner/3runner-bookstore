@@ -51,7 +51,7 @@ public class MemberServiceImpl implements MemberService {
         }else{
             Member member = new Member();
             member.setEmail(userProfile.getEmail());
-            member.setPassword(passwordEncoder.encode(userProfile.getIdNo()));
+            member.setPassword(passwordEncoder.encode(userProfile.getId()));
             member.setGrade(Grade.General);
             member.setStatus(Status.Active);
             member.setName(userProfile.getName()!=null?userProfile.getName():"Payco");
@@ -99,35 +99,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 	}
 
-	/**
-	 * Find by email and password member.
-	 *
-	 * @param email    the email -string 이메일 값을 받는다.
-	 * @return the member -해당하는 member를 반환한다.
-	 * @author 유지아 Find by email and password member. -이메일과 패스워드 값으로 조회한다.
-	 */
-	// public Member readByEmailAndPassword(String email, String password) {
-	// 	Optional<Member> member = memberRepository.findByEmail(email);
-	// 	if (member.isPresent()) {
-	// 		if(member.get().getAuthProvider()!= AuthProvider.General){
-	// 			throw new LoginOauthEmailException(member.get().getAuthProvider());
-	// 		}
-	// 		if (passwordEncoder.matches(password, member.get().getPassword())) {
-	// 			return member.get();
-	// 		}
-	// 	}
-	// 	throw new LoginFailException();
-	// }
 
-	public Member readByEmail(String email) {
-		Optional<Member> member = memberRepository.findByEmail(email);
-		if (member.isPresent()) {
-			if (passwordEncoder.matches(password, member.get().getPassword())) {
-				return member.get();
-			}
-		}
-		throw new LoginFailException();
-	}
 
 	public Member readByEmail(String email) {
 		Optional<Member> member = memberRepository.findByEmail(email);

@@ -6,6 +6,7 @@ import com.nhnacademy.bookstore.book.book.repository.BookCustomRepository;
 import com.nhnacademy.bookstore.entity.book.QBook;
 import com.nhnacademy.bookstore.entity.bookImage.QBookImage;
 import com.nhnacademy.bookstore.entity.bookImage.enums.BookImageType;
+
 import com.nhnacademy.bookstore.entity.totalImage.QTotalImage;
 import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsBook;
 import com.querydsl.core.types.Projections;

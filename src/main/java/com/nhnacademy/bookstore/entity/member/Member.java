@@ -99,7 +99,7 @@ public class Member {
 		this.setBirthday(request.birthday());
 		this.setGrade(Grade.General);
 		this.setCreatedAt(ZonedDateTime.now());
-		this.setAuthProvider(AuthProvider.General);
+		this.setAuthProvider(AuthProvider.GENERAL);
 	}
 
 }
