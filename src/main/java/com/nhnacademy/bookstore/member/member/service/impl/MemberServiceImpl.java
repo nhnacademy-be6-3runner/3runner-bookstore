@@ -59,6 +59,7 @@ public class MemberServiceImpl implements MemberService {
             member.setPoint(5000L);
             member.setCreatedAt(ZonedDateTime.now());
 			member.setLastLoginDate(ZonedDateTime.now());
+			member.setAuthProvider(AuthProvider.PAYCO);
             memberRepository.save(member);
             return member;
         }
