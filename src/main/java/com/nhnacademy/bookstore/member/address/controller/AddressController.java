@@ -50,10 +50,9 @@ public class AddressController {
      *
      */
     @PostMapping("/bookstore/members/addresses")
-    public ApiResponse<List<AddressResponse>> createAddress(@RequestBody @Valid CreateAddressRequest request) {
-        HttpServletRequest servletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String memberId = servletRequest.getHeader("Member-Id");
-        Member member = memberService.readById(Long.valueOf(memberId));
+    public ApiResponse<List<AddressResponse>> createAddress(@RequestBody @Valid CreateAddressRequest request,@RequestHeader("member-id")Long memberId) {
+
+        Member member = memberService.readById(memberId);
         Address address = new Address(request, member);
         addressServiceImpl.save(address,member);
         return new ApiResponse<List<AddressResponse>>(new ApiResponse.Header(true, 201),
@@ -71,10 +70,9 @@ public class AddressController {
      */
 //주소를 추가한다.
     @GetMapping("/bookstore/members/addresses")
-    public ApiResponse<List<AddressResponse>> readAllAddresses() {
-        HttpServletRequest servletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String memberId = servletRequest.getHeader("Member-Id");
-        Member member = memberService.readById(Long.valueOf(memberId));
+    public ApiResponse<List<AddressResponse>> readAllAddresses(@RequestHeader("member-id") Long memberId) {
+
+        Member member = memberService.readById(memberId);
 
         return new ApiResponse<List<AddressResponse>>(new ApiResponse.Header(true, 200),
                 new ApiResponse.Body<>(addressServiceImpl.readAll(member).stream().map(a -> AddressResponse.builder()

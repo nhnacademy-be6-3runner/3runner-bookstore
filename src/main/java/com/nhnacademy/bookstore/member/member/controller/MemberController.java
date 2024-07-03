@@ -84,10 +84,10 @@ public class MemberController {
 	/**
 	 * Find by member id response entity. -멤버아이디를 기반으로 멤버정보를 가져온다.
 	 *
+	 * @param memberId the member id -long형인 memberId값을 request header로 받는다.
 	 * @return the response entity -멤버 정보에 대한 응답을 담아서 apiresponse로 응답한다.
 	 * @author 유지아
 	 */
-	@Transactional
 	@GetMapping("/bookstore/members")
 	public ApiResponse<GetMemberResponse> readById(@RequestHeader("member-id") Long memberId) {
 
