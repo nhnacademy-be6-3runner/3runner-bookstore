@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nhnacademy.bookstore.entity.auth.Auth;
@@ -21,10 +23,15 @@ import com.nhnacademy.bookstore.member.auth.dto.AuthResponse;
 import com.nhnacademy.bookstore.member.auth.service.impl.AuthServiceImpl;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.LoginRequest;
+import com.nhnacademy.bookstore.member.member.dto.request.PasswordCorrectRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UpdateMemberRequest;
+import com.nhnacademy.bookstore.member.member.dto.request.UpdatePasswordRequest;
+import com.nhnacademy.bookstore.member.member.dto.request.UserProfile;
 import com.nhnacademy.bookstore.member.member.dto.response.GetMemberResponse;
 import com.nhnacademy.bookstore.member.member.dto.response.UpdateMemberResponse;
+import com.nhnacademy.bookstore.member.member.exception.GeneralNotPayco;
 import com.nhnacademy.bookstore.member.member.service.impl.MemberServiceImpl;
+import com.nhnacademy.bookstore.member.memberAuth.dto.response.MemberAuthResponse;
 import com.nhnacademy.bookstore.member.memberAuth.service.impl.MemberAuthServiceImpl;
 import com.nhnacademy.bookstore.member.pointRecord.service.impl.PointRecordServiceImpl;
 import com.nhnacademy.bookstore.util.ApiResponse;
@@ -74,7 +81,6 @@ public class MemberController {
 	 */
 	@GetMapping("/bookstore/members")
 	public ApiResponse<GetMemberResponse> readById(@RequestHeader("member-id") Long memberId) {
-
 		Member member = memberService.readById(memberId);
 		GetMemberResponse getMemberResponse = GetMemberResponse.builder()
 			.age(member.getAge())
@@ -149,9 +155,8 @@ public class MemberController {
 	 */
 	@Transactional
 	@PutMapping("/bookstore/members")
-	public ApiResponse<UpdateMemberResponse> updateMember(@RequestHeader(name = "Member-Id") Long memberId,
+	public ApiResponse<UpdateMemberResponse> updateMember(@RequestHeader(name = "member-id") Long memberId,
 		@Valid @RequestBody UpdateMemberRequest updateMemberRequest) {
-
 		Member updatedMember = memberService.updateMember(memberId, updateMemberRequest);
 		UpdateMemberResponse updateMemberResponse = UpdateMemberResponse.builder()
 			.id(String.valueOf(updatedMember.getId()))
@@ -168,11 +173,58 @@ public class MemberController {
 	 * @author 오연수
 	 */
 	@DeleteMapping("/bookstore/members")
-	public ApiResponse<Void> deleteMember(@RequestHeader(name = "Member-Id") Long memberId) {
+	public ApiResponse<Void> deleteMember(@RequestHeader(name = "member-id") Long memberId) {
 		memberService.deleteMember(memberId);
 
 		return new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.NO_CONTENT.value()));
 
+    }
+	@PostMapping("/bookstore/members/oauth")
+	public MemberAuthResponse oauthMember(@RequestBody @Valid UserProfile userProfile){
+		//일단 무조건 auth는 general일꺼고..
+		Auth auth = authService.getAuth("USER");
+		Member member;
+		try {
+			member = memberService.saveOrGetPaycoMember(userProfile);
+		}catch(GeneralNotPayco ex){
+			return null;
+		}
+		if(memberAuthService.readAllAuths(member.getId()).size() == 0){
+			memberAuthService.saveAuth(member, auth);
+		}
+		MemberAuthResponse memberAuthResponse = MemberAuthResponse.builder().email(member.getEmail()).memberId(member.getId()).auth(memberAuthService.readAllAuths(
+			member.getId()).stream().map(Auth::getName).toList()).password(member.getPassword()).build();
+		return memberAuthResponse;
+	}
+	@GetMapping("/bookstore/members/email")
+	public ApiResponse<Boolean> emailExists(@RequestParam String email){
+		try {
+			Member member = memberService.readByEmail(email);
+			return new ApiResponse<>(new ApiResponse.Header(true, 200), new ApiResponse.Body<>(Boolean.TRUE));
+		}catch (Exception e){
+			return new ApiResponse<>(new ApiResponse.Header(true, 500), new ApiResponse.Body<>(Boolean.FALSE));
+		}
+	}
+	@PutMapping("/bookstore/members/password")
+	public ApiResponse<Void> updatePassword(@RequestHeader(name = "member-id") Long memberId, @RequestBody UpdatePasswordRequest updatePasswordRequest){
+		try{
+			memberService.updatePassword(memberId, updatePasswordRequest);
+			return  new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.ACCEPTED.value()));
+		}catch (Exception e){
+			return new ApiResponse<>(new ApiResponse.Header(false,HttpStatus.BAD_REQUEST.value()));
+		}
+	}
+	@PostMapping("/bookstore/members/password")
+	public ApiResponse<Void> isPasswordMatch(@RequestHeader(name = "member-id") Long memberId,@RequestBody PasswordCorrectRequest request){
+		try{
+			if(memberService.isCorrectPassword(memberId,request.password())){
+				return new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.ACCEPTED.value()));
+			}else{
+				return new ApiResponse<>(new ApiResponse.Header(false, HttpStatus.NOT_FOUND.value()));
+			}
+		}catch(Exception e) {
+			return new ApiResponse<>(new ApiResponse.Header(false, HttpStatus.NOT_FOUND.value()));
+		}
 	}
 }
 

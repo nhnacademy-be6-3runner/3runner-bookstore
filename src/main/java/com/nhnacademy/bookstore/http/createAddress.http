@@ -1,0 +1,14 @@
+### POST 요청을 /bookstore/members/addresses 경로로 보내기
+POST http://localhost:8081/bookstore/members/addresses
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkFDQ0VTUyIsInV1aWQiOiI4ZmM3ZmNiZi04ODk1LTRkYTQtYTU0NS03ZGNhYjhiZjBlM2YiLCJpYXQiOjE3MjAwNzY4NjIsImV4cCI6MTcyMDA4MDQ2Mn0.anshjVcajU4rTMcCwCgEhnXUda_xyVzqy2oAmrgTYVk
+Member-Id: 1
+
+{
+  "name": "John Doe",
+  "country": "USA",
+  "city": "New York",
+  "state": "NY",
+  "road": "5th Avenue",
+  "postalCode": "10001"
+}

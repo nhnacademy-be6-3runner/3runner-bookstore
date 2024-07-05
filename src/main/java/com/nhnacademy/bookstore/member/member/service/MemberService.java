@@ -10,6 +10,7 @@ import com.nhnacademy.bookstore.entity.member.enums.Grade;
 import com.nhnacademy.bookstore.entity.member.enums.Status;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UpdateMemberRequest;
+import com.nhnacademy.bookstore.member.member.dto.request.UpdatePasswordRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UserProfile;
 import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
 
@@ -38,4 +39,7 @@ public interface MemberService {
     List<ReadPurchaseResponse> getPurchasesByMemberId(Long memberId);
 
     Member saveOrGetPaycoMember(UserProfile userProfile);
+
+	Member updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest);
+	Boolean isCorrectPassword(Long memberId, String password);
 }

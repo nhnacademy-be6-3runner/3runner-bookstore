@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,7 @@ import com.nhnacademy.bookstore.member.address.service.impl.AddressServiceImpl;
 import com.nhnacademy.bookstore.member.member.service.impl.MemberServiceImpl;
 import com.nhnacademy.bookstore.util.ApiResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -46,17 +48,11 @@ public class AddressController {
      *
      */
     @PostMapping("/bookstore/members/addresses")
-    public ApiResponse<List<AddressResponse>> createAddress(@RequestBody @Valid CreateAddressRequest request,@RequestHeader("member-id")Long memberId) {
-
+    public ApiResponse<Void> createAddress(@RequestBody @Valid CreateAddressRequest request,@RequestHeader(value = "Member-id")Long memberId) {
         Member member = memberService.readById(memberId);
         Address address = new Address(request, member);
         addressServiceImpl.save(address,member);
-        return new ApiResponse<List<AddressResponse>>(new ApiResponse.Header(true, 201),
-                new ApiResponse.Body<>(addressServiceImpl.readAll(member).stream().map(a -> AddressResponse.builder()
-                        .name(a.getName()).country(a.getCountry()).city(a.getCity()).state(a.getState()).road(a.getRoad()).postalCode(a.getPostalCode())
-                        .build()).collect(Collectors.toList())));
-
-
+        return new ApiResponse<Void>(new ApiResponse.Header(true, HttpStatus.CREATED.value()));
     }
 
 
@@ -71,10 +67,10 @@ public class AddressController {
     @GetMapping("/bookstore/members/addresses")
     public ApiResponse<List<AddressResponse>> readAllAddresses(@RequestHeader("member-id") Long memberId) {
 
-        Member member = memberService.readById(memberId);
-
+        Member member = memberService.readById(Long.valueOf(memberId));
+        List<Address> addresses = addressServiceImpl.readAll(member);
         return new ApiResponse<List<AddressResponse>>(new ApiResponse.Header(true, 200),
-                new ApiResponse.Body<>(addressServiceImpl.readAll(member).stream().map(a -> AddressResponse.builder()
+                new ApiResponse.Body<>(addresses.stream().map(a -> AddressResponse.builder().id(a.getId())
                         .name(a.getName()).country(a.getCountry()).city(a.getCity()).state(a.getState()).road(a.getRoad()).postalCode(a.getPostalCode()).build()).collect(Collectors.toList())));
 
 
@@ -89,9 +85,8 @@ public class AddressController {
      * @return the api response - UpdateAddressResponse DTO
      * @author 오연수
      */
-    @PutMapping("/bookstore/members/addresses")
-    public ApiResponse<UpdateAddressResponse> updateAddress(@RequestHeader(name = "Address-Id") Long addressId,
-                                                            @RequestBody UpdateAddressRequest updateAddressRequest) {
+    @PutMapping("/bookstore/members/addresses/{addressId}")
+    public ApiResponse<UpdateAddressResponse> updateAddress(@RequestBody @Valid UpdateAddressRequest updateAddressRequest, @PathVariable(name = "addressId") Long addressId) {
         Address address = addressServiceImpl.updateAddress(addressId, updateAddressRequest);
         UpdateAddressResponse updateAddressResponse = UpdateAddressResponse.builder()
                 .id(addressId)
@@ -109,8 +104,8 @@ public class AddressController {
      * @return the api response - Void
      * @author 오연수
      */
-    @DeleteMapping("/bookstore/members/addresses")
-    public ApiResponse<Void> deleteAddress(@RequestHeader(name = "Address-Id") Long addressId) {
+    @DeleteMapping("/bookstore/members/addresses/{addressId}")
+    public ApiResponse<Void> deleteAddress(@PathVariable(name = "addressId") Long addressId) {
 
         addressServiceImpl.deleteAddress(addressId);
         return new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.NO_CONTENT.value()));

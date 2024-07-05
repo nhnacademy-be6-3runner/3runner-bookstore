@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.nhnacademy.bookstore.entity.memberAuth.MemberAuth;
+import com.nhnacademy.bookstore.member.auth.repository.AuthRepository;
+import com.nhnacademy.bookstore.member.member.dto.request.UpdatePasswordRequest;
+import com.nhnacademy.bookstore.member.member.exception.GeneralNotPayco;
+import com.nhnacademy.bookstore.member.memberAuth.repository.MemberAuthRepository;
 import com.nhnacademy.bookstore.purchase.coupon.service.CouponMemberService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,27 +46,35 @@ public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
 	private final PurchaseRepository purchaseRepository;
 	private final PasswordEncoder passwordEncoder;
-
+	private final AuthRepository authRepository;
+	private final MemberAuthRepository memberAuthRepository;
 	/**
 	 * 웰컴 쿠폰 구현 서비스.
 	 */
 	private final CouponMemberService couponMemberService;
-  
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public Member saveOrGetPaycoMember(UserProfile userProfile) {
-		Optional<Member> optionalMember = memberRepository.findByEmail(userProfile.getIdNo());
+		Optional<Member> optionalMember = memberRepository.findByEmail(userProfile.getEmail());
 		if (optionalMember.isPresent()) {
-			return optionalMember.get();//존재하는경우, 그냥 멤버를 가져온다.
+			if(optionalMember.get().getAuthProvider() == AuthProvider.PAYCO) {
+				return optionalMember.get();//존재하는경우, 그냥 멤버를 가져온다.
+			}else{
+				throw new GeneralNotPayco();
+			}
 		} else {
+
 			Member member = new Member();
 			member.setEmail(userProfile.getEmail());
-			member.setPassword(passwordEncoder.encode(userProfile.getIdNo()));
+			member.setPassword(passwordEncoder.encode(userProfile.getId()));
 			member.setGrade(Grade.General);
 			member.setStatus(Status.Active);
-			member.setName(userProfile.getName());
-			member.setPhone(userProfile.getMobile());
+			member.setName(userProfile.getName()!=null? userProfile.getName() : "Payco");
+			member.setPhone(userProfile.getMobile()!=null? userProfile.getMobile() : "EmptyNumber");
 			member.setPoint(5000L);
 			member.setCreatedAt(ZonedDateTime.now());
+			member.setLastLoginDate(ZonedDateTime.now());
+			member.setAuthProvider(AuthProvider.PAYCO);
 			memberRepository.save(member);
 			//없는경우 새로 가져온다.
 			couponMemberService.issueWelcomeCoupon(member);
@@ -82,12 +95,8 @@ public class MemberServiceImpl implements MemberService {
 			passwordEncoder.encode(request.password()), request.name(), request.phone(), request.age(),
 			request.birthday());
 		Member member = new Member(encodedRequest);
-		Optional<Member> findmember = memberRepository.findByEmail(member.getEmail());
-		if (findmember.isPresent()) {
-			throw new AlreadyExistsEmailException();
-		}
 
-		couponMemberService.issueWelcomeCoupon(member);
+		//couponMemberService.issueWelcomeCoupon(member);
 		return memberRepository.save(member);
 	}
 
@@ -149,10 +158,8 @@ public class MemberServiceImpl implements MemberService {
 	public Member updateMember(Long memberId, UpdateMemberRequest updateMemberRequest) {
 		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
 
-		member.setPassword(updateMemberRequest.password());
 		member.setName(updateMemberRequest.name());
 		member.setAge(updateMemberRequest.age());
-		member.setEmail(updateMemberRequest.email());
 		member.setPhone(updateMemberRequest.phone());
 		member.setBirthday(updateMemberRequest.birthday());
 		member.setModifiedAt(ZonedDateTime.now());
@@ -171,6 +178,13 @@ public class MemberServiceImpl implements MemberService {
 
 		member.setStatus(Status.Withdrawn);
 		member.setDeletedAt(ZonedDateTime.now());
+		member.setPhone("EmptyNumber");
+		member.setName("EmptyName");
+		member.setPassword("EmptyPassword");
+		member.setBirthday(null);
+		member.setAge(0);
+
+
 
 		memberRepository.save(member);
 	}
@@ -189,7 +203,6 @@ public class MemberServiceImpl implements MemberService {
 		member.setModifiedAt(ZonedDateTime.now());
 		return memberRepository.save(member);
 	}
-
 	/**
 	 * Update member's grade(general, royal, gold, platinum).
 	 *
@@ -235,5 +248,17 @@ public class MemberServiceImpl implements MemberService {
 				.memberType(purchase.getMemberType())
 				.build()
 			).collect(Collectors.toList());
+	}
+
+	public Member updatePassword(Long memberId, UpdatePasswordRequest updatePasswordRequest) {
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
+		member.setPassword(passwordEncoder.encode(updatePasswordRequest.password()));
+		member.setModifiedAt(ZonedDateTime.now());
+		return memberRepository.save(member);
+	}
+	public Boolean isCorrectPassword(Long memberId, String password){
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
+		return passwordEncoder.matches(password, member.getPassword());
+
 	}
 }

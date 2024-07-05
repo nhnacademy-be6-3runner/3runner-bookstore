@@ -11,10 +11,8 @@ import java.time.ZonedDateTime;
  */
 @Builder
 public record UpdateMemberRequest (
-    String password,
     String name,
     int age,
     String phone,
-    String email,
     ZonedDateTime birthday
 ){}
