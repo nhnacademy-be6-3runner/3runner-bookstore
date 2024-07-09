@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,9 +92,9 @@ public class Member {
 		this.setEmail(request.email());
 		this.setBirthday(request.birthday());
 		this.setGrade(Grade.General);
-		this.setCreatedAt(ZonedDateTime.now());
+		this.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
 		this.setAuthProvider(AuthProvider.GENERAL);
-		this.setLastLoginDate(ZonedDateTime.now());
+		this.setLastLoginDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
 	}
 
     /**

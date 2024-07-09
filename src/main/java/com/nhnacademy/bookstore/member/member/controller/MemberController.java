@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.member.member.controller;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -192,6 +193,7 @@ public class MemberController {
 		if(memberAuthService.readAllAuths(member.getId()).size() == 0){
 			memberAuthService.saveAuth(member, auth);
 		}
+
 		MemberAuthResponse memberAuthResponse = MemberAuthResponse.builder().email(member.getEmail()).memberId(member.getId()).auth(memberAuthService.readAllAuths(
 			member.getId()).stream().map(Auth::getName).toList()).password(member.getPassword()).build();
 		return memberAuthResponse;
@@ -223,6 +225,16 @@ public class MemberController {
 				return new ApiResponse<>(new ApiResponse.Header(false, HttpStatus.NOT_FOUND.value()));
 			}
 		}catch(Exception e) {
+			return new ApiResponse<>(new ApiResponse.Header(false, HttpStatus.NOT_FOUND.value()));
+		}
+	}
+	@PutMapping("/bookstore/members/lastLogin")
+	ApiResponse<Void> lastLoginUpdate(@RequestBody Long memberId){
+		try {
+			memberService.updateStatus(memberId, Status.Active);
+			memberService.updateLastLogin(memberId, ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
+			return new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.ACCEPTED.value()));
+		}catch (Exception e){
 			return new ApiResponse<>(new ApiResponse.Header(false, HttpStatus.NOT_FOUND.value()));
 		}
 	}

@@ -51,7 +51,7 @@ spring:
     password: nhnacademy123!
 
   profiles:
-    active: prod
+    active: dev
   lifecycle:
     timeout-per-shutdown-phase: 30s
   application:
