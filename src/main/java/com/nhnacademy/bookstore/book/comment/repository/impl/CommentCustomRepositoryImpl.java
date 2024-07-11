@@ -48,6 +48,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                 .from(qComment)
                 .join(qComment.member, qMember)
                 .where(qComment.review.id.eq(reviewId).and(qComment.status.eq(CommentStatus.ON)))
+                .orderBy(qComment.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
