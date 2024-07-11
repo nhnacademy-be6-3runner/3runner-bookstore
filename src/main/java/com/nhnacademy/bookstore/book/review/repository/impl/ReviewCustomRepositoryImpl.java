@@ -273,4 +273,21 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .fetchOne()).orElse(0L);
         return new PageImpl<>(reviewListResponses, pageable, total);
     }
+
+    /**
+     * 별점 평균을 구하는 메서드입니다.
+     *
+     * @param bookId 도서 아이디
+     * @return 별점 평균
+     */
+    @Override
+    public Double getAverageRating(long bookId) {
+        return jpaQueryFactory
+                .select(qReview.rating.avg())
+                .from(qReview)
+                .join(qReview.purchaseBook, qPurchaseBook)
+                .where(qPurchaseBook.book.id.eq(bookId)
+                        .and(qReview.reviewStatus.eq(ReviewStatus.ON)))
+                .fetchOne();
+    }
 }

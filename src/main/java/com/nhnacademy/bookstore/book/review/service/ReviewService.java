@@ -29,4 +29,8 @@ public interface ReviewService {
     Page<ReviewListResponse> readAllReviewsByBookId(long bookId, Pageable pageable);
 
     Page<ReviewListResponse> readAllReviewsByMemberId(long memberId, Pageable pageable);
+
+    Long countByBookId(long bookId);
+
+    Double getAverageRating(long bookId);
 }

@@ -20,4 +20,6 @@ public interface ReviewCustomRepository {
     Page<ReviewListResponse> getReviewsByBookId(long bookId, Pageable pageable);
 
     Page<ReviewListResponse> getReviewsByUserId(long memberId, Pageable pageable);
+
+    Double getAverageRating(long bookId);
 }
