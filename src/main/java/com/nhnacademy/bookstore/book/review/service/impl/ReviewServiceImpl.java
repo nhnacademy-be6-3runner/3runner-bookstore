@@ -236,18 +236,6 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     /**
-     * 리뷰 갯수를 구하는 메서드입니다.
-     *
-     * @param bookId 도서 아이디
-     * @return 도서 갯수
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public Long countByBookId(long bookId) {
-        return reviewRepository.countByBookId(bookId);
-    }
-
-    /**
      * 별점 평균을 구하는 메서드입니다.
      *
      * @param bookId 도서 아이디
@@ -256,6 +244,11 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(readOnly = true)
     public Double getAverageRating(long bookId) {
-        return reviewRepository.getAverageRating(bookId);
+        return reviewRepository.getAverageRatingByBookId(bookId);
+    }
+
+    @Override
+    public Long reviewCount(long bookId) {
+        return reviewRepository.countReviewsByBookId(bookId);
     }
 }

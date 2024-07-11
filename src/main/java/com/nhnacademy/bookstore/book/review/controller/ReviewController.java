@@ -140,26 +140,26 @@ public class ReviewController {
     }
 
     /**
-     * 리뷰 카운트 메서드입니다.
-     *
-     * @param bookId 도서 아이디
-     * @return 리뷰 갯수
-     */
-    @GetMapping("/reviews/{bookId}/count")
-    public ApiResponse<Long> countReviewsByBookId(@PathVariable long bookId) {
-        long cnt = reviewService.countByBookId(bookId);
-        return ApiResponse.success(cnt);
-    }
-
-    /**
      * 리뷰 평점의 평균을 구하는 메서드입니다.
      *
      * @param bookId 도서 아이디
      * @return 평점
      */
-    @GetMapping("/reviews/{bookId}/avg")
+    @GetMapping("/books/{bookId}/reviews/avg")
     public ApiResponse<Double> getAverageReviewsByBookId(@PathVariable long bookId) {
         double avg = reviewService.getAverageRating(bookId);
         return ApiResponse.success(avg);
+    }
+
+    /**
+     * 리뷰의 갯수를 구하는 메서드입니다.
+     *
+     * @param bookId 도서 아이디
+     * @return 리뷰 갯수
+     */
+    @GetMapping("/books/{bookId}/reviews/count")
+    public ApiResponse<Long> getCountReviewsByBookId(@PathVariable long bookId) {
+        long cnt = reviewService.reviewCount(bookId);
+        return ApiResponse.success(cnt);
     }
 }

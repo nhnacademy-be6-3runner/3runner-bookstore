@@ -30,7 +30,7 @@ public interface ReviewService {
 
     Page<ReviewListResponse> readAllReviewsByMemberId(long memberId, Pageable pageable);
 
-    Long countByBookId(long bookId);
-
     Double getAverageRating(long bookId);
+
+    Long reviewCount(long bookId);
 }
