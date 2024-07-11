@@ -65,12 +65,12 @@ jobs:
             if sudo docker service ls | grep -q 'bookstore1'; then
               sudo docker service rm bookstore1
             fi
-            sudo docker service create --name bookstore1 --publish 8081:8080 --network back_network_swarm bookstore-image1
+            sudo docker service create --name bookstore1 --publish 8081:8081 --network back_network_swarm bookstore-image1
 
             sleep 90
             
             if sudo docker service ls | grep -q 'bookstore2'; then
               sudo docker service rm bookstore2
             fi
-            sudo docker service create --name bookstore2 --publish 8082:8080 --network back_network_swarm bookstore-image2
+            sudo docker service create --name bookstore2 --publish 8082:8082 --network back_network_swarm bookstore-image2
 
