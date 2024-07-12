@@ -133,7 +133,8 @@ public class ReviewController {
      * @return ApiResponse<reviewListResponse>
      */
     @GetMapping("/reviews/member")
-    public ApiResponse<Page<ReviewListResponse>> readReviewsByMemberId(@RequestHeader("Member-Id") Long memberId, @RequestParam int page, @RequestParam int size) {
+    public ApiResponse<Page<ReviewListResponse>> readReviewsByMemberId(@RequestHeader(value = "Member-Id", required = false) Long memberId, @RequestParam int page, @RequestParam int size) {
+        log.info("memberId = {}", memberId);
         Pageable pageable = PageRequest.of(page, size);
         Page<ReviewListResponse> reviewList = reviewService.readAllReviewsByMemberId(memberId, pageable);
         return ApiResponse.success(reviewList);
