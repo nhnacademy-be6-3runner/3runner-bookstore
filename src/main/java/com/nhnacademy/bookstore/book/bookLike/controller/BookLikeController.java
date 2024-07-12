@@ -1,9 +1,13 @@
 package com.nhnacademy.bookstore.book.bookLike.controller;
 
+import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.bookLike.service.BookLikeService;
 import com.nhnacademy.bookstore.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -17,6 +21,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/bookstore")
 public class BookLikeController {
     private final BookLikeService bookLikeService;
+
+    @GetMapping("/mypage/books/likes")
+    public ApiResponse<Page<BookListResponse>> readAllBookLikesByMemberId(
+            @RequestHeader(value = "Member-Id") Long memberId,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        log.info("book like controller : memberId={}, page={}, size={}", memberId, page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BookListResponse> bookResponse = bookLikeService.findBookLikeByMemberId(memberId, pageable);
+        return ApiResponse.success(bookResponse);
+    }
 
     @GetMapping("/{bookId}/likes/status")
     public ApiResponse<Boolean> isBookLikedByMember(@PathVariable("bookId") Long bookId, @RequestHeader("Member-Id") Long memberId) {
