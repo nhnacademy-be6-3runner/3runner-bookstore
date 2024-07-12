@@ -200,7 +200,7 @@ class ApiBookServiceImplMockTest {
 		when(bookCategoryRepository.save(any(BookCategory.class))).thenReturn(bookCategory);
 		when(bookRepository.save(any())).thenReturn(book);
 
-		apiBookServiceImpl.save("1234567890123");
+		apiBookServiceImpl.save("12345678901231");
 
 	}
 

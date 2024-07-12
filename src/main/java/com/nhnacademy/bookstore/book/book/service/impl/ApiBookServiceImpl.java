@@ -17,7 +17,6 @@ import java.util.Objects;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +26,7 @@ import com.nhnacademy.bookstore.book.book.dto.response.ApiCreateBookResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.DescriptionResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.ImageMultipartFile;
 import com.nhnacademy.bookstore.book.book.repository.ApiBookRepository;
+import com.nhnacademy.bookstore.book.book.repository.BookRedisRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.book.service.ApiBookService;
 import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
@@ -52,16 +52,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ApiBookServiceImpl implements ApiBookService {
 
-	@Autowired
-	private ApiBookRepository apiBookRepository;
-	@Autowired
-	private BookRepository bookRepository;
-	@Autowired
-	private CategoryRepository categoryRepository;
-	@Autowired
-	private BookCategoryRepository bookCategoryRepository;
-	@Autowired
-	private ImageService imageService;
+	private final ApiBookRepository apiBookRepository;
+	private final BookRepository bookRepository;
+	private final CategoryRepository categoryRepository;
+	private final BookCategoryRepository bookCategoryRepository;
+	private final ImageService imageService;
+	private final BookRedisRepository redisRepository;
 
 	private static final String DETAIL_VIEW_FRONT = "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=";
 
@@ -120,6 +116,7 @@ public class ApiBookServiceImpl implements ApiBookService {
 			book.addBookImage(bookImage);
 		}
 		bookRepository.save(book);
+		redisRepository.createBook(book);
 	}
 
 	/**

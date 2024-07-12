@@ -36,7 +36,7 @@ spring:
     password: nhnacademy123!
 
   profiles:
-    active: prod
+    active: dev
   lifecycle:
     timeout-per-shutdown-phase: 30s
   application:
@@ -73,8 +73,7 @@ springdoc:
     path: /bookstore/docs/swagger
 
 elasticsearch:
-  url: 115.94.72.198:9200
-  key: WVZvVlo1QUJxeC1mdVBfZkZPOHM6SjNHd1hRX2RUWmFCbnY4dmtIcTRDUQ==
+  key: b0FEM241QUJ6WmRyRUdYWG9LbUs6RVZ4WkNYM09TNTZvUU9qb0xxM09JZw==
 
 
 db:

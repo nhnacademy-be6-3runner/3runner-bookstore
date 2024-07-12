@@ -6,20 +6,7 @@ import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.support.HttpHeaders;
 
 @Configuration
-// @EnableElasticsearchRepositories
 public class ElasticSearchConfig {
-	//
-	// @Value("${elasticsearch.url}")
-	// private String elasticHost;
-	//
-	// @Value("${elasticsearch.key}")
-	// private String apiKey;
-
-	// @Value("${spring.elasticsearch.username}")
-	// private String username;
-	//
-	// @Value("${spring.elasticsearch.password}")
-	// private String password;
 
 	@Value("${spring.elasticsearch.uris}")
 	private String[] esHost;
@@ -35,9 +22,6 @@ public class ElasticSearchConfig {
 		return ClientConfiguration.builder()
 			.connectedTo(esHost)
 			.usingSsl()
-			// .withConnectTimeout(Duration.ofSeconds(5))
-			// .withSocketTimeout(Duration.ofSeconds(3))
-			// .withBasicAuth(username, password)
 			.withDefaultHeaders(headers)
 			.build();
 	}
