@@ -64,7 +64,7 @@ public class CommentController {
      * @param memberId  사용자 아이디
      * @return ApiResponse<>
      */
-    @GetMapping("/{commentId}/delete")
+    @DeleteMapping("/{commentId}/delete")
     public ApiResponse<Void> deleteComment(@PathVariable long commentId, @RequestHeader("Member-id") Long memberId) {
         commentService.deleteComment(commentId, memberId);
         return new ApiResponse<>(new ApiResponse.Header(true, 200));
