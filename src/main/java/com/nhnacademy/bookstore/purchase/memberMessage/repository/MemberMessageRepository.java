@@ -2,6 +2,8 @@ package com.nhnacademy.bookstore.purchase.memberMessage.repository;
 
 import com.nhnacademy.bookstore.entity.member.Member;
 import com.nhnacademy.bookstore.entity.memberMessage.MemberMessage;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +17,7 @@ import java.util.List;
  */
 public interface MemberMessageRepository extends JpaRepository<MemberMessage, Long> {
 
-    List<MemberMessage> findByMember(Member member);
+    Page<MemberMessage> findByMember(Member member, Pageable pageable);
 
     @Query("SELECT COUNT(m) FROM MemberMessage m WHERE m.viewAt IS NULL and m.member = :member")
     long countByViewAtIsNull(@Param("member") Member member);

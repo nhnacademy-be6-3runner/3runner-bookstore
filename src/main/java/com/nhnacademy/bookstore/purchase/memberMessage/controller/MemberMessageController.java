@@ -5,9 +5,9 @@ import com.nhnacademy.bookstore.purchase.memberMessage.dto.UpdateMemberMessageRe
 import com.nhnacademy.bookstore.purchase.memberMessage.service.MemberMessageService;
 import com.nhnacademy.bookstore.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -15,9 +15,12 @@ public class MemberMessageController {
     private final MemberMessageService memberMessageService;
 
     @GetMapping("/bookstore/messages")
-    public ApiResponse<List<ReadMemberMessageResponse>> readAllById(@RequestHeader("Member-Id") Long memberId) {
+    public ApiResponse<Page<ReadMemberMessageResponse>> readAllById(
+            @RequestHeader("Member-Id") Long memberId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        return ApiResponse.success(memberMessageService.readAll(memberId));
+        return ApiResponse.success(memberMessageService.readAll(memberId, page, size));
     }
 
     @GetMapping("/bookstore/messages/counts")

@@ -9,6 +9,9 @@ import com.nhnacademy.bookstore.purchase.memberMessage.exception.MemberMessageDo
 import com.nhnacademy.bookstore.purchase.memberMessage.repository.MemberMessageRepository;
 import com.nhnacademy.bookstore.purchase.memberMessage.service.MemberMessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,18 +45,19 @@ public class MemberMessageServiceImpl implements MemberMessageService {
 
 
     @Override
-    public List<ReadMemberMessageResponse> readAll(Long memberId) {
+    public Page<ReadMemberMessageResponse> readAll(Long memberId, int page, int size) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
 
-        return memberMessageRepository.findByMember(member)
-                .stream()
+        Pageable pageable = PageRequest.of(page, size);
+
+        return memberMessageRepository.findByMember(member, pageable)
                 .map(m -> ReadMemberMessageResponse.builder()
                         .id(m.getId())
                         .message(m.getMessage())
                         .viewAt(m.getViewAt())
                         .sendAt(m.getSendAt())
                         .build()
-                ).toList();
+                );
     }
 
     @Override
