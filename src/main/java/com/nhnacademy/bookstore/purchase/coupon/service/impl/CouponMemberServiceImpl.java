@@ -94,41 +94,35 @@ public class CouponMemberServiceImpl implements CouponMemberService {
         return couponId;
     }
 
-    /**
-     * 생일쿠폰 발급.
-     * 스케줄러로 발급
-     */
-    @Async
-    @Scheduled(cron = "0 0 13 * * ?")
     @Override
-    public void issueBirthdayCoupon() {
-        List<Member> members = memberRepository.findAll();
+    public void issueBirthdayCoupon(Long memberId) {
+        Member member = memberRepository
+                .findById(memberId)
+                .orElseThrow(MemberNotExistsException::new);
 
-        for (Member member : members) {
-            if (Objects.nonNull(member.getBirthday())) {
-                if (member.getBirthday().getDayOfYear() == ZonedDateTime.now().getDayOfYear()) {
-                    CreateCouponFormRequest couponFormRequest = CreateCouponFormRequest.builder()
-                            .startDate(ZonedDateTime.now())
-                            .endDate(ZonedDateTime.now().plusDays(30))
-                            .name("Birthday Coupon")
-                            .maxPrice(100000)
-                            .minPrice(10000)
-                            .couponTypeId(5L)
-                            .couponUsageId(3L)
-                            .build();
+        if (Objects.nonNull(member.getBirthday())) {
+            if (member.getBirthday().getDayOfYear() == ZonedDateTime.now().getDayOfYear()) {
+                CreateCouponFormRequest couponFormRequest = CreateCouponFormRequest.builder()
+                        .startDate(ZonedDateTime.now())
+                        .endDate(ZonedDateTime.now().plusDays(30))
+                        .name("Birthday Coupon")
+                        .maxPrice(100000)
+                        .minPrice(10000)
+                        .couponTypeId(5L)
+                        .couponUsageId(3L)
+                        .build();
 
-                    couponControllerClient.createCouponForm(couponFormRequest);
+                couponControllerClient.createCouponForm(couponFormRequest);
 
-                    Long couponFormId = couponControllerClient.createCouponForm(couponFormRequest).getBody().getData();
+                Long couponFormId = couponControllerClient.createCouponForm(couponFormRequest).getBody().getData();
 
-                    Coupon coupon = new Coupon(
-                            couponFormId,
-                            CouponStatus.READY,
-                            member
-                    );
+                Coupon coupon = new Coupon(
+                        couponFormId,
+                        CouponStatus.READY,
+                        member
+                );
 
-                    couponRepository.save(coupon);
-                }
+                couponRepository.save(coupon);
             }
         }
     }

@@ -13,7 +13,7 @@ public interface CouponMemberService {
 
     Long useCoupons(Long couponFormId, Long memberId);
 
-    void issueBirthdayCoupon();
+    void issueBirthdayCoupon(Long memberId);
 
     void issueWelcomeCoupon(Member member);
 
