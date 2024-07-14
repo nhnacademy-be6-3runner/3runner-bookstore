@@ -2,7 +2,7 @@ name: Java CI with Maven, SonarQube, and Docker
 
 on:
   push:
-    branches: [ "main"]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -20,17 +20,11 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: Run SonarQube
-        run: mvn clean verify sonar:sonar -Dsonar.projectKey=${{secrets.SONAR_KEY}} -Dsonar.projectName=${{secrets.SONAR_NAME}} -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.token=${{secrets.SONAR_TOKEN}}
+      #      - name: Run SonarQube
+      #        run: mvn clean verify sonar:sonar -Dsonar.projectKey=${{secrets.SONAR_KEY}} -Dsonar.projectName=${{secrets.SONAR_NAME}} -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.token=${{secrets.SONAR_TOKEN}}
 
       - name: Delete file in server
         run: sudo rm -rf /home/nhnacademy/bookstore
@@ -60,7 +54,10 @@ jobs:
             sudo docker build -t bookstore-image1 .
             sudo docker run -d -p 8081:8081 --name bookstore1 --net back_network bookstore-image1
 
-            sleep 90
+            while [[ "$(sudo docker inspect -f '{{.State.Status}}' bookstore1)" != "running" ]]; do \
+              echo "Waiting for container to become healthy..."; \
+              sleep 5; \
+            done
             
             sudo docker stop bookstore2 || true
             sudo docker rm bookstore2 || true

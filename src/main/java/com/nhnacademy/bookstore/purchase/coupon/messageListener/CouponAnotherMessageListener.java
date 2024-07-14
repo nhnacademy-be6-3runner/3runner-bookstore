@@ -46,8 +46,14 @@ public class CouponAnotherMessageListener {
 
         List<CouponResponse> responses = couponCustomRepository.findMemberIdsByCouponFormIds(couponFormIds);
         for (CouponResponse response : responses) {
+            String name = "기본쿠폰";
+            for (CouponFormDto couponFormDto : couponFormDtos) {
+                if (couponFormDto.id() == response.couponId()) {
+                    name = couponFormDto.name();
+                }
+            }
             memberMessageService.createMessage(
-                    new MemberMessage("회원님 쿠폰 " + response.couponId() + "가 만료 3일 남았습니다.",
+                    new MemberMessage("회원님 쿠폰 " + name + "(" + response.couponId() + ") 가 만료 3일 남았습니다.",
                             memberRepository
                                     .findById(response.memberId())
                                     .orElseThrow(MemberNotExistsException::new))
