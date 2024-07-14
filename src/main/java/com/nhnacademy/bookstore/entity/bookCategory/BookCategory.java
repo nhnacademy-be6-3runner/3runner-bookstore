@@ -2,7 +2,12 @@ package com.nhnacademy.bookstore.entity.bookCategory;
 
 import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.entity.category.Category;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,30 +19,26 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Getter
-@Table(name = "book_category", indexes = {
-    @Index(name = "idx_book_id", columnList = "book_id"),
-    @Index(name = "idx_category_id", columnList = "category_id")
-})
 public class BookCategory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    @ManyToOne
-    @Setter
-    private Book book;
+	@ManyToOne
+	@Setter
+	private Book book;
 
-    @ManyToOne
-    @Setter
-    private Category category;
+	@ManyToOne
+	@Setter
+	private Category category;
 
-    public static BookCategory create(Book book, Category category) {
-        BookCategory bookCategory = BookCategory.builder()
-                .book(book)
-                .category(category)
-                .build();
-        book.addBookCategory(bookCategory);  // 양방향 설정
-        return bookCategory;
-    }
+	public static BookCategory create(Book book, Category category) {
+		BookCategory bookCategory = BookCategory.builder()
+			.book(book)
+			.category(category)
+			.build();
+		book.addBookCategory(bookCategory);  // 양방향 설정
+		return bookCategory;
+	}
 }

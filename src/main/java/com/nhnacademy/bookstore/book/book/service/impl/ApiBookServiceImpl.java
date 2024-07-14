@@ -17,6 +17,7 @@ import java.util.Objects;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ import com.nhnacademy.bookstore.book.book.dto.response.AladinDetailResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.ApiCreateBookResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.DescriptionResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.ImageMultipartFile;
+import com.nhnacademy.bookstore.book.book.exception.ApiBookResponseException;
 import com.nhnacademy.bookstore.book.book.repository.ApiBookRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRedisRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
@@ -41,7 +43,6 @@ import com.nhnacademy.bookstore.entity.bookImage.enums.BookImageType;
 import com.nhnacademy.bookstore.entity.category.Category;
 import com.nhnacademy.bookstore.entity.totalImage.TotalImage;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -49,15 +50,20 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ApiBookServiceImpl implements ApiBookService {
 
-	private final ApiBookRepository apiBookRepository;
-	private final BookRepository bookRepository;
-	private final CategoryRepository categoryRepository;
-	private final BookCategoryRepository bookCategoryRepository;
-	private final ImageService imageService;
-	private final BookRedisRepository redisRepository;
+	@Autowired
+	private ApiBookRepository apiBookRepository;
+	@Autowired
+	private BookRepository bookRepository;
+	@Autowired
+	private CategoryRepository categoryRepository;
+	@Autowired
+	private BookCategoryRepository bookCategoryRepository;
+	@Autowired
+	private ImageService imageService;
+	@Autowired
+	private BookRedisRepository redisRepository;
 
 	private static final String DETAIL_VIEW_FRONT = "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=";
 
@@ -205,34 +211,34 @@ public class ApiBookServiceImpl implements ApiBookService {
 	 * (있을 경우에만 받아옴) -> 좀 더 좋은 화질의 메인 사진, 유튜브 영상, 설명의 사진
 	 * @param itemId 알라딘의 책 아이디
 	 */
-	private AladinDetailResponse getDetailResponse(String itemId, String imageUrl) {
+	public AladinDetailResponse getDetailResponse(String itemId, String imageUrl) {
 		List<String> imageUrlList = new ArrayList<>();
 		String youTubeStr = null;
 
+		Document doc = null;
 		try {
-			Document doc = Jsoup.connect(DETAIL_VIEW_FRONT + itemId).get();
-
-			Elements metaTags = doc.select("meta[property=og:image]");
-			Elements image = doc.select("div[id=card_play]");
-			Elements youTube = doc.select("iframe[src*=youtube.com]");
-
-			if (!metaTags.isEmpty()) {
-				imageUrl = Objects.requireNonNull(metaTags.first()).attr("content");
-			}
-			if (!image.isEmpty()) {
-				String[] imageList = image.toString().split("<img src=\"");
-				for (int i = 1; i < imageList.length; i++) {
-					imageUrlList.add("https:" + imageList[i].substring(0, imageList[i].indexOf('"')));
-				}
-			}
-			if (!youTube.isEmpty()) {
-				youTubeStr = youTube.toString();
-			}
-			log.info(imageUrlList.toString());
-
+			doc = Jsoup.connect(DETAIL_VIEW_FRONT + itemId).get();
 		} catch (IOException e) {
-			log.info(e.getMessage());
+			throw new ApiBookResponseException();
 		}
+
+		Elements metaTags = doc.select("meta[property=og:image]");
+		Elements image = doc.select("div[id=card_play]");
+		Elements youTube = doc.select("iframe[src*=youtube.com]");
+
+		if (!metaTags.isEmpty()) {
+			imageUrl = Objects.requireNonNull(metaTags.first()).attr("content");
+		}
+		if (!image.isEmpty()) {
+			String[] imageList = image.toString().split("<img src=\"");
+			for (int i = 1; i < imageList.length; i++) {
+				imageUrlList.add("https:" + imageList[i].substring(0, imageList[i].indexOf('"')));
+			}
+		}
+		if (!youTube.isEmpty()) {
+			youTubeStr = youTube.toString();
+		}
+		log.info(imageUrlList.toString());
 
 		return AladinDetailResponse.builder()
 			.mainImageUrl(imageUrl)

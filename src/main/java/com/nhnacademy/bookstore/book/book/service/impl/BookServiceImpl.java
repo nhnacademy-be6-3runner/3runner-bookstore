@@ -37,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
+
 	private final BookRepository bookRepository;
 	private final BookCategoryService bookCategoryService;
 	private final BookTagService bookTagService;

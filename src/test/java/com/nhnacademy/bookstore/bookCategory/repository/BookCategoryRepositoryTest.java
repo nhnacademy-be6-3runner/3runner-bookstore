@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +16,14 @@ import org.springframework.data.domain.Pageable;
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
-import com.nhnacademy.bookstore.book.bookCartegory.repository.impl.BookCategoryCustomRepositoryImpl;
+import com.nhnacademy.bookstore.book.category.dto.response.BookDetailCategoryResponse;
 import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
 import com.nhnacademy.bookstore.entity.category.Category;
 
 @DataJpaTest
-@Import(BookCategoryCustomRepositoryImpl.class)
+// @Import(BookCategoryCustomRepositoryImpl.class)
 public class BookCategoryRepositoryTest {
 
 	@Autowired
@@ -66,6 +65,10 @@ public class BookCategoryRepositoryTest {
 		Category children2 = new Category();
 		children2.setName("자식 카테고리2");
 		children2.setParent(parent1);
+
+		categoryRepository.save(parent1);
+		categoryRepository.save(children1);
+		categoryRepository.save(children2);
 
 		this.categoryList = List.of(parent1, children1, children2);
 	}
@@ -137,25 +140,34 @@ public class BookCategoryRepositoryTest {
 		Assertions.assertEquals(book.getAuthor(), bookPage.getContent().get(0).author());
 	}
 
-	// @DisplayName("도서 아이디로 카테고리 리스트 조회 테스트")
-	// @Test
-	// void bookWithCategoryListTest() {
-	//     categoryRepository.saveAll(categoryList);
-	//     bookRepository.save(book);
-	//
-	//     BookCategory bookCategory1 = new BookCategory();
-	//     bookCategory1.setBook(book);
-	//     bookCategory1.setCategory(categoryList.get(0));
-	//
-	//     bookCategoryRepository.save(bookCategory1);
-	//
-	//     List<BookCategoriesResponse> categories = bookCategoryRepository.bookWithCategoryList(
-	//             book.getId());
-	//
-	//     Assertions.assertFalse(categories.isEmpty());
-	//     Assertions.assertEquals(1, categories.size());
-	//     Assertions.assertEquals(categoryList.get(0).getName(), categories.get(0).categoryName());
-	// }
+	@DisplayName("도서 아이디로 카테고리 리스트 조회 테스트")
+	@Test
+	void bookWithCategoryListTest() {
+		categoryRepository.saveAll(categoryList);
+		bookRepository.save(book);
+
+		BookCategory bookCategory1 = new BookCategory();
+		bookCategory1.setBook(book);
+		bookCategory1.setCategory(categoryList.get(0));
+
+		bookCategoryRepository.save(bookCategory1);
+
+		BookCategory bookCategory2 = new BookCategory();
+		bookCategory2.setBook(book);
+		bookCategory2.setCategory(categoryList.get(1));
+		bookCategoryRepository.save(bookCategory2);
+
+		List<BookDetailCategoryResponse> categories = bookCategoryRepository.bookWithCategoryList(
+			book.getId());
+
+		Assertions.assertFalse(categories.isEmpty());
+		Assertions.assertEquals(2, categories.size());
+		Assertions.assertEquals(categoryList.get(0).getName(), categories.get(0).name());
+		Assertions.assertEquals(categoryList.get(1).getParent().getId(), categories.get(1).parentId());
+
+		Assertions.assertEquals(categoryList.get(1).getName(), categories.get(1).name());
+
+	}
 
 	@DisplayName("카테고리 리스트로 도서 조회 테스트")
 	@Test
