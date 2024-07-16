@@ -60,7 +60,6 @@ public class ElasticController {
 					book.author(),
 					book.imagePath(),
 					book.publisher(),
-					book.publishedDate().toString(),
 					tagList,
 					categoryList,
 					book.price(),

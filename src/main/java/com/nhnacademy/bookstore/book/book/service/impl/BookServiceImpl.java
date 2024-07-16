@@ -15,6 +15,7 @@ import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.BookManagementResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
 import com.nhnacademy.bookstore.book.book.exception.BookDoesNotExistException;
+import com.nhnacademy.bookstore.book.book.repository.BookRedisRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.book.service.BookService;
 import com.nhnacademy.bookstore.book.bookCartegory.dto.request.CreateBookCategoryRequest;
@@ -36,10 +37,12 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
+
 	private final BookRepository bookRepository;
 	private final BookCategoryService bookCategoryService;
 	private final BookTagService bookTagService;
 	private final BookImageService bookImageService;
+	private final BookRedisRepository bookRedisRepository;
 
 	/**
 	 * 도서를 등록하는 메서드입니다.
@@ -66,7 +69,7 @@ public class BookServiceImpl implements BookService {
 			null,
 			null
 		);
-		bookRepository.save(book);
+		book = bookRepository.save(book);
 
 		bookCategoryService.createBookCategory(
 			CreateBookCategoryRequest.builder()
@@ -79,6 +82,8 @@ public class BookServiceImpl implements BookService {
 		if (!Objects.isNull(createBookRequest.imageName())) {
 			bookImageService.createBookImage(List.of(createBookRequest.imageName()), book.getId(), BookImageType.MAIN);
 		}
+		book = bookRepository.findById(book.getId()).orElseThrow();
+		bookRedisRepository.createBook(book);
 	}
 
 	/**
@@ -120,7 +125,7 @@ public class BookServiceImpl implements BookService {
 		book.setIsbn(createBookRequest.isbn());
 		book.setPublisher(createBookRequest.publisher());
 
-		bookRepository.save(book);
+		book = bookRepository.save(book);
 
 		bookCategoryService.updateBookCategory(bookId,
 			UpdateBookCategoryRequest.builder().bookId(bookId).categoryIds(createBookRequest.categoryIds()).build());
@@ -128,6 +133,9 @@ public class BookServiceImpl implements BookService {
 			CreateBookTagListRequest.builder().bookId(bookId).tagIdList(createBookRequest.tagIds()).build());
 
 		bookImageService.updateBookImage(createBookRequest.imageName(), createBookRequest.imageList(), bookId);
+
+		book = bookRepository.findById(book.getId()).orElseThrow();
+		bookRedisRepository.updateBook(book);
 	}
 
 	/**
@@ -164,6 +172,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public void deleteBook(Long bookId) {
 		bookRepository.deleteById(bookId);
+		bookRedisRepository.deleteBook(bookId);
 	}
 
 	/**
