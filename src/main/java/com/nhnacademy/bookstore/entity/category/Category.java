@@ -16,7 +16,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,7 +23,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

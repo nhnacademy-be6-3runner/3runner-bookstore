@@ -22,6 +22,7 @@ import com.nhnacademy.bookstore.book.category.dto.request.CreateCategoryRequest;
 import com.nhnacademy.bookstore.book.category.dto.request.UpdateCategoryRequest;
 import com.nhnacademy.bookstore.book.category.dto.response.CategoryForCouponResponse;
 import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
+import com.nhnacademy.bookstore.book.category.dto.response.CategoryResponse;
 import com.nhnacademy.bookstore.book.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookstore.book.category.exception.DuplicateCategoryNameException;
 import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
@@ -50,6 +51,15 @@ class CategoryServiceTest {
 		when(categoryRepository.save(any(Category.class))).thenReturn(category);
 		categoryService.createCategory(dto);
 		verify(categoryRepository, times(1)).save(any(Category.class));
+	}
+
+	@Test
+	void createCategoryCategoryNotFoundException() {
+		CreateCategoryRequest dto = new CreateCategoryRequest("상위 카테고리", 3L);
+		when(categoryRepository.existsByName(any())).thenReturn(false);
+		when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(CategoryNotFoundException.class, () -> categoryService.createCategory(dto));
 	}
 
 	@DisplayName("카테고리 삭제 테스트")
@@ -84,6 +94,44 @@ class CategoryServiceTest {
 
 		assertThatThrownBy(() -> categoryService.updateCategory(id, dto))
 			.isInstanceOf(CategoryNotFoundException.class);
+	}
+
+	@Test
+	void updateCategoryDuplicateCategoryNameException() {
+		long id = 1L;
+		UpdateCategoryRequest dto = new UpdateCategoryRequest("test", null);
+		when(categoryRepository.findById(id)).thenReturn(Optional.of(new Category("test1")));
+		when(categoryRepository.existsByName(any())).thenReturn(true);
+		assertThrows(DuplicateCategoryNameException.class, () -> categoryService.updateCategory(1L, dto));
+
+	}
+
+	@Test
+	void updateCategoryCategoryNotFoundException() {
+		long id = 1L;
+		UpdateCategoryRequest dto = UpdateCategoryRequest.builder().name("test111").parentId(2L).build();
+		when(categoryRepository.findById(id)).thenReturn(Optional.of(new Category("test111")));
+		when(categoryRepository.findById(2L)).thenReturn(Optional.empty());
+		assertThrows(CategoryNotFoundException.class, () -> categoryService.updateCategory(1L, dto));
+	}
+	
+	@Test
+	void updateCategory() {
+		long id = 1L;
+		UpdateCategoryRequest dto = UpdateCategoryRequest.builder().name("test111").build();
+		when(categoryRepository.findById(id)).thenReturn(Optional.of(new Category("test111")));
+		categoryService.updateCategory(id, dto);
+
+	}
+
+	@Test
+	void updateCategory2() {
+		long id = 1L;
+		UpdateCategoryRequest dto = UpdateCategoryRequest.builder().name("test111").parentId(2L).build();
+		when(categoryRepository.findById(id)).thenReturn(Optional.of(new Category("test11")));
+		when(categoryRepository.existsByName(any())).thenReturn(false);
+		when(categoryRepository.findById(2L)).thenReturn(Optional.empty());
+		assertThrows(CategoryNotFoundException.class, () -> categoryService.updateCategory(1L, dto));
 	}
 
 	@DisplayName("존재하지 않는 카테고리 삭제 테스트")
@@ -175,4 +223,89 @@ class CategoryServiceTest {
 		assertEquals(category1.getName(), getResponse.getFirst().name());
 	}
 
+	@Test
+	void getCategory() {
+		long id = 1L;
+		Category category = new Category("Category 1");
+		category.setId(id);
+		when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
+		CategoryResponse categoryResponse = categoryService.getCategory(id);
+
+		assertNotNull(categoryResponse);
+		assertEquals(id, categoryResponse.getId());
+		assertEquals(category.getName(), categoryResponse.getName());
+	}
+
+	@Test
+	void getCategoryCategoryNotFoundException() {
+		long id = 1L;
+		when(categoryRepository.findById(id)).thenReturn(Optional.empty());
+		assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategory(id));
+	}
+
+	@Test
+	void getCategoriesWithChildren() {
+		CategoryParentWithChildrenResponse categoryParentWithChildrenResponse = new CategoryParentWithChildrenResponse(
+			1L, "Category 1");
+		List<CategoryParentWithChildrenResponse> categoryParentWithChildrenResponseList = List.of(
+			categoryParentWithChildrenResponse);
+
+		when(categoryRepository.findParentWithChildrenCategories()).thenReturn(categoryParentWithChildrenResponseList);
+		assertEquals(categoryParentWithChildrenResponseList, categoryService.getCategoriesWithChildren());
+
+	}
+
+	@Test
+	void getCategories() {
+		Category category1 = new Category("Category 1");
+		category1.setId(1L);
+		Category category2 = new Category("Category 2");
+		category2.setId(2L);
+		category2.setParent(category1);
+		Category category3 = new Category("Category 3");
+		category3.setId(3L);
+		category3.setParent(category2);
+
+		List<Category> categoryList = List.of(category1, category2, category3);
+
+		when(categoryRepository.findAll()).thenReturn(categoryList);
+
+		List<CategoryParentWithChildrenResponse> categories = categoryService.getCategories();
+		assertNotNull(categories);
+		assertEquals(1, categories.size());
+		assertEquals(category1.getId(), categories.get(0).getId());
+
+	}
+
+	@Test
+	void getParentCategoriesTest() {
+		CategoryResponse categoryResponse1 = CategoryResponse.builder().id(1L).name("Category 1").parent(null).build();
+		CategoryResponse categoryResponse2 = CategoryResponse.builder()
+			.id(2L)
+			.name("Category 2")
+			.parent(categoryResponse1)
+			.build();
+		CategoryResponse categoryResponse3 = CategoryResponse.builder()
+			.id(3L)
+			.name("Category 3")
+			.parent(categoryResponse1)
+			.build();
+
+		List<CategoryResponse> categoryResponseList = List.of(categoryResponse1, categoryResponse2, categoryResponse3);
+		when(categoryRepository.findTopCategories()).thenReturn(categoryResponseList);
+
+		List<CategoryResponse> responses = categoryService.getParentCategories();
+		assertNotNull(responses);
+		assertEquals(3, responses.size());
+		assertEquals(categoryResponse1.getId(), responses.get(0).getId());
+		assertEquals(categoryResponse2.getId(), responses.get(1).getId());
+		assertEquals(categoryResponse3.getId(), responses.get(2).getId());
+
+	}
+
+	@Test
+	void getChildrenCategoriesByParentIdCategoryNotFoundException() {
+		when(categoryRepository.existsById(1L)).thenReturn(false);
+		assertThrows(CategoryNotFoundException.class, () -> categoryService.getChildrenCategoriesByParentId(1L));
+	}
 }

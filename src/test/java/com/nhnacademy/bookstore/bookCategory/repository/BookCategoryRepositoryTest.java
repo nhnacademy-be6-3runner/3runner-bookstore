@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
+import com.nhnacademy.bookstore.book.bookCartegory.repository.impl.BookCategoryCustomRepositoryImpl;
 import com.nhnacademy.bookstore.book.category.dto.response.BookDetailCategoryResponse;
 import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
@@ -23,7 +25,7 @@ import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
 import com.nhnacademy.bookstore.entity.category.Category;
 
 @DataJpaTest
-// @Import(BookCategoryCustomRepositoryImpl.class)
+@Import(BookCategoryCustomRepositoryImpl.class)
 public class BookCategoryRepositoryTest {
 
 	@Autowired
