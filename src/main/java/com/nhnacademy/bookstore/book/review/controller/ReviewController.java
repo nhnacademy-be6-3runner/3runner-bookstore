@@ -133,9 +133,34 @@ public class ReviewController {
      * @return ApiResponse<reviewListResponse>
      */
     @GetMapping("/reviews/member")
-    public ApiResponse<Page<ReviewListResponse>> readReviewsByMemberId(@RequestHeader("Member-Id") Long memberId, @RequestParam int page, @RequestParam int size) {
+    public ApiResponse<Page<ReviewListResponse>> readReviewsByMemberId(@RequestHeader(value = "Member-Id") Long memberId, @RequestParam int page, @RequestParam int size) {
+        log.info("memberId = {}", memberId);
         Pageable pageable = PageRequest.of(page, size);
         Page<ReviewListResponse> reviewList = reviewService.readAllReviewsByMemberId(memberId, pageable);
         return ApiResponse.success(reviewList);
+    }
+
+    /**
+     * 리뷰 평점의 평균을 구하는 메서드입니다.
+     *
+     * @param bookId 도서 아이디
+     * @return 평점
+     */
+    @GetMapping("/books/{bookId}/reviews/avg")
+    public ApiResponse<Double> getAverageReviewsByBookId(@PathVariable long bookId) {
+        double avg = reviewService.getAverageRating(bookId);
+        return ApiResponse.success(avg);
+    }
+
+    /**
+     * 리뷰의 갯수를 구하는 메서드입니다.
+     *
+     * @param bookId 도서 아이디
+     * @return 리뷰 갯수
+     */
+    @GetMapping("/books/{bookId}/reviews/count")
+    public ApiResponse<Long> getCountReviewsByBookId(@PathVariable long bookId) {
+        long cnt = reviewService.reviewCount(bookId);
+        return ApiResponse.success(cnt);
     }
 }

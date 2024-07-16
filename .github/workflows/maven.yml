@@ -2,9 +2,7 @@ name: Java CI with Maven, SonarQube, and Docker
 
 on:
   push:
-    branches: [ "main" , "develop" ]
-  pull_request:
-    branches: [ "main" , "develop" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -21,12 +19,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
@@ -56,15 +48,19 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd /home/nhnacademy/bookstore
+            
             sudo docker stop bookstore1 || true
             sudo docker rm bookstore1 || true
             sudo docker build -t bookstore-image1 .
-            sudo docker run -d -p 8081:8080 --name bookstore1 --net back_network bookstore-image1
+            sudo docker run -d -p 8081:8081 --name bookstore1 --net back_network bookstore-image1
 
-            sleep 90
+            while [[ "$(sudo docker inspect -f '{{.State.Status}}' bookstore1)" != "running" ]]; do \
+              echo "Waiting for container to become healthy..."; \
+              sleep 5; \
+            done
             
             sudo docker stop bookstore2 || true
             sudo docker rm bookstore2 || true
             sudo docker build -t bookstore-image2 .
-            sudo docker run -d -p 8082:8080 --name bookstore2 --net back_network bookstore-image2
+            sudo docker run -d -p 8082:8082 --name bookstore2 --net back_network bookstore-image2
 

@@ -3,7 +3,6 @@ package com.nhnacademy.bookstore.book.category.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -11,7 +10,6 @@ import lombok.ToString;
  */
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @ToString
 public class CategoryResponse {

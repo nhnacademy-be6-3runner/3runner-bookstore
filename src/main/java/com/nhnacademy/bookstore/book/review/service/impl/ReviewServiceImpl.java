@@ -90,9 +90,6 @@ public class ReviewServiceImpl implements ReviewService {
                 review.getPurchaseBook().getPurchase().getMember(),
                 null)
         );
-
-
-
         return review.getId();
     }
 
@@ -236,5 +233,22 @@ public class ReviewServiceImpl implements ReviewService {
             throw new MemberNotExistsException();
         }
         return reviewRepository.getReviewsByUserId(memberId, pageable);
+    }
+
+    /**
+     * 별점 평균을 구하는 메서드입니다.
+     *
+     * @param bookId 도서 아이디
+     * @return 별점 평균
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Double getAverageRating(long bookId) {
+        return reviewRepository.getAverageRatingByBookId(bookId);
+    }
+
+    @Override
+    public Long reviewCount(long bookId) {
+        return reviewRepository.countReviewsByBookId(bookId);
     }
 }

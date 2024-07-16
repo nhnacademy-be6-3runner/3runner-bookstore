@@ -64,7 +64,7 @@ public class CommentController {
      * @param memberId  사용자 아이디
      * @return ApiResponse<>
      */
-    @GetMapping("/{commentId}/delete")
+    @DeleteMapping("/{commentId}/delete")
     public ApiResponse<Void> deleteComment(@PathVariable long commentId, @RequestHeader("Member-id") Long memberId) {
         commentService.deleteComment(commentId, memberId);
         return new ApiResponse<>(new ApiResponse.Header(true, 200));
@@ -84,10 +84,7 @@ public class CommentController {
                                                                         @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<CommentResponse> commentList = commentService.readAllCommentsByReviewId(reviewId, pageable);
-        return new ApiResponse<>(
-                new ApiResponse.Header(true, 200),
-                new ApiResponse.Body<>(commentList)
-        );
+        return ApiResponse.success(commentList);
     }
 
     /**
@@ -98,13 +95,12 @@ public class CommentController {
      * @param size     사이즈
      * @return 댓글 리스트
      */
-    @GetMapping("/member-reviews")
-    public ApiResponse<Page<CommentResponse>> readAllCommentsByMemberId(@RequestHeader("Member-id") Long memberId, @RequestParam int page, @RequestParam int size) {
+    @GetMapping("/member/comments")
+    public ApiResponse<Page<CommentResponse>> readAllCommentsByMemberId(@RequestHeader(value = "Member-id") Long memberId,
+                                                                        @RequestParam(defaultValue = "0") int page,
+                                                                        @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<CommentResponse> commentList = commentService.readAllCommentsByMemberId(memberId, pageable);
-        return new ApiResponse<>(
-                new ApiResponse.Header(true, 200),
-                new ApiResponse.Body<>(commentList)
-        );
+        return ApiResponse.success(commentList);
     }
 }

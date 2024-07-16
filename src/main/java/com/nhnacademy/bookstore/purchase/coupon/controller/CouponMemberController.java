@@ -57,4 +57,12 @@ public class CouponMemberController {
         return ApiResponse.success(couponMemberService.registorCouponForBook(bookId, memberId));
     }
 
+
+    @GetMapping("/coupons/birthdays")
+    private ApiResponse<Void> registerCouponBook(
+            @RequestHeader("Member-Id") Long memberId) {
+        couponMemberService.issueBirthdayCoupon(memberId);
+        return ApiResponse.success(null);
+    }
+
 }

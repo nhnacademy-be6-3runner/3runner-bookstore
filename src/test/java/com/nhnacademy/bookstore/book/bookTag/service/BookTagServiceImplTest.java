@@ -235,13 +235,23 @@ class BookTagServiceImplTest {
 		BookTag bookTag3 = new BookTag(book, tag3);
 
 		List<BookTag> bookTagList = List.of(bookTag1, bookTag2, bookTag3);
+		// book.setBookTagList(bookTagList);
+		book.setId(1L);
+		List<Tag> tagList = new ArrayList<>();
+		tagList.add(tag1);
+		tagList.add(tag2);
+		tagList.add(tag3);
 
 		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-		when(tagRepository.findAllById(anyList())).thenReturn(List.of(tag1, tag2, tag3));
-		when(bookTagRepository.save(any(BookTag.class))).thenReturn(bookTag2);
+		when(tagRepository.findAllById(anyList())).thenReturn(tagList);
+		// when(bookTagRepository.save(any(BookTag.class))).thenReturn(bookTag2);
 
-		CreateBookTagListRequest tagListRequest = CreateBookTagListRequest.builder().build();
+		CreateBookTagListRequest tagListRequest = CreateBookTagListRequest.builder()
+			.bookId(1L)
+			.tagIdList(List.of(1L, 2L, 3L))
+			.build();
 		bookTagService.updateBookTag(tagListRequest);
+		verify(bookRepository, times(2)).save(any(Book.class));
 	}
 
 	@Test

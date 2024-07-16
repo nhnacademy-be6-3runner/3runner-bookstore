@@ -273,4 +273,26 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .fetchOne()).orElse(0L);
         return new PageImpl<>(reviewListResponses, pageable, total);
     }
+
+    @Override
+    public Double getAverageRatingByBookId(long bookId) {
+        return jpaQueryFactory
+                .select(qReview.rating.avg())
+                .from(qReview)
+                .join(qReview.purchaseBook, qPurchaseBook)
+                .where(qPurchaseBook.book.id.eq(bookId)
+                        .and(qReview.reviewStatus.eq(ReviewStatus.ON)))
+                .fetchOne();
+    }
+
+    @Override
+    public Long countReviewsByBookId(long bookId) {
+        return jpaQueryFactory
+                .select(qReview.count())
+                .from(qReview)
+                .join(qReview.purchaseBook, qPurchaseBook)
+                .where(qPurchaseBook.book.id.eq(bookId)
+                        .and(qReview.reviewStatus.eq(ReviewStatus.ON)))
+                .fetchOne();
+    }
 }
