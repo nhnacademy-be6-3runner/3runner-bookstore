@@ -1,5 +1,7 @@
 package com.nhnacademy.bookstore.purchase.purchaseBook.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,8 +21,8 @@ public interface PurchaseBookService {
 
     Long updatePurchaseBook(UpdatePurchaseBookRequest updatePurchaseBookRequest);
 
-    Page<ReadPurchaseBookResponse> readBookByPurchaseResponses(Long purchaseId, Pageable pageable);
+    List<ReadPurchaseBookResponse> readBookByPurchaseResponses(Long purchaseId, Long memberId);
 
-    Page<ReadPurchaseBookResponse> readGuestBookByPurchaseResponses(String purchaseId, Pageable pageable);
+    List<ReadPurchaseBookResponse> readGuestBookByPurchaseResponses(String purchaseId);
 
 }

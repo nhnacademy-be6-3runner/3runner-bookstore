@@ -53,9 +53,9 @@ public class PurchaseManagerController {
 		} else {
 			pageable = PageRequest.of(page, size, Sort.by(sort));
 		}
-		List<ReadPurchaseResponse> purchaseResponses = purchaseManagerService.readPurchaseAll();
+		Page<ReadPurchaseResponse> purchaseResponses = purchaseManagerService.readPurchaseAll(pageable);
 
-		return ApiResponse.success(new PageImpl<>(purchaseResponses, pageable, purchaseResponses.size()));
+		return ApiResponse.success(purchaseResponses);
 	}
 
 	/**

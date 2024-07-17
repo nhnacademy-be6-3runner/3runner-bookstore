@@ -10,10 +10,13 @@ import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChi
 import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
 import com.nhnacademy.bookstore.entity.category.Category;
+import com.nhnacademy.bookstore.entity.purchase.Purchase;
+import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
 import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.CreatePurchaseBookRequest;
 import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.DeletePurchaseBookRequest;
+import com.nhnacademy.bookstore.purchase.purchaseBook.exception.ImPossibleAccessPurchaseBookException;
 import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsBook;
 import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsPurchase;
 import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsPurchaseBook;
@@ -61,16 +64,22 @@ public class PurchaseBookServiceImpl implements PurchaseBookService {
 	 * @return 해당 주문의 책 리스트를 반환
 	 */
 	@Override
-	public Page<ReadPurchaseBookResponse> readBookByPurchaseResponses(Long purchaseId, Pageable pageable) {
+	public List<ReadPurchaseBookResponse> readBookByPurchaseResponses(Long purchaseId, Long memberId) {
+		Purchase purchase = purchaseRepository.findById(purchaseId).orElseThrow(NotExistsPurchase::new);
 
-		return  purchaseBookCustomRepository.readBookPurchaseResponses(purchaseId, pageable);
+
+		List<PurchaseBook> purchaseBooks = purchase.getPurchaseBookList();
+		if(memberId != purchaseBooks.getFirst().getPurchase().getMember().getId()){
+			throw new ImPossibleAccessPurchaseBookException();
+		}
+
+		return  purchaseBookCustomRepository.readBookPurchaseResponses(purchaseId);
 	}
 
 	@Override
-	public Page<ReadPurchaseBookResponse> readGuestBookByPurchaseResponses(String purchaseId, Pageable pageable) {
+	public List<ReadPurchaseBookResponse> readGuestBookByPurchaseResponses(String purchaseId) {
 
-
-		return  purchaseBookCustomRepository.readGuestBookPurchaseResponses(purchaseId, pageable);
+		return  purchaseBookCustomRepository.readGuestBookPurchaseResponses(purchaseId);
 	}
 
 	/**

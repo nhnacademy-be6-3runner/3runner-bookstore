@@ -29,7 +29,9 @@ import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseAlreadyExist
 import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseDoesNotExistException;
 import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseFormArgumentErrorException;
 import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseNoAuthorizationException;
+import com.nhnacademy.bookstore.purchase.purchaseBook.exception.ImPossibleAccessPurchaseBookException;
 import com.nhnacademy.bookstore.purchase.refund.exception.CreateRefundRequestFormException;
+import com.nhnacademy.bookstore.purchase.refund.exception.ImpossibleAccessRefundException;
 import com.nhnacademy.bookstore.purchase.refund.exception.NotExistsRefund;
 import com.nhnacademy.bookstore.purchase.refund.exception.NotExistsRefundRecord;
 import com.nhnacademy.bookstore.util.ApiResponse;
@@ -134,7 +136,8 @@ public class WebControllerAdvice {
 	 */
 
 	@ExceptionHandler({
-		PurchaseNoAuthorizationException.class
+		PurchaseNoAuthorizationException.class,
+
 	})
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public ApiResponse<ErrorResponseForm> unauthorizedHandler(Exception ex, Model model) {
@@ -146,6 +149,22 @@ public class WebControllerAdvice {
 				.timestamp(ZonedDateTime.now().toString())
 				.build())
 		);
+	}
+
+
+	@ExceptionHandler({
+		ImpossibleAccessRefundException.class,
+		ImPossibleAccessPurchaseBookException.class
+	})
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ApiResponse<ErrorResponseForm> forbiddenHandler(Exception ex, Model model) {
+		return ApiResponse.forbiddenFail(new ApiResponse.Body<>(ErrorResponseForm.builder()
+			.title(ex.getMessage())
+			.status(HttpStatus.FORBIDDEN.value())
+			.timestamp(ZonedDateTime.now().toString())
+			.build()));
+
+
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

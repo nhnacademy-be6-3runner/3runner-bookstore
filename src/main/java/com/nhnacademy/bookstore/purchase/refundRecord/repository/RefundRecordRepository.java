@@ -1,4 +1,4 @@
-package com.nhnacademy.bookstore.purchase.refund.repository;
+package com.nhnacademy.bookstore.purchase.refundRecord.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

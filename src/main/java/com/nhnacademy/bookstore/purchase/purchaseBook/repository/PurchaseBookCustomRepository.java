@@ -1,5 +1,7 @@
 package com.nhnacademy.bookstore.purchase.purchaseBook.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -9,8 +11,10 @@ import com.nhnacademy.bookstore.purchase.purchaseBook.dto.response.ReadPurchaseB
  *
  */
 public interface PurchaseBookCustomRepository {
-	Page<ReadPurchaseBookResponse> readBookPurchaseResponses(Long purchaseId, Pageable pageable);
+	List<ReadPurchaseBookResponse> readBookPurchaseResponses(Long purchaseId);
 
-	Page<ReadPurchaseBookResponse> readGuestBookPurchaseResponses(String purchaseId, Pageable pageable);
+	List<ReadPurchaseBookResponse> readGuestBookPurchaseResponses(String purchaseId);
+
+	ReadPurchaseBookResponse readPurchaseBookResponse(Long purchaseBookId);
 
 }

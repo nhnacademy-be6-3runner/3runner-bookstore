@@ -1,6 +1,7 @@
 package com.nhnacademy.bookstore.entity.refundRecord;
 
 import com.nhnacademy.bookstore.entity.purchase.Purchase;
+import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.refund.Refund;
 
 import jakarta.persistence.Entity;
@@ -21,8 +22,12 @@ public class RefundRecord {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	int quantity;
+
+	int price;
+
 	@ManyToOne
-	private Purchase purchase;
+	private PurchaseBook purchaseBook;
 
 	@ManyToOne
 	private Refund refund;

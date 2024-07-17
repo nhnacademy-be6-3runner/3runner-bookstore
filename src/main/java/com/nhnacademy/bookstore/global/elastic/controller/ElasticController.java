@@ -1,3 +1,4 @@
+
 package com.nhnacademy.bookstore.global.elastic.controller;
 
 import java.util.ArrayList;
@@ -93,3 +94,4 @@ public class ElasticController {
 	}
 
 }
+

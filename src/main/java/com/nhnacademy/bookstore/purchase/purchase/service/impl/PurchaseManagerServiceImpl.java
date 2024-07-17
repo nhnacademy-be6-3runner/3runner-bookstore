@@ -4,6 +4,9 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,9 +37,9 @@ public class PurchaseManagerServiceImpl implements PurchaseManagerService {
 	 * @return 모든 주문 list
 	 */
 	@Override
-	public List<ReadPurchaseResponse> readPurchaseAll() {
+	public Page<ReadPurchaseResponse> readPurchaseAll(Pageable pageable) {
 		List<Purchase> purchases = purchaseRepository.findAll();
-		return purchases.stream().map(purchase -> ReadPurchaseResponse.builder()
+		List<ReadPurchaseResponse> responseList = purchases.stream().map(purchase -> ReadPurchaseResponse.builder()
 				.id(purchase.getId())
 				.orderNumber(purchase.getOrderNumber())
 				.status(purchase.getStatus())
@@ -47,6 +50,11 @@ public class PurchaseManagerServiceImpl implements PurchaseManagerService {
 				.memberType(purchase.getMemberType())
 				.build())
 			.toList();
+		int start = (int)pageable.getOffset();
+		int end = Math.min((start + pageable.getPageSize()), responseList.size());
+		List<ReadPurchaseResponse> pagedResponse = responseList.subList(start, end);
+
+		return new PageImpl<>(pagedResponse, pageable, responseList.size());
 	}
 
 	/**

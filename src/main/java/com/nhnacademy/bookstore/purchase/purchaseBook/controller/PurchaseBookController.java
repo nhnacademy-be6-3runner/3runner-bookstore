@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.purchase.purchaseBook.controller;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.data.domain.Page;
@@ -51,48 +52,27 @@ public class PurchaseBookController {
 	 * @return 주문id로 조회된 책들 리스트 반환
 	 */
 	@GetMapping("/{purchaseId}")
-	public ApiResponse<Page<ReadPurchaseBookResponse>> readPurchaseBook(
-		@PathVariable(value = "purchaseId")  Long purchaseId
-		, @RequestParam int page
-		, @RequestParam int size
-		, @RequestParam(required = false) String sort) {
-		Pageable pageable;
-		if (Objects.isNull(sort)) {
-			pageable = PageRequest.of(page, size);
-		} else {
-			pageable = PageRequest.of(page, size, Sort.by(sort));
-		}
+	public ApiResponse<List<ReadPurchaseBookResponse>> readPurchaseBook(
+		@PathVariable(value = "purchaseId")  Long purchaseId, @RequestHeader(name = "Member-Id", required = false) Long memberId) {
 
-		Page<ReadPurchaseBookResponse> tmp =
-			purchaseBookService.readBookByPurchaseResponses( purchaseId, pageable);
+		List<ReadPurchaseBookResponse> tmp =
+			purchaseBookService.readBookByPurchaseResponses(purchaseId, memberId);
 		return ApiResponse.success(tmp);
 	}
 
 	/**
 	 *  회원 주문 orderNumber로 조회
 	 *
-	 * @param memberId 회원 Id
 	 * @param purchaseId 주문 orderNumber
-	 * @param page 현재 페이지
-	 * @param size 페이지에 한번에 보여주는 개수
-	 * @param sort 정렬
 	 * @return 주문 orderNumber 로 조회된 책들 리스트 반환
 	 */
 	@GetMapping("/guests/{purchaseId}")
-	public ApiResponse<Page<ReadPurchaseBookResponse>> readGuestPurchaseBook(
-		@PathVariable(value = "purchaseId")  String purchaseId
-		, @RequestParam int page
-		, @RequestParam int size
-		, @RequestParam(required = false) String sort) {
-		Pageable pageable;
-		if (Objects.isNull(sort)) {
-			pageable = PageRequest.of(page, size);
-		} else {
-			pageable = PageRequest.of(page, size, Sort.by(sort));
-		}
+	public ApiResponse<List<ReadPurchaseBookResponse>> readGuestPurchaseBook(
+		@PathVariable(value = "purchaseId")  String purchaseId) {
 
-		Page<ReadPurchaseBookResponse> tmp =
-			purchaseBookService.readGuestBookByPurchaseResponses(purchaseId, pageable);
+
+		List<ReadPurchaseBookResponse> tmp =
+			purchaseBookService.readGuestBookByPurchaseResponses(purchaseId);
 		return ApiResponse.success(tmp);
 	}
 

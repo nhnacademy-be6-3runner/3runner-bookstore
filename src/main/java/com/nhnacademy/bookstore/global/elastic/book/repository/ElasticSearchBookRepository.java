@@ -1,3 +1,4 @@
+
 package com.nhnacademy.bookstore.global.elastic.book.repository;
 
 import java.util.List;
@@ -26,3 +27,4 @@ public interface ElasticSearchBookRepository extends ElasticsearchRepository<Boo
 		+ "  }")
 	Page<BookDocument> findByCustomQuery(String query, Pageable pageable);
 }
+

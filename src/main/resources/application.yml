@@ -72,8 +72,10 @@ springdoc:
     url: /docs/openapi-3.0.json
     path: /bookstore/docs/swagger
 
+
 elasticsearch:
   key: b0FEM241QUJ6WmRyRUdYWG9LbUs6RVZ4WkNYM09TNTZvUU9qb0xxM09JZw==
+
 
 
 db:

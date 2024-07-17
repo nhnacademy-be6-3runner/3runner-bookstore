@@ -1,3 +1,4 @@
+
 package com.nhnacademy.bookstore.global.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -26,3 +27,4 @@ public class ElasticSearchConfig {
 			.build();
 	}
 }
+

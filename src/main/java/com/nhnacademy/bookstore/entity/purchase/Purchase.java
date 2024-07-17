@@ -75,8 +75,7 @@ public class Purchase {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PointRecord> pointRecordList = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RefundRecord> refundRecordList = new ArrayList<>();
+
 
     public Purchase(UUID orderNumber, PurchaseStatus status, int deliveryPrice, int totalPrice, ZonedDateTime createdAt, String road, String password, ZonedDateTime shippingDate, Boolean isPacking, MemberType memberType, Member member) {
         this.orderNumber = orderNumber;
