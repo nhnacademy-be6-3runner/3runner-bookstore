@@ -21,6 +21,8 @@ spring:
         use_sql_comments: true
         highlight_sql: true
         auto_quote_keyword: true
+  #    hibernate:
+  #      ddl-auto: create-drop
 
   servlet:
     multipart:
@@ -36,7 +38,7 @@ spring:
     password: nhnacademy123!
 
   profiles:
-    active: prod
+    active: dev
   lifecycle:
     timeout-per-shutdown-phase: 30s
   application:
@@ -78,7 +80,8 @@ elasticsearch:
 
 db:
   driver: com.mysql.cj.jdbc.Driver
-  url: b6b9d1cb45ab4fb1b46637352b6a053c
+  url: 731e048dd73f4b429f4ef4f5ba6a6dbe
+  #  url: b6b9d1cb45ab4fb1b46637352b6a053c
   username: 83f7720a5c66449bae3b4948e07b111f
   password: 410f279ee5a54791b7dc0a1e87f94672
   initial-size: 5
