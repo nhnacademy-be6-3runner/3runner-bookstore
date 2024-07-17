@@ -2,7 +2,6 @@ package com.nhnacademy.bookstore.purchase.payment.controller;
 import com.nhnacademy.bookstore.purchase.payment.dto.CreatePaymentGuestRequest;
 import com.nhnacademy.bookstore.purchase.payment.exception.TossPaymentException;
 import com.nhnacademy.bookstore.purchase.payment.service.PaymentGuestService;
-import com.nhnacademy.bookstore.purchase.payment.service.PaymentMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -21,6 +20,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
+/**
+ * 페이먼츠 비회원 컨트롤러.
+ *
+ * @author 김병우
+ */
 @Slf4j
 @Controller
 @RequiredArgsConstructor

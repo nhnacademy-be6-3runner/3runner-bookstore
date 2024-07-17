@@ -18,11 +18,14 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-import java.util.Objects;
 
+/**
+ * 페이먼츠 회원 컨트롤러.
+ *
+ * @author 김병우
+ */
 @Slf4j
 @Controller
 @RequiredArgsConstructor

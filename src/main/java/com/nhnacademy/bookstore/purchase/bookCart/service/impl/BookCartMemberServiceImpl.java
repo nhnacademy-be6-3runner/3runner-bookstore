@@ -32,6 +32,13 @@ import com.nhnacademy.bookstore.purchase.cart.repository.CartRepository;
 
 import lombok.RequiredArgsConstructor;
 
+
+/**
+ * 북카트맴버 서비스 구현체.
+ *
+ * @author 정주혁
+ * fix 김병우 : 레디스 구현 추가, 수정
+ */
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -67,12 +74,17 @@ public class BookCartMemberServiceImpl implements BookCartMemberService {
             List<BookCart> allBookCarts = bookCartRepository.findAllByCart(cart);
             for (BookCart bookCart : allBookCarts) {
 
+                String url = null;
+                if (bookCart.getBook().getBookImageList() != null && !bookCart.getBook().getBookImageList().isEmpty()) {
+                    url = bookCart.getBook().getBookImageList().getFirst().getTotalImage().getUrl();
+                }
+
                 bookCartRedisRepository.create("Member" + readAllCartMemberRequest.userId(), bookCart.getId(),
                         ReadBookCartGuestResponse.builder()
                                 .bookCartId(bookCart.getId())
                                 .bookId(bookCart.getBook().getId())
                                 .price(bookCart.getBook().getPrice())
-                                .url(bookCart.getBook().getBookImageList().getFirst().getTotalImage().getUrl())
+                                .url(url)
                                 .quantity(bookCart.getQuantity())
                                 .leftQuantity(bookCart.getBook().getQuantity())
                                 .build()
@@ -83,7 +95,7 @@ public class BookCartMemberServiceImpl implements BookCartMemberService {
                         .bookCartId(bookCart.getId())
                         .bookId(bookCart.getBook().getId())
                         .price(bookCart.getBook().getPrice())
-                        .url(bookCart.getBook().getBookImageList().getFirst().getTotalImage().getUrl())
+                        .url(url)
                         .title(bookCart.getBook().getTitle())
                         .leftQuantity(bookCart.getBook().getQuantity())
                         .build());
@@ -145,12 +157,17 @@ public class BookCartMemberServiceImpl implements BookCartMemberService {
 
         bookCartRepository.save(bookCart);
 
+        String url = null;
+        if (bookCart.getBook().getBookImageList() != null && !bookCart.getBook().getBookImageList().isEmpty()) {
+            url = bookCart.getBook().getBookImageList().getFirst().getTotalImage().getUrl();
+        }
+
         bookCartRedisRepository.create("Member"+createBookCartRequest.userId(), bookCart.getId(),
                 ReadBookCartGuestResponse.builder()
                         .bookCartId(bookCart.getId())
                         .bookId(createBookCartRequest.bookId())
                         .price(bookCart.getBook().getPrice())
-                        .url(bookCart.getBook().getBookImageList().getFirst().getTotalImage().getUrl())
+                        .url(url)
                         .quantity(createBookCartRequest.quantity())
                         .leftQuantity(bookCart.getBook().getQuantity())
                         .build()

@@ -64,7 +64,7 @@ public class BookCartController {
             @RequestHeader(value = "Member-Id", required = false) Long memberId
         ) {
         if (bindingResult.hasErrors()) {
-            throw new BookCartArgumentErrorException("폼 에러");
+            throw new BookCartArgumentErrorException(bindingResult.getFieldErrors().toString());
         }
 
         if (Objects.isNull(memberId)) {
@@ -99,7 +99,7 @@ public class BookCartController {
     ) {
 
         if (bindingResult.hasErrors()) {
-            throw new BookCartArgumentErrorException("폼 에러");
+            throw new BookCartArgumentErrorException(bindingResult.getFieldErrors().toString());
         }
 
         if (Objects.isNull(memberId)) {
@@ -115,6 +115,14 @@ public class BookCartController {
 
     }
 
+    /**
+     * 북카트삭제.
+     *
+     * @param deleteBookCartGuestRequest 삭제요청Dto.
+     * @param bindingResult 오류검증
+     * @param memberId 맴버아이디
+     * @return 북카트 아이디
+     */
     @DeleteMapping()
     public ApiResponse<Long> deleteCart(
             @Valid @RequestBody DeleteBookCartRequest deleteBookCartGuestRequest,
@@ -122,7 +130,7 @@ public class BookCartController {
             @RequestHeader(value = "Member-Id", required = false) Long memberId
     ) {
         if (bindingResult.hasErrors()) {
-            throw new BookCartArgumentErrorException("폼 에러");
+            throw new BookCartArgumentErrorException(bindingResult.getFieldErrors().toString());
         }
 
         if (Objects.isNull(memberId)) {
@@ -137,6 +145,13 @@ public class BookCartController {
         }
     }
 
+    /**
+     * 북카트전체삭제.
+     *
+     * @param cartId 카트아이디
+     * @param memberId 맴버아이디
+     * @return 카트아이디
+     */
     @DeleteMapping("/{cartId}")
     public ApiResponse<Long> deleteAllCart(
             @PathVariable(required = false) Long cartId,

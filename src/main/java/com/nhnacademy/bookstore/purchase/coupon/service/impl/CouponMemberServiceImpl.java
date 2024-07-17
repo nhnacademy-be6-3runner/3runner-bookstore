@@ -1,6 +1,5 @@
 package com.nhnacademy.bookstore.purchase.coupon.service.impl;
 
-import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.entity.coupon.Coupon;
 import com.nhnacademy.bookstore.entity.coupon.enums.CouponStatus;
 import com.nhnacademy.bookstore.entity.member.Member;
@@ -16,9 +15,8 @@ import com.nhnacademy.bookstore.purchase.coupon.feign.dto.response.ReadCouponFor
 import com.nhnacademy.bookstore.purchase.coupon.repository.CouponRepository;
 import com.nhnacademy.bookstore.purchase.coupon.service.CouponMemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
@@ -39,12 +37,6 @@ public class CouponMemberServiceImpl implements CouponMemberService {
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
 
-    /**
-     * 맴버 쿠폰 전체 읽기.
-     *
-     * @param memberId 맴버아이디
-     * @return 쿠폰폼dto 리스트
-     */
     @Override
     public List<ReadCouponFormResponse> readMemberCoupons(Long memberId) {
         Member member = memberRepository
@@ -65,13 +57,6 @@ public class CouponMemberServiceImpl implements CouponMemberService {
                 .getData();
     }
 
-    /**
-     * 쿠폰 사용.
-     *
-     * @param couponFormId 쿠폰아이디
-     * @param memberId 맴버아이디
-     * @return 쿠폰아이디
-     */
     @Override
     public Long useCoupons(Long couponFormId, Long memberId) {
         Coupon coupon = couponRepository
@@ -87,13 +72,7 @@ public class CouponMemberServiceImpl implements CouponMemberService {
         return couponFormId;
     }
 
-    //TODO : 환불 구현시 필요
-    @Override
-    public Long refundCoupons(Long couponId, Long memberId) {
-
-        return couponId;
-    }
-
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void issueBirthdayCoupon(Long memberId) {
         Member member = memberRepository

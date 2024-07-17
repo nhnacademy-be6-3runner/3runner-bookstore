@@ -1,18 +1,20 @@
 package com.nhnacademy.bookstore.purchase.bookCart.dto.request;
 
 
+import jakarta.validation.constraints.Min;
 import lombok.Builder;
 
+
 /**
- * 카트 추가,삭제 폼.
+ * 북카트 업데이트 요청.
  *
- * @author 김병우
- * @param bookId 도서아이디
- * @param quantity 도서수량
+ * @param cartId
+ * @param bookId
+ * @param quantity
  */
 @Builder
 public record UpdateBookCartRequest(
-        long cartId,
-        long bookId,
-        int quantity) {
+        @Min(0) long cartId,
+        @Min(1) long bookId,
+        @Min(1) int quantity) {
 }
