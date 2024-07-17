@@ -49,7 +49,9 @@ public class WebControllerAdvice {
 	 * @param model
 	 * @return ApiResponse<ErrorResponseForm>
 	 */
-	@ExceptionHandler(RuntimeException.class)
+	@ExceptionHandler(
+		RuntimeException.class
+	)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ApiResponse<ErrorResponseForm> runtimeExceptionHandler(Exception ex, Model model) {
 
