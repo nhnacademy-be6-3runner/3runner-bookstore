@@ -85,14 +85,4 @@ public class PaymentGuestServiceImpl implements PaymentGuestService {
         }
         return purchaseId;
     }
-
-    @Override
-    public Long refund() {
-        return 0L;
-    }
-
-    @Override
-    public Long partialRefund() {
-        return 0L;
-    }
 }

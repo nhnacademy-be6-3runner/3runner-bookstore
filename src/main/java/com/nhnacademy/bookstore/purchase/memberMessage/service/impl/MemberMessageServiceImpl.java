@@ -31,12 +31,6 @@ public class MemberMessageServiceImpl implements MemberMessageService {
     private final MemberMessageRepository memberMessageRepository;
     private final MemberRepository memberRepository;
 
-    /**
-     * 맴버메시지 생성.
-     *
-     * @param memberMessage 맴버메시지
-     * @return 멤버메시지아이디
-     */
     @Override
     public Long createMessage(MemberMessage memberMessage) {
         memberMessageRepository.save(memberMessage);

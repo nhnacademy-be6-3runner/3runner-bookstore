@@ -9,8 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * 포인트 정책 서비스 구현체.
+ *
+ * @author 김병우
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -26,7 +30,9 @@ public class PointPolicyServiceImpl implements PointPolicyService {
 
     @Override
     public Long update(String policyName, Integer policyValue) {
-        PointPolicy pointPolicy = pointPolicyRepository.findByPolicyName(policyName).orElseGet(() -> saveAndReturnPolicy(policyName, policyValue));
+        PointPolicy pointPolicy = pointPolicyRepository
+                .findByPolicyName(policyName)
+                .orElseGet(() -> saveAndReturnPolicy(policyName, policyValue));
         pointPolicy.setPolicyValue(policyValue);
         pointPolicyRepository.save(pointPolicy);
         return pointPolicy.getId();

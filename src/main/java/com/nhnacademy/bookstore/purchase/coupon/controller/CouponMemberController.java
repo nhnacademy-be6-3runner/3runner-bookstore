@@ -49,6 +49,13 @@ public class CouponMemberController {
         return ApiResponse.success(couponMemberService.registorCoupon(couponRegistorRequest.code(), memberId));
     }
 
+    /**
+     * 북쿠폰 등록.
+     *
+     * @param bookId 북아이디
+     * @param memberId 맴버아이디
+     * @return 여부
+     */
     @PostMapping("/coupons/books/{bookId}")
     private ApiResponse<Boolean> registerCouponBook(
             @PathVariable Long bookId,
@@ -58,6 +65,12 @@ public class CouponMemberController {
     }
 
 
+    /**
+     * 생일쿠폰 등록.
+     *
+     * @param memberId 맴버아이디
+     * @return 보이드
+     */
     @GetMapping("/coupons/birthdays")
     private ApiResponse<Void> registerCouponBook(
             @RequestHeader("Member-Id") Long memberId) {

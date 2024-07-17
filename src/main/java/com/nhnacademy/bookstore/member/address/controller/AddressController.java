@@ -3,7 +3,9 @@ package com.nhnacademy.bookstore.member.address.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.nhnacademy.bookstore.member.address.exception.AddressFormErrorException;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,11 +49,17 @@ public class AddressController {
      *
      */
     @PostMapping("/bookstore/members/addresses")
-    public ApiResponse<Void> createAddress(@RequestBody @Valid CreateAddressRequest request,@RequestHeader(value = "Member-Id")Long memberId) {
+    public ApiResponse<Void> createAddress(@RequestBody @Valid CreateAddressRequest request,
+                                           BindingResult bindingResult,
+                                           @RequestHeader(value = "Member-Id") Long memberId) {
+        if (bindingResult.hasErrors()) {
+            throw new AddressFormErrorException(bindingResult.getFieldErrors().toString());
+        }
+
         Member member = memberService.readById(memberId);
         Address address = new Address(request, member);
-        addressServiceImpl.save(address,member);
-        return new ApiResponse<Void>(new ApiResponse.Header(true, HttpStatus.CREATED.value()));
+        addressServiceImpl.save(address, member);
+        return ApiResponse.createSuccess(null);
     }
 
 
