@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.book.review.repository;
 
+import com.nhnacademy.bookstore.book.review.dto.response.ReviewAdminListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewDetailResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewListResponse;
 import com.nhnacademy.bookstore.book.review.repository.impl.ReviewCustomRepositoryImpl;
@@ -175,7 +176,7 @@ class ReviewRepositoryTest {
     @DisplayName("리뷰 목록 조회 테스트")
     void testGetReviewList() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<ReviewListResponse> reviewPage = reviewRepository.getReviewList(pageable);
+        Page<ReviewAdminListResponse> reviewPage = reviewRepository.getReviewList(pageable);
 
         assertThat(reviewPage).isNotNull();
         assertThat(reviewPage.getContent()).isNotEmpty();

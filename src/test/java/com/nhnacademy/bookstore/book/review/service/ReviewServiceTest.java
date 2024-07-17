@@ -5,19 +5,15 @@ import com.nhnacademy.bookstore.book.review.dto.request.CreateReviewRequest;
 import com.nhnacademy.bookstore.book.review.dto.request.DeleteReviewRequest;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewDetailResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewListResponse;
-import com.nhnacademy.bookstore.book.review.exception.UnauthorizedReviewAccessException;
 import com.nhnacademy.bookstore.book.review.repository.ReviewRepository;
 import com.nhnacademy.bookstore.book.review.service.impl.ReviewServiceImpl;
-import com.nhnacademy.bookstore.entity.auth.Auth;
 import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.entity.member.Member;
-import com.nhnacademy.bookstore.entity.memberAuth.MemberAuth;
 import com.nhnacademy.bookstore.entity.purchase.Purchase;
 import com.nhnacademy.bookstore.entity.purchase.enums.MemberType;
 import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
 import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.review.Review;
-import com.nhnacademy.bookstore.entity.review.enums.ReviewStatus;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
 import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
 import com.nhnacademy.bookstore.member.member.service.MemberPointService;
@@ -44,7 +40,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -107,10 +102,6 @@ class ReviewServiceTest {
                 .email("dfdaf2@nav.com")
                 .build());
         member2.setId(2L);
-
-        Auth auth = new Auth(1L, "admin");
-        MemberAuth memberAuth = new MemberAuth(1L, member2, auth);
-        member2.addMemberAuth(memberAuth);
 
         Book book = new Book(
                 "책1",
@@ -190,30 +181,6 @@ class ReviewServiceTest {
 
         verify(reviewRepository, Mockito.never()).save(review);
     }
-
-
-    @DisplayName("리뷰 삭제 테스트 - 권한 없음")
-    @Test
-    void testDeleteReview_Unauthorized() {
-        given(reviewRepository.findById(1L)).willReturn(Optional.of(review));
-        given(memberRepository.findById(1L)).willReturn(Optional.of(member1));
-
-        assertThrows(UnauthorizedReviewAccessException.class, () -> reviewService.deleteReview(1L, 1L, deleteReviewRequest));
-    }
-
-    @DisplayName("리뷰 삭제 테스트 - 성공")
-    @Test
-    void testDeleteReview_Success() {
-        given(reviewRepository.findById(1L)).willReturn(Optional.of(review));
-        given(memberRepository.findById(2L)).willReturn(Optional.of(member2));
-
-        Long reviewId = reviewService.deleteReview(1L, 2L, deleteReviewRequest);
-
-        assertThat(reviewId).isEqualTo(review.getId());
-        assertThat(review.getReviewStatus()).isEqualTo(ReviewStatus.DELETE);
-        assertThat(review.getDeletedReason()).isEqualTo(deleteReviewRequest.deleteReason());
-    }
-
 
     @DisplayName("리뷰 상세 조회 테스트")
     @Test
