@@ -1,76 +1,234 @@
-//package com.nhnacademy.bookstore.purchase.payment.service.impl;
-//
-//import com.nhnacademy.bookstore.purchase.bookCart.dto.request.ReadAllBookCartMemberRequest;
-//import com.nhnacademy.bookstore.purchase.bookCart.dto.response.ReadAllBookCartMemberResponse;
-//import com.nhnacademy.bookstore.purchase.bookCart.service.BookCartMemberService;
-//import com.nhnacademy.bookstore.purchase.purchase.dto.request.CreatePurchaseRequest;
-//import com.nhnacademy.bookstore.purchase.purchase.service.PurchaseMemberService;
-//import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.CreatePurchaseBookRequest;
-//import com.nhnacademy.bookstore.purchase.purchaseBook.service.PurchaseBookService;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//
-//import java.util.List;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.mockito.Mockito.*;
-//
-//@ExtendWith(MockitoExtension.class)
-//class PaymentMemberServiceImplTest {
-//
-//    @Mock
-//    private BookCartMemberService bookCartMemberService;
-//
-//    @Mock
-//    private PurchaseMemberService purchaseMemberService;
-//
-//    @Mock
-//    private PurchaseBookService purchaseBookService;
-//
-//    @InjectMocks
-//    private PaymentMemberServiceImpl paymentMemberService;
-//
-//    @Test
-//    void payment() {
-//        Long memberId = 1L;
-//        String address = "Test Address";
-//        Integer totalPrice = 10000;
-//        String orderId = "order123";
-//
-//        // Mock data
-//        Long purchaseId = 1L;
-//        List<ReadAllBookCartMemberResponse> bookCartMemberResponseList = List.of(
-//                new ReadAllBookCartMemberResponse(1L, 1L, 5000, null, "Book 1", 2),
-//                new ReadAllBookCartMemberResponse(2L, 2L, 3000, null, "Book 2", 1)
-//        );
-//
-//        when(purchaseMemberService.createPurchase(any(CreatePurchaseRequest.class), eq(memberId))).thenReturn(purchaseId);
-//        when(bookCartMemberService.readAllCartMember(any(ReadAllBookCartMemberRequest.class))).thenReturn(bookCartMemberResponseList);
-//
-//        // Call the method to test
-//        Long result = paymentMemberService.payment(memberId, address, totalPrice, orderId);
-//
-//        // Verify interactions
-//        verify(purchaseMemberService, times(1)).createPurchase(any(CreatePurchaseRequest.class), eq(memberId));
-//        verify(bookCartMemberService, times(1)).readAllCartMember(any(ReadAllBookCartMemberRequest.class));
-//        verify(purchaseBookService, times(2)).createPurchaseBook(any(CreatePurchaseBookRequest.class));
-//
-//        // Assertions
-//        assertThat(result).isEqualTo(purchaseId);
-//    }
-//
-//    @Test
-//    void refund() {
-//        Long result = paymentMemberService.refund();
-//        assertThat(result).isZero();
-//    }
-//
-//    @Test
-//    void partialRefund() {
-//        Long result = paymentMemberService.partialRefund();
-//        assertThat(result).isZero();
-//    }
-//}
+package com.nhnacademy.bookstore.purchase.payment.service.impl;
+
+import com.nhnacademy.bookstore.book.book.exception.BookDoesNotExistException;
+import com.nhnacademy.bookstore.book.book.repository.BookRepository;
+import com.nhnacademy.bookstore.entity.book.Book;
+import com.nhnacademy.bookstore.entity.payment.Payment;
+import com.nhnacademy.bookstore.entity.pointPolicy.PointPolicy;
+import com.nhnacademy.bookstore.entity.purchase.Purchase;
+import com.nhnacademy.bookstore.member.pointRecord.service.PointRecordService;
+import com.nhnacademy.bookstore.purchase.bookCart.dto.request.ReadAllBookCartMemberRequest;
+import com.nhnacademy.bookstore.purchase.bookCart.dto.response.ReadAllBookCartMemberResponse;
+import com.nhnacademy.bookstore.purchase.bookCart.service.BookCartMemberService;
+import com.nhnacademy.bookstore.purchase.coupon.service.CouponMemberService;
+import com.nhnacademy.bookstore.purchase.payment.dto.CreatePaymentMemberRequest;
+import com.nhnacademy.bookstore.purchase.payment.repository.PaymentRepository;
+import com.nhnacademy.bookstore.purchase.pointPolicy.exception.PointPolicyDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.pointPolicy.repository.PointPolicyRepository;
+import com.nhnacademy.bookstore.purchase.purchase.dto.request.CreatePurchaseRequest;
+import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
+import com.nhnacademy.bookstore.purchase.purchase.service.PurchaseMemberService;
+import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.CreatePurchaseBookRequest;
+import com.nhnacademy.bookstore.purchase.purchaseBook.service.PurchaseBookService;
+import com.nhnacademy.bookstore.purchase.purchaseCoupon.service.PurchaseCouponService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
+
+class PaymentMemberServiceImplTest {
+
+    @InjectMocks
+    private PaymentMemberServiceImpl paymentMemberService;
+
+    @Mock
+    private BookCartMemberService bookCartMemberService;
+
+    @Mock
+    private PurchaseMemberService purchaseMemberService;
+
+    @Mock
+    private PurchaseBookService purchaseBookService;
+
+    @Mock
+    private PointRecordService pointRecordService;
+
+    @Mock
+    private PurchaseCouponService purchaseCouponService;
+
+    @Mock
+    private CouponMemberService couponMemberService;
+
+    @Mock
+    private PaymentRepository paymentRepository;
+
+    @Mock
+    private PurchaseRepository purchaseRepository;
+
+    @Mock
+    private BookRepository bookRepository;
+
+    @Mock
+    private PointPolicyRepository pointPolicyRepository;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testPayment() {
+        CreatePaymentMemberRequest request = CreatePaymentMemberRequest.builder()
+                .orderId("orderId")
+                .road("road")
+                .amount(10000)
+                .shippingDate(ZonedDateTime.now())
+                .isPacking(true)
+                .paymentKey("paymentKey")
+                .memberId(1L)
+                .discountedPoint(1000)
+                .couponFormId(1L)
+                .discountedPrice(5000)
+                .build();
+
+        PointPolicy pointPolicy = new PointPolicy();
+        pointPolicy.setPolicyName("적립률");
+        pointPolicy.setPolicyValue(10);
+
+        Long purchaseId = 1L;
+        given(pointPolicyRepository.findByPolicyName("적립률")).willReturn(Optional.of(pointPolicy));
+        given(purchaseMemberService.createPurchase(any(CreatePurchaseRequest.class), eq(1L))).willReturn(purchaseId);
+        given(purchaseRepository.findById(purchaseId)).willReturn(Optional.of(mock(Purchase.class)));
+        List<ReadAllBookCartMemberResponse> bookCartResponses = List.of(
+                ReadAllBookCartMemberResponse.builder()
+                        .bookCartId(1L)
+                        .bookId(1L)
+                        .price(1000)
+                        .url("url")
+                        .title("title")
+                        .quantity(2)
+                        .leftQuantity(10)
+                        .build()
+        );
+
+        given(bookCartMemberService.readAllCartMember(any(ReadAllBookCartMemberRequest.class))).willReturn(bookCartResponses);
+
+        Book book = new Book();
+        book.setId(1L);
+        book.setQuantity(10);
+        given(bookRepository.findById(1L)).willReturn(Optional.of(book));
+
+        Long result = paymentMemberService.payment(request);
+
+        assertEquals(purchaseId, result);
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+        verify(purchaseBookService, times(1)).createPurchaseBook(any(CreatePurchaseBookRequest.class));
+        verify(bookRepository, times(1)).save(any(Book.class));
+        verify(pointRecordService, times(2)).save(anyLong(), anyString(), eq(1L), eq(purchaseId));
+        verify(couponMemberService, times(1)).useCoupons(1L, 1L);
+        verify(purchaseCouponService, times(1)).create(purchaseId, 1L, 5000);
+    }
+
+    @Test
+    void testPayment_PointPolicyDoesNotExist() {
+        CreatePaymentMemberRequest request = CreatePaymentMemberRequest.builder()
+                .orderId("orderId")
+                .road("road")
+                .amount(10000)
+                .shippingDate(ZonedDateTime.now())
+                .isPacking(true)
+                .paymentKey("paymentKey")
+                .memberId(1L)
+                .discountedPoint(1000)
+                .couponFormId(1L)
+                .discountedPrice(5000)
+                .build();
+
+        given(pointPolicyRepository.findByPolicyName("적립률")).willReturn(Optional.empty());
+
+        assertThrows(PointPolicyDoesNotExistException.class, () -> paymentMemberService.payment(request));
+    }
+
+    @Test
+    void testPayment_BookDoesNotExist() {
+        CreatePaymentMemberRequest request = CreatePaymentMemberRequest.builder()
+                .orderId("orderId")
+                .road("road")
+                .amount(10000)
+                .shippingDate(ZonedDateTime.now())
+                .isPacking(true)
+                .paymentKey("paymentKey")
+                .memberId(1L)
+                .discountedPoint(1000)
+                .couponFormId(1L)
+                .discountedPrice(5000)
+                .build();
+
+        PointPolicy pointPolicy = new PointPolicy();
+        pointPolicy.setPolicyName("적립률");
+        pointPolicy.setPolicyValue(10);
+
+        Long purchaseId = 1L;
+        given(pointPolicyRepository.findByPolicyName("적립률")).willReturn(Optional.of(pointPolicy));
+        given(purchaseMemberService.createPurchase(any(CreatePurchaseRequest.class), eq(1L))).willReturn(purchaseId);
+        given(purchaseRepository.findById(purchaseId)).willReturn(Optional.of(mock(Purchase.class)));
+        List<ReadAllBookCartMemberResponse> bookCartResponses = List.of(
+                ReadAllBookCartMemberResponse.builder()
+                        .bookCartId(1L)
+                        .bookId(1L)
+                        .price(1000)
+                        .url("url")
+                        .title("title")
+                        .quantity(2)
+                        .leftQuantity(10)
+                        .build()
+        );
+        given(bookCartMemberService.readAllCartMember(any(ReadAllBookCartMemberRequest.class))).willReturn(bookCartResponses);
+
+        given(bookRepository.findById(1L)).willReturn(Optional.empty());
+
+        assertThrows(BookDoesNotExistException.class, () -> paymentMemberService.payment(request));
+    }
+
+    @Test
+    void testPayment_InsufficientStock() {
+        CreatePaymentMemberRequest request = CreatePaymentMemberRequest.builder()
+                .orderId("orderId")
+                .road("road")
+                .amount(10000)
+                .shippingDate(ZonedDateTime.now())
+                .isPacking(true)
+                .paymentKey("paymentKey")
+                .memberId(1L)
+                .discountedPoint(1000)
+                .couponFormId(1L)
+                .discountedPrice(5000)
+                .build();
+
+        PointPolicy pointPolicy = new PointPolicy();
+        pointPolicy.setPolicyName("적립률");
+        pointPolicy.setPolicyValue(10);
+
+        Long purchaseId = 1L;
+        given(pointPolicyRepository.findByPolicyName("적립률")).willReturn(Optional.of(pointPolicy));
+        given(purchaseMemberService.createPurchase(any(CreatePurchaseRequest.class), eq(1L))).willReturn(purchaseId);
+        given(purchaseRepository.findById(purchaseId)).willReturn(Optional.of(mock(Purchase.class)));
+        List<ReadAllBookCartMemberResponse> bookCartResponses = List.of(
+                ReadAllBookCartMemberResponse.builder()
+                        .bookCartId(1L)
+                        .bookId(1L)
+                        .price(1000)
+                        .url("url")
+                        .title("title")
+                        .quantity(11)
+                        .leftQuantity(10)
+                        .build()
+        );
+        given(bookCartMemberService.readAllCartMember(any(ReadAllBookCartMemberRequest.class))).willReturn(bookCartResponses);
+
+        Book book = new Book();
+        book.setId(1L);
+        book.setQuantity(10);
+        given(bookRepository.findById(1L)).willReturn(Optional.of(book));
+
+        assertThrows(RuntimeException.class, () -> paymentMemberService.payment(request));
+    }
+}

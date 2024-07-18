@@ -28,6 +28,8 @@ import com.nhnacademy.bookstore.book.book.exception.BookDoesNotExistException;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.bookCartegory.dto.request.CreateBookCategoryRequest;
 import com.nhnacademy.bookstore.book.bookCartegory.dto.request.UpdateBookCategoryRequest;
+import com.nhnacademy.bookstore.book.bookCartegory.exception.BookCategoryAlreadyExistsException;
+import com.nhnacademy.bookstore.book.bookCartegory.exception.BookCategoryNotFoundException;
 import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
 import com.nhnacademy.bookstore.book.bookCartegory.service.impl.BookCategoryServiceImpl;
 import com.nhnacademy.bookstore.book.category.dto.response.BookDetailCategoryResponse;
@@ -164,6 +166,13 @@ class BookCategoryServiceTest {
 		verify(bookCategoryRepository, times(1)).deleteById(anyLong());
 	}
 
+	@Test
+	void deletedBookCategory_BookCategoryNotFoundException() {
+		when(bookCategoryRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(BookCategoryNotFoundException.class, () -> bookCategoryService.deletedBookCategory(1L));
+	}
+
 	@DisplayName("도서에 해당하는 카테고리 목록 조회 테스트")
 	@Test
 	void readBookWithCategoryList() {
@@ -291,4 +300,88 @@ class BookCategoryServiceTest {
 
 	}
 
+	@Test
+	void allCategoryListTest() {
+		Category category1 = new Category("Category 1");
+		category1.setId(1L);
+		Category category2 = new Category("Category 2");
+		category2.setId(2L);
+		Category category3 = new Category("Category 3");
+		category3.setId(3L);
+		Category category4 = new Category("Category 4");
+		category4.setId(4L);
+		Category category5 = new Category("Category 5");
+		category5.setId(5L);
+		Category category6 = new Category("Category 6");
+		category6.setId(6L);
+		Category category7 = new Category("Category 7");
+		category7.setId(7L);
+		Category category8 = new Category("Category 8");
+		category8.setId(8L);
+		category1.setChildren(null);
+		category1.addChildren(category5);
+		category1.addChildren(category6);
+		category1.addChildren(category7);
+		category2.addChildren(category8);
+		category2.addChildren(category3);
+		List<Category> categoryList = List.of(category1, category2, category3, category4, category5, category6,
+			category7, category8);
+
+		when(categoryRepository.findAll()).thenReturn(categoryList);
+
+		List<CategoryParentWithChildrenResponse> response = bookCategoryService.allCategoryList();
+		assertEquals(response.size(), 3);
+		assertEquals(response.getFirst().getId(), category1.getId());
+	}
+
+	@Test
+	void readBookCategoryNamesTest() {
+		List<BookCategory> bookCategoryList = new ArrayList<>();
+		BookCategory bookCategory1 = BookCategory.create(book, category);
+		bookCategoryList.add(bookCategory1);
+		Category category2 = new Category("Category 2");
+		BookCategory bookCategory2 = BookCategory.create(book, category2);
+		bookCategoryList.add(bookCategory2);
+		when(bookCategoryRepository.findByBookId(anyLong())).thenReturn(bookCategoryList);
+
+		List<String> response = bookCategoryService.readBookCategoryNames(1L);
+
+		assertEquals(response.size(), 2);
+		assertEquals(response.get(0), "테스트 카테고리");
+		assertEquals(response.get(1), "Category 2");
+
+	}
+
+	@Test
+	void createBookCategory_BookCategoryAlreadyExistsException_Test() {
+		CreateBookCategoryRequest dto = new CreateBookCategoryRequest(book.getId(),
+			categoryList.stream().map(Category::getId).collect(Collectors.toList()));
+
+		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(categoryRepository.findAllById(anyList())).thenReturn(categoryList);
+		when(bookCategoryRepository.existsByBookAndCategory(any(Book.class), any(Category.class))).thenReturn(true);
+
+		assertThrows(BookCategoryAlreadyExistsException.class, () -> bookCategoryService.createBookCategory(dto));
+	}
+
+	@Test
+	void updateBookCategory_CategoryNotFoundException_Test() {
+		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(categoryRepository.findAllById(anyList())).thenReturn(categoryList);
+
+		UpdateBookCategoryRequest request = UpdateBookCategoryRequest.builder()
+			.bookId(book.getId())
+			.categoryIds(List.of(1L, 2L, 3L, 4L))
+			.build();
+		assertThrows(CategoryNotFoundException.class, () -> bookCategoryService.updateBookCategory(1L, request));
+
+	}
+
+	@Test
+	void readCategoriesWithBookList_CategoryNotFoundException_Test() {
+		when(categoryRepository.findAllById(anyList())).thenReturn(categoryList);
+
+		assertThrows(CategoryNotFoundException.class, () ->
+			bookCategoryService.readCategoriesWithBookList(List.of(1L, 2L, 3L), PageRequest.of(1, 12)));
+	}
 }

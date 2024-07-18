@@ -1,6 +1,5 @@
 package com.nhnacademy.bookstore.purchase.coupon.controller;
 
-import com.nhnacademy.bookstore.member.member.dto.response.GetMemberResponse;
 import com.nhnacademy.bookstore.member.member.dto.response.ReadMemberResponse;
 import com.nhnacademy.bookstore.member.member.service.MemberPointService;
 import com.nhnacademy.bookstore.purchase.coupon.feign.dto.request.CreateCouponFormRequest;

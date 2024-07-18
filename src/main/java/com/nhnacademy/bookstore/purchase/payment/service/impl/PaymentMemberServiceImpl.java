@@ -136,14 +136,4 @@ public class PaymentMemberServiceImpl implements PaymentMemberService {
 
         return purchaseId;
     }
-
-    @Override
-    public Long refund() {
-        return 0L;
-    }
-
-    @Override
-    public Long partialRefund() {
-        return 0L;
-    }
 }

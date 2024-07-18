@@ -3,6 +3,7 @@ package com.nhnacademy.bookstore.entity.bookCategory;
 import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.entity.category.Category;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +26,7 @@ public class BookCategory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@Setter
 	private Book book;
 

@@ -24,7 +24,7 @@ public class Auth {
     private String name;
 
     @OneToMany(mappedBy = "auth", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MemberAuth> memberAuthSet = new ArrayList<>();
+    private List<MemberAuth> memberAuthList = new ArrayList<>();
 
     public Auth(Long id, String name) {
         this.id = id;

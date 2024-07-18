@@ -1,141 +1,140 @@
-//package com.nhnacademy.bookstore.book.tag.service;
-//
-//import com.nhnacademy.bookstore.book.tag.dto.request.CreateTagRequest;
-//import com.nhnacademy.bookstore.book.tag.dto.request.DeleteTagRequest;
-//import com.nhnacademy.bookstore.book.tag.dto.request.UpdateTagRequest;
-//import com.nhnacademy.bookstore.book.tag.dto.response.TagResponse;
-//import com.nhnacademy.bookstore.book.tag.exception.AlreadyHaveTagException;
-//import com.nhnacademy.bookstore.book.tag.exception.NotExistsTagException;
-//import com.nhnacademy.bookstore.book.tag.repository.TagRepository;
-//import com.nhnacademy.bookstore.book.tag.service.Impl.TagServiceImpl;
-//import com.nhnacademy.bookstore.entity.tag.Tag;
-//import java.util.ArrayList;
-//import java.util.List;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.MockitoAnnotations;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
-//
-//import java.util.Optional;
-//
-//import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.*;
-//
-//@SpringBootTest
-//@AutoConfigureMockMvc
-//class TagServiceTest {
-//
-//    @Mock
-//    private TagRepository tagRepository;
-//
-//    @InjectMocks
-//    private TagServiceImpl tagService;
-//
-//    @BeforeEach
-//    public void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//    }
-//
-//    @Test
-//    public void getAllTagsTest(){
-//        List<Tag> tagList = new ArrayList<>();
-//        tagList.add(new Tag(1, "Tag1",null));
-//        tagList.add(new Tag(2, "Tag2",null));
-//        tagList.add(new Tag(3, "Tag3",null));
-//        when(tagRepository.findAll()).thenReturn(tagList);
-//
-//        List<TagResponse> allTags = tagService.getAllTags();
-//
-//        assertThat(allTags.size()).isEqualTo(tagList.size());
-//        assertThat(allTags.getFirst().id()).isEqualTo(tagList.getFirst().getId());
-//        assertThat(allTags.getFirst().name()).isEqualTo(tagList.getFirst().getName());
-//
-//    }
-//
-//    @Test
-//    public void testCreateTag_Success() {
-//        CreateTagRequest createTagRequest = CreateTagRequest.builder()
-//                .name("New Tag")
-//                .build();
-//
-//        when(tagRepository.findByName(createTagRequest.name())).thenReturn(Optional.empty());
-//        when(tagRepository.save(any(Tag.class))).thenReturn(new Tag());
-//
-//        tagService.createTag(createTagRequest);
-//
-//        verify(tagRepository, times(1)).save(any(Tag.class));
-//    }
-//
-//    @Test
-//    public void testDeleteTag_Success() {
-//        DeleteTagRequest deleteTagRequest = DeleteTagRequest.builder()
-//                .tagId(1L)
-//                .build();
-//
-//        when(tagRepository.existsById(deleteTagRequest.tagId())).thenReturn(true);
-//        doNothing().when(tagRepository).deleteById(deleteTagRequest.tagId());
-//
-//        tagService.deleteTag(deleteTagRequest);
-//
-//        verify(tagRepository, times(1)).deleteById(deleteTagRequest.tagId());
-//    }
-//
-//    @Test
-//    public void testUpdateTag_Success() {
-//        UpdateTagRequest updateTagRequest = UpdateTagRequest.builder()
-//                .tagId(1L)
-//                .tagName("Updated Tag Name")
-//                .build();
-//
-//        Tag existingTag = new Tag();
-//        existingTag.setName("Old Tag Name");
-//
-//        when(tagRepository.findById(updateTagRequest.tagId())).thenReturn(Optional.of(existingTag));
-//        when(tagRepository.save(any(Tag.class))).thenReturn(existingTag);
-//
-//        tagService.updateTag(updateTagRequest);
-//
-//        verify(tagRepository, times(1)).save(existingTag);
-//    }
-//
-//
-//    @Test
-//    void createTag_alreadyHaveTagExceptionThrown() {
-//        // Given
-//        CreateTagRequest request = new CreateTagRequest("existingTag");
-//        Tag existingTag = new Tag();
-//        existingTag.setName("existingTag");
-//
-//        // When
-//        when(tagRepository.findByName("existingTag")).thenReturn(Optional.of(existingTag));
-//
-//        // Then
-//        AlreadyHaveTagException exception = assertThrows(AlreadyHaveTagException.class, () -> {
-//            tagService.createTag(request);
-//        });
-//
-//        assertEquals("태그가 이미 있습니다.", exception.getMessage());
-//        verify(tagRepository, never()).save(any(Tag.class));
-//    }
-//
-//    @Test
-//    void deleteTagExceptionThrown() {
-//        when(tagRepository.existsById(anyLong())).thenReturn(false);
-//
-//        assertThrows(NotExistsTagException.class, () -> tagService.deleteTag(new DeleteTagRequest(1L)));
-//    }
-//
-//    @Test
-//    void updateTagExceptionThrown() {
-//        when(tagRepository.existsById(anyLong())).thenReturn(false);
-//
-//        assertThrows(NotExistsTagException.class, () -> tagService.updateTag(new UpdateTagRequest(1L, "update")));
-//    }
-//
-//}
+package com.nhnacademy.bookstore.book.tag.service.Impl;
+
+import com.nhnacademy.bookstore.book.tag.dto.request.CreateTagRequest;
+import com.nhnacademy.bookstore.book.tag.dto.request.DeleteTagRequest;
+import com.nhnacademy.bookstore.book.tag.dto.request.UpdateTagRequest;
+import com.nhnacademy.bookstore.book.tag.dto.response.TagResponse;
+import com.nhnacademy.bookstore.book.tag.exception.AlreadyHaveTagException;
+import com.nhnacademy.bookstore.book.tag.exception.NotExistsTagException;
+import com.nhnacademy.bookstore.book.tag.repository.TagRepository;
+import com.nhnacademy.bookstore.entity.tag.Tag;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+class TagServiceTest {
+
+    @Mock
+    private TagRepository tagRepository;
+
+    @InjectMocks
+    private TagServiceImpl tagService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testGetAllTags() {
+        List<Tag> tags = new ArrayList<>();
+        Tag tag1 = new Tag();
+        tag1.setName("Tag1");
+        tags.add(tag1);
+
+        when(tagRepository.findAll()).thenReturn(tags);
+
+        List<TagResponse> result = tagService.getAllTags();
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().name()).isEqualTo("Tag1");
+    }
+
+    @Test
+    void testCreateTag() {
+        CreateTagRequest request = new CreateTagRequest("NewTag");
+        Tag tag = new Tag();
+        tag.setName("NewTag");
+
+        when(tagRepository.findByName(any())).thenReturn(Optional.empty());
+        when(tagRepository.save(any(Tag.class))).thenReturn(tag);
+
+        Long result = tagService.createTag(request);
+        assertThat(result).isEqualTo(0L);
+    }
+
+    @Test
+    void testCreateTag_AlreadyExists() {
+        CreateTagRequest request = new CreateTagRequest("ExistingTag");
+
+        when(tagRepository.findByName(any())).thenReturn(Optional.of(new Tag()));
+
+        assertThrows(AlreadyHaveTagException.class, () -> tagService.createTag(request));
+    }
+
+    @Test
+    void testDeleteTag() {
+        DeleteTagRequest request = new DeleteTagRequest(1L);
+
+        when(tagRepository.existsById(anyLong())).thenReturn(true);
+        doNothing().when(tagRepository).deleteById(anyLong());
+
+        tagService.deleteTag(request);
+
+        verify(tagRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testDeleteTag_NotExists() {
+        DeleteTagRequest request = new DeleteTagRequest(1L);
+
+        when(tagRepository.existsById(anyLong())).thenReturn(false);
+
+        assertThrows(NotExistsTagException.class, () -> tagService.deleteTag(request));
+    }
+
+    @Test
+    void testUpdateTag() {
+        UpdateTagRequest request = new UpdateTagRequest(1L, "UpdatedTag");
+        Tag tag = new Tag();
+        tag.setName("OldTag");
+
+        when(tagRepository.findById(anyLong())).thenReturn(Optional.of(tag));
+        when(tagRepository.save(any(Tag.class))).thenReturn(tag);
+
+        Long result = tagService.updateTag(request);
+        assertThat(result).isEqualTo(0L);
+        assertThat(tag.getName()).isEqualTo("UpdatedTag");
+    }
+
+    @Test
+    void testUpdateTag_NotExists() {
+        UpdateTagRequest request = new UpdateTagRequest(1L, "UpdatedTag");
+
+        when(tagRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(NotExistsTagException.class, () -> tagService.updateTag(request));
+    }
+
+    @Test
+    void testGetAllAdminTags() {
+        Pageable pageable = PageRequest.of(0, 10);
+        List<TagResponse> tagResponses = new ArrayList<>();
+        TagResponse response = TagResponse.builder().id(1L).name("Tag1").build();
+        tagResponses.add(response);
+        Page<TagResponse> page = new PageImpl<>(tagResponses, pageable, 1);
+
+        when(tagRepository.readAdminBookList(any(Pageable.class))).thenReturn(page);
+
+        Page<TagResponse> result = tagService.getAllAdminTags(pageable);
+        assertThat(result).isNotNull();
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().getFirst().name()).isEqualTo("Tag1");
+    }
+}

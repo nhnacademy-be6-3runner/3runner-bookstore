@@ -1,20 +1,21 @@
 package com.nhnacademy.bookstore.purchase.bookCart.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import jakarta.validation.constraints.Min;
 import lombok.Builder;
 
 /**
- * 카트 생성 폼.
+ * 북카트 생성 요청 Dto.
  *
- * @author 김병우
- * @param bookId 도서아이디
- * @param quantity 도서수량
+ * @param bookId
+ * @param userId
+ * @param quantity
  */
-
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record CreateBookCartRequest(
-        long bookId,
-        long userId,
-        int quantity) {
+        @Min(1) long bookId,
+        @Min(0) long userId,
+        @Min(1) int quantity) {
     }

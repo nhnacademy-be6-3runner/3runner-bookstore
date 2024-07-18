@@ -33,6 +33,4 @@ public interface ReviewLikeRepository extends JpaRepository<ReviewLike, Long> {
      * @param memberId 멤버 아이디
      */
     void deleteByReviewIdAndMemberId(Long reviewId, Long memberId);
-
-    boolean findByReviewIdAndMemberId(Long reviewId, Long memberId);
 }

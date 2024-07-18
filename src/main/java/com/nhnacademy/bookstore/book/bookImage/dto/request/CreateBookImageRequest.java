@@ -10,10 +10,10 @@ import lombok.Builder;
 @Builder
 public record CreateBookImageRequest(
 	@NotNull
-	@NotBlank(message = "url is entry")
+	@NotBlank
 	@Size(max = 50)
 	String url,
-	@NotNull(message = "type is entry")
+	@NotNull
 	BookImageType type,
 	long bookId) {
 }

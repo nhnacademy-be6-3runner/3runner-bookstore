@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.nhnacademy.bookstore.book.book.exception.BookDoesNotExistException;
 import com.nhnacademy.bookstore.book.book.exception.CreateBookRequestFormException;
 import com.nhnacademy.bookstore.book.book.exception.UpdateBookRequestFormException;
+import com.nhnacademy.bookstore.book.category.exception.CreateCategoryRequestException;
+import com.nhnacademy.bookstore.book.category.exception.UpdateCategoryRequestException;
 import com.nhnacademy.bookstore.book.image.exception.NotFindImageException;
 import com.nhnacademy.bookstore.book.tag.exception.AlreadyHaveTagException;
 import com.nhnacademy.bookstore.member.address.exception.AddressFullException;
@@ -51,7 +53,9 @@ public class WebControllerAdvice {
 	 * @param model
 	 * @return ApiResponse<ErrorResponseForm>
 	 */
-	@ExceptionHandler(RuntimeException.class)
+	@ExceptionHandler(
+		RuntimeException.class
+	)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ApiResponse<ErrorResponseForm> runtimeExceptionHandler(Exception ex, Model model) {
 
@@ -85,7 +89,10 @@ public class WebControllerAdvice {
 		TossPaymentException.class,
 		UpdateBookRequestFormException.class,
 		AlreadyHaveTagException.class,
-		CreateRefundRequestFormException.class
+		CreateRefundRequestFormException.class,
+		CreateCategoryRequestException.class,
+		UpdateCategoryRequestException.class
+
 	})
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ApiResponse<ErrorResponseForm> badRequestHandler(Exception ex, Model model) {
