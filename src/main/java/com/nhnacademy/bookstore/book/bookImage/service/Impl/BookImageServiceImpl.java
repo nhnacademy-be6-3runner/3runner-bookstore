@@ -108,7 +108,7 @@ public class BookImageServiceImpl implements BookImageService {
 
 		imageList.add(imageMain);
 		deleteBookImage.removeIf(bookImage ->
-			!imageList.contains(bookImage.getTotalImage().getUrl())
+			imageList.contains(bookImage.getTotalImage().getUrl())
 		);
 
 		for (BookImage image : deleteBookImage) {

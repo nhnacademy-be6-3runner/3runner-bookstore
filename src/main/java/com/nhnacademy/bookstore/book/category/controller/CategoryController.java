@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.service.BookService;
-import com.nhnacademy.bookstore.book.bookCartegory.service.BookCategoryService;
 import com.nhnacademy.bookstore.book.category.dto.request.CreateCategoryRequest;
 import com.nhnacademy.bookstore.book.category.dto.request.UpdateCategoryRequest;
 import com.nhnacademy.bookstore.book.category.dto.response.CategoryForCouponResponse;
@@ -47,7 +46,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CategoryController {
 	private final CategoryService categoryService;
-	private final BookCategoryService bookCategoryService;
 	private final BookService bookService;
 
 	/**
@@ -67,7 +65,7 @@ public class CategoryController {
 		}
 		categoryService.createCategory(dto);
 
-		return new ApiResponse<Void>(new ApiResponse.Header(true, 201));
+		return new ApiResponse<>(new ApiResponse.Header(true, 201));
 	}
 
 	/**

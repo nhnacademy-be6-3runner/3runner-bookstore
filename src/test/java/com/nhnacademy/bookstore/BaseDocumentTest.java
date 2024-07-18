@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
@@ -20,9 +19,9 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.bookstore.book.book.controller.BookController;
 
 @Disabled
+
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -55,7 +54,7 @@ public abstract class BaseDocumentTest {
 		return objectMapper.writeValueAsString(dto);
 	}
 
-	protected Attributes.Attribute attribute(final String key, final String value){
-		return new Attributes.Attribute(key,value);
+	protected Attributes.Attribute attribute(final String key, final String value) {
+		return new Attributes.Attribute(key, value);
 	}
 }
