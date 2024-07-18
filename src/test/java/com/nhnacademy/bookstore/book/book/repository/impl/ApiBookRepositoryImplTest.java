@@ -51,6 +51,7 @@ class ApiBookRepositoryImplTest {
 			.isbn13("1234567890123")
 			.priceSales(12500)
 			.priceStandard(13000)
+			.pubDate("Tue, 01 Jan 2019 00:00:00 GMT")
 			.cover("https://image.aladin.co.kr/product/34132/71/coversum/e712533508_1.jpg")
 			.categoryName("Category1>Category2>Category3")
 			.publisher("Test Publisher")
@@ -58,7 +59,6 @@ class ApiBookRepositoryImplTest {
 
 		ApiCreateBookResponse bookResponse = ApiCreateBookResponse.builder()
 			.title("Test Title")
-			.pubDate("Tue, 01 Jan 2019 00:00:00 GMT")
 			.item(List.of(item))
 			.build();
 

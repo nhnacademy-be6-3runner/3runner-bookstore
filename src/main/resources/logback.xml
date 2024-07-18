@@ -1,0 +1,26 @@
+<configuration>
+    <!-- Custom NHN Log Crash Appender 정의 -->
+    <appender name="NHN_LOG_CRASH_APPENDER" class="com.nhnacademy.bookstore.global.appender.NHNLogCrashAppender">
+        <url>https://api-logncrash.cloud.toast.com/v2/log</url>
+    </appender>
+
+    <!-- 비동기 NHN Log Crash Appender 정의 -->
+    <appender name="ASYNC_NHN_LOG_CRASH_APPENDER" class="ch.qos.logback.classic.AsyncAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>
+
+            </level>
+        </filter>
+        <appender-ref ref="NHN_LOG_CRASH_APPENDER"/>
+    </appender>
+
+    <!-- Racingcar Logger 정의 -->
+    <logger name="racingcar" level="INFO">
+        <appender-ref ref="ASYNC_NHN_LOG_CRASH_APPENDER"/>
+    </logger>
+
+    <!-- Root Logger 정의 -->
+    <root level="DEBUG">
+        <!-- 여기에 다른 Appender를 추가할 수 있습니다. 예를 들어, ConsoleAppender 또는 FileAppender -->
+    </root>
+</configuration>

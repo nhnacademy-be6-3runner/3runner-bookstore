@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nhnacademy.bookstore.book.category.dto.request.CreateCategoryRequest;
 import com.nhnacademy.bookstore.book.category.dto.request.UpdateCategoryRequest;
+import com.nhnacademy.bookstore.book.category.dto.response.CategoryForCouponResponse;
 import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
 import com.nhnacademy.bookstore.book.category.dto.response.CategoryResponse;
 import com.nhnacademy.bookstore.book.category.exception.CategoryNotFoundException;
@@ -108,17 +109,26 @@ public class CategoryServiceImpl implements CategoryService {
 		return categoryRepository.findParentWithChildrenCategories();
 	}
 
+	@Override
+	public List<CategoryForCouponResponse> getCategoriesIds(List<Long> ids) {
+		List<Category> categoryList = categoryRepository.findAllById(ids);
+		List<CategoryForCouponResponse> categoryResponseList = new ArrayList<>();
+		for (Category category : categoryList) {
+			categoryResponseList.add(new CategoryForCouponResponse(category.getId(), category.getName()));
+		}
+		return categoryResponseList;
+	}
+
 	/**
 	 * @author 한민기
 	 *
-	 * @param categoryList
-	 * @return
+	 * @param categoryList 카테고리 리스트
+	 * @return 카테고리를 부모와 자녀를 묶어서 내보내기
 	 */
 	private List<CategoryParentWithChildrenResponse> categoryChildrenMade(
 		List<Category> categoryList) {
 
 		Map<Long, CategoryParentWithChildrenResponse> categoryMap = new HashMap<>();
-
 		List<CategoryParentWithChildrenResponse> rootList = new ArrayList<>();
 
 		for (Category category : categoryList) {
@@ -139,6 +149,5 @@ public class CategoryServiceImpl implements CategoryService {
 			}
 		}
 		return rootList;
-
 	}
 }

@@ -27,16 +27,19 @@ import com.nhnacademy.bookstore.entity.bookTag.BookTag;
 import com.nhnacademy.bookstore.entity.tag.Tag;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 책에 달린 태그를 검색 하거나 태그로 책을 검색하기 위한 서비스
  *
  * @author 정주혁
+ * fix 한민기
  */
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class BookTagServiceImpl implements BookTagService {
 
 	private final BookTagRepository bookTagRepository;
@@ -107,6 +110,7 @@ public class BookTagServiceImpl implements BookTagService {
 		if (!bookRepository.existsById(createBookTagRequestList.bookId())) {
 			throw new BookDoesNotExistException("책이 없습니다.");
 		}
+
 		for (Long tagId : createBookTagRequestList.tagIdList()) {
 			if (bookTagRepository.existsByBookIdAndTagId(createBookTagRequestList.bookId(), tagId)) {
 				throw new AlreadyExistsBookTagException("이미 해당 책에 달린 태그가 존재합니다.");
@@ -120,6 +124,30 @@ public class BookTagServiceImpl implements BookTagService {
 
 			bookTagRepository.save(bookTag);
 		}
+	}
+
+	/**
+	 * 기존의 태그를 삭제하고 다시 추가.
+	 *
+	 * @param createBookTagListRequest 수정할 태그들의 목록
+	 */
+	@Override
+	@Transactional(propagation = Propagation.MANDATORY)
+	public void updateBookTag(CreateBookTagListRequest createBookTagListRequest) {
+		Book book = bookRepository.findById(createBookTagListRequest.bookId())
+			.orElseThrow(() -> new BookDoesNotExistException("존재하지 않는 도서입니다."));
+
+		List<Tag> bookTagList = tagRepository.findAllById(createBookTagListRequest.tagIdList());
+
+		book.getBookTagList().clear();
+
+		bookRepository.save(book);
+		for (Tag tag : bookTagList) {
+			BookTag bookTag = new BookTag(book, tag);
+			book.addBookTag(bookTag);
+		}
+
+		bookRepository.save(book);
 	}
 
 }

@@ -30,7 +30,9 @@ public class ApiBookController {
 
 		apiBookService.save(isbnId);
 
-		return new ApiResponse<Void>(new ApiResponse.Header(true, 201));
+		return new ApiResponse<>(new ApiResponse.Header(true, 201));
 	}
 
 }
+
+

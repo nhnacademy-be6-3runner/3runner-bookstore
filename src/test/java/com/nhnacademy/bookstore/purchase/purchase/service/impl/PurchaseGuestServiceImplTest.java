@@ -10,16 +10,13 @@ import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseAlreadyExist
 import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseDoesNotExistException;
 import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseNoAuthorizationException;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
+import com.nhnacademy.bookstore.purchase.purchase.service.impl.PurchaseGuestServiceImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.ZonedDateTime;
@@ -27,94 +24,210 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+
 class PurchaseGuestServiceImplTest {
-    private static final Logger log = LoggerFactory.getLogger(PurchaseGuestServiceImplTest.class);
-    @Mock
-    private PurchaseRepository purchaseRepository;
-    @Mock
-    private PasswordEncoder passwordEncoder;
-    @InjectMocks
-    private PurchaseGuestServiceImpl purchaseGuestService;
 
-    private Purchase purchase;
-    private CreatePurchaseRequest request;
-    private UpdatePurchaseGuestRequest updateRequest;
+	@Mock
+	private PurchaseRepository purchaseRepository;
 
-    @BeforeEach
-    void setUp() {
-        purchase = new Purchase(UUID.randomUUID(), PurchaseStatus.SHIPPED, 100, 10, ZonedDateTime.now(), "road", "password", MemberType.NONMEMBER, null,null,null,null);
+	@Mock
+	private PasswordEncoder encoder;
 
-        request = CreatePurchaseRequest.builder().orderId(UUID.randomUUID().toString()).deliveryPrice(100).totalPrice(1000).road("dfdfd").password("abcdefg").build();
-        updateRequest = UpdatePurchaseGuestRequest.builder().purchaseStatus(PurchaseStatus.SHIPPED).orderNumber(UUID.randomUUID()).password("password").build();
-    }
+	@InjectMocks
+	private PurchaseGuestServiceImpl purchaseGuestService;
 
-    @Test
-    void createPurchase() {
-        when(purchaseRepository.existsPurchaseByOrderNumber(any(UUID.class))).thenReturn(false);
-        when(purchaseRepository.save(any(Purchase.class))).thenReturn(purchase);
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
+	}
 
-        Long purchaseId = purchaseGuestService.createPurchase(request);
+	@Test
+	void createPurchase_Success() {
+		CreatePurchaseRequest request = CreatePurchaseRequest.builder()
+			.orderId("123e4567-e89b-12d3-a456-426614174000")
+			.deliveryPrice(5000)
+			.totalPrice(10000)
+			.road("123 Street")
+			.password("password")
+			.shippingDate(ZonedDateTime.now())
+			.isPacking(true)
+			.build();
 
-        assertNotNull(purchaseId);
-        verify(purchaseRepository, times(1)).save(any(Purchase.class));
-    }
+		Purchase purchase = new Purchase(
+			UUID.fromString(request.orderId()),
+			PurchaseStatus.COMPLETED,
+			request.deliveryPrice(),
+			request.totalPrice(),
+			ZonedDateTime.now(),
+			request.road(),
+			encoder.encode(request.password()),
+			request.shippingDate(),
+			request.isPacking(),
+			MemberType.NONMEMBER,
+			null
+		);
 
-    @Test
-    void createPurchase_PurchaseAlreadyExist() {
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(purchaseRepository.existsPurchaseByOrderNumber(any(UUID.class))).thenReturn(true);
+		when(purchaseRepository.existsPurchaseByOrderNumber(purchase.getOrderNumber())).thenReturn(false);
+		when(purchaseRepository.save(any(Purchase.class))).thenReturn(purchase);
+		when(encoder.encode(anyString())).thenReturn("encodedPassword");
 
-        assertThrows(PurchaseAlreadyExistException.class, () -> purchaseGuestService.createPurchase(request));
-    }
+		Long purchaseId = purchaseGuestService.createPurchase(request);
 
-    @Test
-    void updatePurchase() {
+		assertNotNull(purchaseId);
+		verify(purchaseRepository, times(1)).existsPurchaseByOrderNumber(purchase.getOrderNumber());
+		verify(purchaseRepository, times(1)).save(any(Purchase.class));
+	}
 
-        when(purchaseRepository.findPurchaseByOrderNumber(any(UUID.class))).thenReturn(Optional.of(purchase));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+	@Test
+	void createPurchase_PurchaseAlreadyExistException() {
+		CreatePurchaseRequest request = CreatePurchaseRequest.builder()
+			.orderId("123e4567-e89b-12d3-a456-426614174000")
+			.deliveryPrice(5000)
+			.totalPrice(10000)
+			.road("123 Street")
+			.password("password")
+			.shippingDate(ZonedDateTime.now())
+			.isPacking(true)
+			.build();
 
-        Long purchaseId = purchaseGuestService.updatePurchase(updateRequest);
+		when(purchaseRepository.existsPurchaseByOrderNumber(any(UUID.class))).thenReturn(true);
 
-        assertNotNull(purchaseId);
-        assertEquals(purchase.getId(), purchaseId);
-        assertEquals(PurchaseStatus.SHIPPED, purchase.getStatus());
-    }
+		assertThrows(PurchaseAlreadyExistException.class, () -> purchaseGuestService.createPurchase(request));
+	}
 
-    @Test
-    void readPurchase() {
-        when(purchaseRepository.findPurchaseByOrderNumber(any(UUID.class))).thenReturn(Optional.of(purchase));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+	@Test
+	void updatePurchase_Success() {
+		UpdatePurchaseGuestRequest request =  UpdatePurchaseGuestRequest.builder()
+			.orderNumber(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+			.purchaseStatus(PurchaseStatus.COMPLETED)
+			.password("password")
+			.build();
 
-        ReadPurchaseResponse response = purchaseGuestService.readPurchase(purchase.getOrderNumber(), "password");
+		Purchase purchase = new Purchase();
+		purchase.setId(1L);
+		purchase.setOrderNumber(request.orderNumber());
+		purchase.setStatus(PurchaseStatus.COMPLETED);
 
-        assertNotNull(response);
-        assertEquals(purchase.getId(), response.id());
-    }
+		when(purchaseRepository.findPurchaseByOrderNumber(request.orderNumber())).thenReturn(Optional.of(purchase));
+		when(purchaseRepository.save(any(Purchase.class))).thenReturn(purchase);
 
-    @Test
-    void deletePurchase() {
-        when(purchaseRepository.findPurchaseByOrderNumber(any(UUID.class))).thenReturn(Optional.of(purchase));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+		Long purchaseId = purchaseGuestService.updatePurchase(request);
 
-        assertDoesNotThrow(() -> purchaseGuestService.deletePurchase(purchase.getOrderNumber(), "password"));
-    }
-    @Test
-    void testValidateGuestThrowsPurchaseDoesNotExistException() {
-        when(purchaseRepository.findPurchaseByOrderNumber(any(UUID.class))).thenReturn(Optional.empty());
+		assertNotNull(purchaseId);
+		assertEquals(PurchaseStatus.COMPLETED, purchase.getStatus());
+		verify(purchaseRepository, times(1)).findPurchaseByOrderNumber(request.orderNumber());
+		verify(purchaseRepository, times(1)).save(any(Purchase.class));
+	}
 
-        assertThrows(PurchaseDoesNotExistException.class, () -> purchaseGuestService.deletePurchase(purchase.getOrderNumber(), "password"));
-    }
+	@Test
+	void updatePurchase_PurchaseDoesNotExistException() {
+		UpdatePurchaseGuestRequest request =  UpdatePurchaseGuestRequest.builder()
+			.orderNumber(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+			.purchaseStatus(PurchaseStatus.COMPLETED)
+			.password("password")
+			.build();
 
-    @Test
-    void testValidateGuestThrowsPurchaseNoAuthorizationException() {
-        when(purchaseRepository.findPurchaseByOrderNumber(any(UUID.class))).thenReturn(Optional.of(purchase));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+		when(purchaseRepository.findPurchaseByOrderNumber(request.orderNumber())).thenReturn(Optional.empty());
 
-        assertThrows(PurchaseNoAuthorizationException.class, () -> purchaseGuestService.deletePurchase(purchase.getOrderNumber(), "password"));
-    }
+		assertThrows(PurchaseDoesNotExistException.class, () -> purchaseGuestService.updatePurchase(request));
+	}
 
+	@Test
+	void readPurchase_Success() {
+		UUID orderNumber = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+		String password = "password";
+		Purchase purchase = new Purchase();
+		purchase.setId(1L);
+		purchase.setOrderNumber(orderNumber);
+		purchase.setPassword("encodedPassword");
+
+		when(purchaseRepository.findPurchaseByOrderNumber(orderNumber)).thenReturn(Optional.of(purchase));
+		when(encoder.matches(password, purchase.getPassword())).thenReturn(true);
+
+		ReadPurchaseResponse response = purchaseGuestService.readPurchase(orderNumber, password);
+
+		assertNotNull(response);
+		assertEquals(orderNumber, response.orderNumber());
+		verify(purchaseRepository, times(2)).findPurchaseByOrderNumber(orderNumber); // validateGuest + readPurchase
+	}
+
+
+
+
+	@Test
+	void deletePurchase_Success() {
+		UUID orderNumber = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+		String password = "password";
+		Purchase purchase = new Purchase();
+		purchase.setId(1L);
+		purchase.setOrderNumber(orderNumber);
+		purchase.setPassword("encodedPassword");
+
+		when(purchaseRepository.findPurchaseByOrderNumber(orderNumber)).thenReturn(Optional.of(purchase));
+		when(encoder.matches(password, purchase.getPassword())).thenReturn(true);
+
+		purchaseGuestService.deletePurchase(orderNumber, password);
+
+		verify(purchaseRepository, times(1)).findPurchaseByOrderNumber(orderNumber);
+		verify(purchaseRepository, times(1)).delete(purchase);
+	}
+
+	@Test
+	void deletePurchase_PurchaseDoesNotExistException() {
+		UUID orderNumber = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+		String password = "password";
+
+		when(purchaseRepository.findPurchaseByOrderNumber(orderNumber)).thenReturn(Optional.empty());
+
+		assertThrows(PurchaseDoesNotExistException.class,
+			() -> purchaseGuestService.deletePurchase(orderNumber, password));
+	}
+
+	@Test
+	void deletePurchase_PurchaseNoAuthorizationException() {
+		UUID orderNumber = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+		String password = "password";
+		Purchase purchase = new Purchase();
+		purchase.setId(1L);
+		purchase.setOrderNumber(orderNumber);
+		purchase.setPassword("encodedPassword");
+
+		when(purchaseRepository.findPurchaseByOrderNumber(orderNumber)).thenReturn(Optional.of(purchase));
+		when(encoder.matches(password, purchase.getPassword())).thenReturn(false);
+
+		assertThrows(PurchaseNoAuthorizationException.class,
+			() -> purchaseGuestService.deletePurchase(orderNumber, password));
+	}
+
+	@Test
+	void validateGuest_Success() {
+		UUID orderNumber = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+		String password = "password";
+		Purchase purchase = new Purchase();
+		purchase.setOrderNumber(orderNumber);
+		purchase.setPassword("encodedPassword");
+
+		when(purchaseRepository.findPurchaseByOrderNumber(orderNumber)).thenReturn(Optional.of(purchase));
+		when(encoder.matches(password, purchase.getPassword())).thenReturn(true);
+
+		Boolean isValid = purchaseGuestService.validateGuest(orderNumber, password);
+
+		assertTrue(isValid);
+		verify(purchaseRepository, times(1)).findPurchaseByOrderNumber(orderNumber);
+	}
+
+	@Test
+	void validateGuest_Failure() {
+		UUID orderNumber = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+		String password = "password";
+
+		when(purchaseRepository.findPurchaseByOrderNumber(orderNumber)).thenReturn(Optional.empty());
+
+		Boolean isValid = purchaseGuestService.validateGuest(orderNumber, password);
+
+		assertFalse(isValid);
+		verify(purchaseRepository, times(1)).findPurchaseByOrderNumber(orderNumber);
+	}
 }

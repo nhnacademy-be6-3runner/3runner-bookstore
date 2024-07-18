@@ -1,156 +1,194 @@
 package com.nhnacademy.bookstore.purchase.purchaseBook.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.bookstore.BaseDocumentTest;
 import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.CreatePurchaseBookRequest;
-import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.DeletePurchaseBookRequest;
-import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.ReadPurchaseIdRequest;
 import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.UpdatePurchaseBookRequest;
 import com.nhnacademy.bookstore.purchase.purchaseBook.dto.response.ReadBookByPurchase;
 import com.nhnacademy.bookstore.purchase.purchaseBook.dto.response.ReadPurchaseBookResponse;
 import com.nhnacademy.bookstore.purchase.purchaseBook.service.PurchaseBookService;
-import com.nhnacademy.bookstore.purchase.purchaseBook.service.impl.PurchaseBookServiceImpl;
-import com.nhnacademy.bookstore.util.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.MapBindingResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-class PurchaseBookControllerTest {
+@WebMvcTest(PurchaseBookController.class)
+public class PurchaseBookControllerTest extends BaseDocumentTest {
 
-    @Mock
-    private PurchaseBookServiceImpl purchaseBookService;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @InjectMocks
-    private PurchaseBookController purchaseBookController;
-	@Autowired
-	private MockMvc mockMvc;
+    @MockBean
+    private PurchaseBookService purchaseBookService;
+
+    @Autowired
+    private WebApplicationContext context;
+
+
 
     @BeforeEach
-    public void setup() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
-    @DisplayName("주문-책 해당 주문id로 모두 조회")
     @Test
     void testReadPurchaseBook() throws Exception {
-        // Prepare test data
-        ReadPurchaseIdRequest request = ReadPurchaseIdRequest.builder()
-            .purchaseId(1L)
-            .page(1)
-            .size(10)
-            .build();
-        ReadPurchaseBookResponse response = ReadPurchaseBookResponse.builder()
-            .readBookByPurchase(mock(ReadBookByPurchase.class))
-            .price(10)
-            .quantity(1)
-            .build();
-        Page<ReadPurchaseBookResponse> responsePage = new PageImpl<>(Collections.singletonList(response));
+        List<ReadPurchaseBookResponse> responses = Collections.singletonList(
+            ReadPurchaseBookResponse.builder().id(1L).quantity(5).price(5000).readBookByPurchase(ReadBookByPurchase.builder().title("Book Title")
+                .build()).build());
+        when(purchaseBookService.readBookByPurchaseResponses(1L, 1L)).thenReturn(responses);
 
-        // Mock service method
-        when(purchaseBookService.readBookByPurchaseResponses(any(ReadPurchaseIdRequest.class), any(Pageable.class)))
-            .thenReturn(responsePage);
-
-        // Perform GET request
-        mockMvc.perform(MockMvcRequestBuilders.get("/bookstore/purchase/book")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(request)))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/bookstore/purchases/books/{purchaseId}", 1L)
+                .header("Member-Id", 1L)
+                .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.header.resultCode").value(200))
-            .andExpect(jsonPath("$.header.successful").value(true));
+            .andExpect(jsonPath("$.body.data[0].id").value(1L))
+            .andExpect(jsonPath("$.body.data[0].readBookByPurchase.title").value("Book Title"))
+            .andExpect(jsonPath("$.body.data[0].quantity").value(5)) // Fixed the expected value to match the mock response
+            .andDo(document("비회원 주문 책 조회",
+                pathParameters(
+                    parameterWithName("purchaseId").description("주문 ID")
+                ),
+                responseFields(
+                    fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
+                    fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                    fieldWithPath("body.data[].id").type(JsonFieldType.NUMBER).description("책 ID"),
+                    fieldWithPath("body.data[].readBookByPurchase.title").type(JsonFieldType.STRING).description("책 제목"),
+                    fieldWithPath("body.data[].readBookByPurchase.price").type(JsonFieldType.NUMBER).optional().description("책 판매가"),
+                    fieldWithPath("body.data[].readBookByPurchase.author").type(JsonFieldType.STRING).optional().description("책 저자"),
+                    fieldWithPath("body.data[].readBookByPurchase.sellingPrice").type(JsonFieldType.NUMBER).optional().description("책 할인가"),
+                    fieldWithPath("body.data[].readBookByPurchase.packing").type(JsonFieldType.BOOLEAN).optional().description("책 포장여부"),
+                    fieldWithPath("body.data[].readBookByPurchase.publisher").type(JsonFieldType.STRING).optional().description("책 출반사"),
+                    fieldWithPath("body.data[].readBookByPurchase.bookImage").type(JsonFieldType.STRING).optional().description("책 이미지 url"),
+                    fieldWithPath("body.data[].quantity").type(JsonFieldType.NUMBER).optional().description("책 수량"),
+                    fieldWithPath("body.data[].price").type(JsonFieldType.NUMBER).optional().description("책 가격") // Added missing price field
+                )
+            ));
     }
 
-
-    @DisplayName("주문-책 생성")
     @Test
-    void testCreatePurchaseBook() {
-        // Mock data
-        CreatePurchaseBookRequest createPurchaseBookRequest = CreatePurchaseBookRequest.builder().bookId(1L).quantity(1).price(100).purchaseId(1L).build();
-        Long expectedId = 1L;
+    void testReadGuestPurchaseBook() throws Exception {
+        List<ReadPurchaseBookResponse> responses = Collections.singletonList(
+            ReadPurchaseBookResponse.builder().id(1L).quantity(5).price(5000).readBookByPurchase(ReadBookByPurchase.builder().title("Book Title")
+                .build()).build());
 
-        // Mock service method
-        when(purchaseBookService.createPurchaseBook(any(CreatePurchaseBookRequest.class))).thenReturn(expectedId);
+        when(purchaseBookService.readGuestBookByPurchaseResponses("123e4567-e89b-12d3-a456-426614174000"))
+            .thenReturn(responses);
 
-        BindingResult bindingResult = new MapBindingResult(new HashMap<>(), "createPurchaseBookRequest");
-
-        // Call controller method
-        ApiResponse<Long> responseEntity = purchaseBookController.createPurchaseBook(createPurchaseBookRequest, bindingResult);
-
-        // Verify
-        assertEquals(201, responseEntity.getHeader().getResultCode());
-        assertTrue(responseEntity.getHeader().isSuccessful());
-        assertEquals(expectedId, responseEntity.getBody().getData());
-
-        verify(purchaseBookService).createPurchaseBook(createPurchaseBookRequest);
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/bookstore/purchases/books/guests/{purchaseId}", "123e4567-e89b-12d3-a456-426614174000")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body.data[0].id").value(1L))
+            .andExpect(jsonPath("$.body.data[0].readBookByPurchase.title").value("Book Title"))
+            .andExpect(jsonPath("$.body.data[0].quantity").value(5)) // Fixed the expected value to match the mock response
+            .andDo(document("비회원 주문 책 조회",
+                pathParameters(
+                    parameterWithName("purchaseId").description("주문 ID")
+                ),
+                responseFields(
+                    fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
+                    fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                    fieldWithPath("body.data[].id").type(JsonFieldType.NUMBER).description("책 ID"),
+                    fieldWithPath("body.data[].readBookByPurchase.title").type(JsonFieldType.STRING).description("책 제목"),
+                    fieldWithPath("body.data[].readBookByPurchase.price").type(JsonFieldType.NUMBER).optional().description("책 판매가"),
+                    fieldWithPath("body.data[].readBookByPurchase.author").type(JsonFieldType.STRING).optional().description("책 저자"),
+                    fieldWithPath("body.data[].readBookByPurchase.sellingPrice").type(JsonFieldType.NUMBER).optional().description("책 할인가"),
+                    fieldWithPath("body.data[].readBookByPurchase.packing").type(JsonFieldType.BOOLEAN).optional().description("책 포장여부"),
+                    fieldWithPath("body.data[].readBookByPurchase.publisher").type(JsonFieldType.STRING).optional().description("책 출반사"),
+                    fieldWithPath("body.data[].readBookByPurchase.bookImage").type(JsonFieldType.STRING).optional().description("책 이미지 url"),
+                    fieldWithPath("body.data[].quantity").type(JsonFieldType.NUMBER).optional().description("책 수량"),
+                    fieldWithPath("body.data[].price").type(JsonFieldType.NUMBER).optional().description("책 가격") // Added missing price field
+                )
+            ));
     }
 
-    @DisplayName("주문-책 삭제")
     @Test
-    void testDeletePurchaseBook() {
-        // Mock data
-        DeletePurchaseBookRequest deletePurchaseBookRequest = DeletePurchaseBookRequest.builder().purchaseBookId(1L).build();
+    void testCreatePurchaseBook() throws Exception {
+        CreatePurchaseBookRequest request = CreatePurchaseBookRequest.builder().purchaseId(1L).bookId(1L).quantity(2).price(10000).build();
 
-        // Mock service method
-        doNothing().when(purchaseBookService).deletePurchaseBook(any(DeletePurchaseBookRequest.class));
-        BindingResult bindingResult = new MapBindingResult(new HashMap<>(), "deletePurchaseBookRequest");
+        when(purchaseBookService.createPurchaseBook(any(CreatePurchaseBookRequest.class))).thenReturn(1L);
 
-        // Call controller method
-        ApiResponse<Void> responseEntity = purchaseBookController.deletePurchaseBook(deletePurchaseBookRequest, bindingResult);
-
-        // Verify
-        assertEquals(204, responseEntity.getHeader().getResultCode());
-        assertTrue(responseEntity.getHeader().isSuccessful());
-        verify(purchaseBookService).deletePurchaseBook(deletePurchaseBookRequest);
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/bookstore/purchases/books")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body.data").value(1L))
+            .andDo(document("주문 책 생성",
+                requestFields(
+                    fieldWithPath("purchaseId").type(JsonFieldType.NUMBER).description("주문 ID"),
+                    fieldWithPath("bookId").type(JsonFieldType.NUMBER).description("책 ID"),
+                    fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("수량"),
+                    fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격") // Added missing price field
+                ),
+                responseFields(
+                    fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("응답 코드"),
+                    fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                    fieldWithPath("body.data").type(JsonFieldType.NUMBER).description("생성된 주문 책 ID") // Fixed the description
+                )
+            ));
     }
 
-    @DisplayName("주문-책 수정")
     @Test
-    void testUpdatePurchaseBook() {
-        // Mock data
-        UpdatePurchaseBookRequest updatePurchaseBookRequest = UpdatePurchaseBookRequest.builder().bookId(1L).quantity(1).price(100).purchaseId(1L).build();
-        Long expectedId = 1L;
+    void testDeletePurchaseBook() throws Exception {
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/bookstore/purchases/books/{purchaseBookId}", 1L)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk()) // Updated to match the correct status for a successful delete
+            .andDo(document("주문 책 제거",
+                pathParameters(
+                    parameterWithName("purchaseBookId").description("삭제할 주문 책 ID")
+                )
+            ));
+    }
 
-        // Mock service method
-        when(purchaseBookService.updatePurchaseBook(any(UpdatePurchaseBookRequest.class))).thenReturn(expectedId);
+    @Test
+    void testUpdatePurchaseBook() throws Exception {
+        UpdatePurchaseBookRequest request = UpdatePurchaseBookRequest.builder().bookId( 1L).purchaseId(1L).quantity(3).price(10000).build();
 
-        BindingResult bindingResult = new MapBindingResult(new HashMap<>(), "updatePurchaseBookRequest");
+        when(purchaseBookService.updatePurchaseBook(any(UpdatePurchaseBookRequest.class))).thenReturn(1L);
 
-        // Call controller method
-        ApiResponse<Long> responseEntity = purchaseBookController.updatePurchaseBook(updatePurchaseBookRequest, bindingResult);
-
-        // Verify
-        assertEquals(200, responseEntity.getHeader().getResultCode());
-        assertTrue(responseEntity.getHeader().isSuccessful());
-        assertEquals(expectedId, responseEntity.getBody().getData());
-
-        verify(purchaseBookService).updatePurchaseBook(updatePurchaseBookRequest);
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/bookstore/purchases/books")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body.data").value(1L))
+            .andDo(document("주문 책 수정",
+                requestFields(
+                    fieldWithPath("purchaseId").type(JsonFieldType.NUMBER).description("주문 ID"),
+                    fieldWithPath("bookId").type(JsonFieldType.NUMBER).description("책 ID"),
+                    fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("수량"),
+                    fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격") // Added missing price field
+                ),
+                responseFields(
+                    fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
+                    fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                    fieldWithPath("body.data").type(JsonFieldType.NUMBER).description("수정된 주문 책 ID")
+                )
+            ));
     }
 }

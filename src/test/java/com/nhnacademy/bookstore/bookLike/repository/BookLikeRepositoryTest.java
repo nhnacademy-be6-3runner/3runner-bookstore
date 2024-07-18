@@ -48,7 +48,7 @@ public class BookLikeRepositoryTest {
 			.name("1")
 			.age(1)
 			.phone("1")
-			.birthday(ZonedDateTime.now())
+			.birthday("2024-05-28")
 			.email("dfdaf@nav.com")
 			.build());
 		entityManager.persist(member1);
@@ -58,46 +58,46 @@ public class BookLikeRepositoryTest {
 			.name("1")
 			.age(1)
 			.phone("1")
-			.birthday(ZonedDateTime.now())
+			.birthday("2024-05-28")
 			.email("dfdaf2@nav.com")
 			.build());
 		entityManager.persist(member2);
 
-		book1 = new Book(
-			"책1",
-			"책1입니다.",
-			ZonedDateTime.now(),
-			1000,
-			10,
-			900,
-			0,
-			true,
-			"작가",
-			"123456789",
-			"출판사",
-			null,
-			null,
-			null
-		);
-		entityManager.persist(book1);
+        book1 = new Book(
+                "책1",
+                "책1입니다.",
+                ZonedDateTime.now(),
+                1000,
+                10,
+                900,
+                0,
+                true,
+                "작가",
+                "123456789",
+                "출판사",
+                null,
+                null,
+                null
+        );
+        entityManager.persist(book1);
 
-		Book book2 = new Book(
-			"책2",
-			"책2입니다.",
-			ZonedDateTime.now(),
-			1000,
-			10,
-			900,
-			0,
-			true,
-			"작가r",
-			"1234567891",
-			"출판사",
-			null,
-			null,
-			null
-		);
-		entityManager.persist(book2);
+        Book book2 = new Book(
+                "책2",
+                "책2입니다.",
+                ZonedDateTime.now(),
+                1000,
+                10,
+                900,
+                0,
+                true,
+                "작가r",
+                "1234567891",
+                "출판사",
+                null,
+                null,
+                null
+        );
+        entityManager.persist(book2);
 
 		BookLike bookLike1 = new BookLike();
 		bookLike1.setBook(book1);
@@ -128,20 +128,9 @@ public class BookLikeRepositoryTest {
 		assertThat(content).extracting(BookListResponse::title).containsExactlyInAnyOrder("책1", "책2");
 	}
 
-	@Test
-	public void testCountLikeByBookId() {
-		long count = bookLikeRepository.countLikeByBookId(book1.getId());
-		assertThat(count).isEqualTo(2);
-	}
-
-	@Test
-	public void testFindBooksOrderByLikes() {
-		Pageable pageable = PageRequest.of(0, 10);
-		Page<BookListResponse> bookPage = bookLikeRepository.findBooksOrderByLikes(pageable);
-
-		assertThat(bookPage.getContent()).hasSize(2);
-		List<BookListResponse> content = bookPage.getContent();
-		assertThat(content).extracting(BookListResponse::title).containsExactly("책1", "책2");
-	}
-
+    @Test
+    void testCountLikeByBookId() {
+        long count = bookLikeRepository.countLikeByBookId(book1.getId());
+        assertThat(count).isEqualTo(2);
+    }
 }

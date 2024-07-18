@@ -18,3 +18,8 @@ management:
       enabled: true
     restart:
       enabled: true
+
+
+feign:
+  coupon:
+    url: gateway:8080

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
+import com.nhnacademy.bookstore.book.book.dto.response.BookManagementResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
 
 /**
@@ -30,4 +31,8 @@ public interface BookCustomRepository {
 	 * @return 도서의 상세정보
 	 */
 	ReadBookResponse readDetailBook(Long bookId);
+
+	Page<BookManagementResponse> readAdminBookList(Pageable pageable);
+
+	Page<BookListResponse> readCategoryAllBookList(Pageable pageable, Long categoryId);
 }

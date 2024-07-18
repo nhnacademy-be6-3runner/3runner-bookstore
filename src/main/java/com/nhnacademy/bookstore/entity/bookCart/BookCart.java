@@ -22,14 +22,11 @@ public class BookCart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-
-    @Min(0)
     @Column(nullable = false, columnDefinition = "int default 0")
     private int quantity;
 
     @NotNull
     private ZonedDateTime createdAt;
-
 
     // 연결
     @ManyToOne

@@ -22,5 +22,7 @@ public interface BookCategoryService {
 	Page<BookListResponse> readCategoriesWithBookList(List<Long> categoryList, Pageable pageable);
 
 	List<CategoryParentWithChildrenResponse> allCategoryList();
+
+	List<String> readBookCategoryNames(Long bookId);
 }
 

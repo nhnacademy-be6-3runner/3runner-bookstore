@@ -26,4 +26,5 @@ public interface BookTagService {
 
 	public void createBookTag(CreateBookTagListRequest createBookTagListRequest);
 
+	void updateBookTag(CreateBookTagListRequest createBookTagListRequest);
 }

@@ -22,19 +22,20 @@ spring:
         highlight_sql: true
         auto_quote_keyword: true
   #    hibernate:
-  #      ddl-auto: update
+  #      ddl-auto: create
 
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 
-  datasource:
-    url: jdbc:mysql://133.186.241.167:3306/be6_3runner_dev
-    username: be6_3runner
-    password: tHos2g5st4@XH7mT
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
+
+  rabbitmq:
+    host: 133.186.241.167
+    port: 5672
+    username: admin
+    password: nhnacademy123!
 
   profiles:
     active: prod
@@ -42,6 +43,13 @@ spring:
     timeout-per-shutdown-phase: 30s
   application:
     name: 3runner-bookstore
+
+  elasticsearch:
+    uris: 115.94.72.198:9200
+    username: elastic
+    password: nhnacademy123!
+
+
 server:
   shutdown: graceful
 
@@ -65,3 +73,20 @@ springdoc:
   swagger-ui:
     url: /docs/openapi-3.0.json
     path: /bookstore/docs/swagger
+
+
+elasticsearch:
+  key: b0FEM241QUJ6WmRyRUdYWG9LbUs6RVZ4WkNYM09TNTZvUU9qb0xxM09JZw==
+
+
+
+db:
+  driver: com.mysql.cj.jdbc.Driver
+  url: 731e048dd73f4b429f4ef4f5ba6a6dbe
+  #  url: b6b9d1cb45ab4fb1b46637352b6a053c
+  username: 83f7720a5c66449bae3b4948e07b111f
+  password: 410f279ee5a54791b7dc0a1e87f94672
+  initial-size: 5
+  max-total: 20
+  max-idle: 20
+  min-idle: 5

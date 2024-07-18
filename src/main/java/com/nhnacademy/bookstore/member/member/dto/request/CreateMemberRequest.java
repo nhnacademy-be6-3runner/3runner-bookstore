@@ -30,7 +30,7 @@ public record CreateMemberRequest(
 
     int age,
 
-    ZonedDateTime birthday
+    String birthday
 
 ){}
 

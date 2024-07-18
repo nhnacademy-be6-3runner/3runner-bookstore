@@ -1,34 +1,46 @@
 package com.nhnacademy.bookstore.entity.pointRecord;
 
 import com.nhnacademy.bookstore.entity.member.Member;
+import com.nhnacademy.bookstore.entity.purchase.Purchase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
+@Getter@Setter
 public class PointRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    private Long memberPoint;
-    @NotNull
-    private Long remnantPoint;
+    private Long usePoint;
     @NotNull
     private ZonedDateTime createdAt;
     @NotNull
     @Size(min = 1, max = 100)
     private String content;
 
-    @NotNull
+    @PrePersist
+    public void create() {
+        this.createdAt = ZonedDateTime.now();
+    }
+
     @ManyToOne
     private Member member;
+
+    @ManyToOne(optional = false)
+    private Purchase purchase;
+
+    public PointRecord( Long usePoint, String content, Member member, Purchase purchase) {
+        this.content = content;
+        this.usePoint = usePoint;
+        this.purchase = purchase;
+        this.member = member;
+    }
 }

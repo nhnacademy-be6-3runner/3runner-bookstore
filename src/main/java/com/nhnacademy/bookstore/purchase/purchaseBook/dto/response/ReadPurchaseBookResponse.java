@@ -12,5 +12,5 @@ import lombok.Builder;
  * @param price
  */
 @Builder
-public record ReadPurchaseBookResponse(ReadBookByPurchase readBookByPurchase, int quantity, int price) {
+public record ReadPurchaseBookResponse(ReadBookByPurchase readBookByPurchase, long id, int quantity, int price) {
 }

@@ -38,4 +38,5 @@ public interface BookTagRepository extends JpaRepository<BookTag, Long> {
 	List<Tag> findAllTagIdByBookId(long bookId);
 
 	boolean existsByBookIdAndTagId(long bookId, long tagId);
+
 }

@@ -3,13 +3,15 @@ package com.nhnacademy.bookstore.purchase.bookCart.dto.response;
 import lombok.*;
 
 /**
- * 카트 응답 폼.
+ * 북카트 비회원 읽기 응답.
  *
- * @author 김병우
  * @param bookCartId
+ * @param bookId
+ * @param price
+ * @param url
  * @param title
  * @param quantity
- * @param price
+ * @param leftQuantity
  */
 @Builder
 public record ReadBookCartGuestResponse(
@@ -18,5 +20,6 @@ public record ReadBookCartGuestResponse(
         int price,
         String url,
         String title,
-        int quantity){
+        int quantity,
+        int leftQuantity){
 }

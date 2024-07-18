@@ -1,175 +1,203 @@
 package com.nhnacademy.bookstore.purchase.purchaseBook.service;
 
-
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
+import com.nhnacademy.bookstore.entity.member.Member;
 import com.nhnacademy.bookstore.entity.purchase.Purchase;
+import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
 import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.CreatePurchaseBookRequest;
-import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.DeletePurchaseBookRequest;
-import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.ReadPurchaseIdRequest;
 import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.UpdatePurchaseBookRequest;
 import com.nhnacademy.bookstore.purchase.purchaseBook.dto.response.ReadPurchaseBookResponse;
+import com.nhnacademy.bookstore.purchase.purchaseBook.exception.ImPossibleAccessPurchaseBookException;
+import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsBook;
+import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsPurchase;
+import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsPurchaseBook;
+import com.nhnacademy.bookstore.purchase.purchaseBook.repository.PurchaseBookCustomRepository;
 import com.nhnacademy.bookstore.purchase.purchaseBook.repository.PurchaseBookRepository;
-import com.nhnacademy.bookstore.purchase.purchaseBook.service.PurchaseBookService;
 import com.nhnacademy.bookstore.purchase.purchaseBook.service.impl.PurchaseBookServiceImpl;
+
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
-import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
 public class PurchaseBookServiceTest {
-    @Mock
-    private PurchaseBookRepository purchaseBookRepository;
 
-    @Mock
-    private PurchaseRepository purchaseRepository;
+	@Mock
+	private PurchaseBookRepository purchaseBookRepository;
 
-    @Mock
-    private BookRepository bookRepository;
+	@Mock
+	private PurchaseRepository purchaseRepository;
 
+	@Mock
+	private BookRepository bookRepository;
 
-    private PurchaseBookService purchaseBookService;
+	@Mock
+	private PurchaseBookCustomRepository purchaseBookCustomRepository;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-        purchaseBookService = new PurchaseBookServiceImpl(
-                purchaseBookRepository,
-                purchaseRepository,
-                bookRepository
-        );
-    }
+	@InjectMocks
+	private PurchaseBookServiceImpl purchaseBookService;
 
-    @DisplayName("주문-책 생성서비스")
-    @Test
-    void testCreatePurchaseBook() {
-        // Mock data
-        CreatePurchaseBookRequest createPurchaseBookRequest = CreatePurchaseBookRequest.builder()
-                .bookId(1L)
-                .quantity(10)
-                .price(1000)
-                .purchaseId(1L)
-                .build();
-        Book bookMock = mock(Book.class);
+	private Book book;
+	private Purchase purchase;
+	private PurchaseBook purchaseBook;
+	private Member member;
 
-        Purchase purchase = mock(Purchase.class);
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
 
-        PurchaseBook purchaseBook = new PurchaseBook(bookMock,10,1000,purchase);
+		member = new Member();
+		member.setId(1L);
 
+		book = new Book();
+		book.setId(1L);
+		book.setTitle("Sample Book");
+		book.setAuthor("Author");
+		book.setPrice(1000);
+		book.setSellingPrice(900);
+		book.setPacking(true);
+		book.setPublisher("Publisher");
+		book.setIsbn("1234567890");
 
+		purchase = new Purchase();
+		purchase.setId(1L);
+		purchase.setOrderNumber(UUID.randomUUID());
+		purchase.setStatus(PurchaseStatus.COMPLETED);
+		purchase.setRoad("우리집");
+		purchase.setMember(member);
 
-        // Mock repository methods
-        when(bookRepository.findById(createPurchaseBookRequest.bookId())).thenReturn(Optional.of(bookMock));
-        when(purchaseRepository.findById(createPurchaseBookRequest.purchaseId())).thenReturn(Optional.of(purchase));
-        when(purchaseBookRepository.save(any(PurchaseBook.class))).thenReturn(purchaseBook);
+		purchaseBook = new PurchaseBook();
+		purchaseBook.setBook(book);
+		purchaseBook.setPurchase(purchase);
+		purchaseBook.setQuantity(2);
+		purchaseBook.setPrice(1800);
+	}
 
-        // Call service method
-        Long resultId = purchaseBookService.createPurchaseBook(createPurchaseBookRequest);
+	@Test
+	void testReadBookByPurchaseResponses() {
+		List<PurchaseBook> purchaseBooks = new ArrayList<>();
+		purchaseBooks.add(purchaseBook);
+		purchase.setPurchaseBookList(purchaseBooks);
 
-        // Verify
-        assertNotNull(resultId);
-        assertEquals(0L, resultId);
+		when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
+		when(purchaseBookCustomRepository.readBookPurchaseResponses(anyLong())).thenReturn(new ArrayList<>());
 
-        verify(bookRepository).findById(createPurchaseBookRequest.bookId());
-        verify(purchaseRepository).findById(createPurchaseBookRequest.purchaseId());
-        verify(purchaseBookRepository).save(any(PurchaseBook.class));
-    }
+		List<ReadPurchaseBookResponse> responses = purchaseBookService.readBookByPurchaseResponses(1L, 1L);
+		assertThat(responses).isEmpty();
+	}
 
-    @DisplayName("주문-책 삭제서비스")
-    @Test
-    void testDeletePurchaseBook() {
-        // Mock data
-        DeletePurchaseBookRequest deletePurchaseBookRequest = DeletePurchaseBookRequest.builder()
-                .purchaseBookId(1L)
-                .build();
+	@Test
+	void testReadBookByPurchaseResponses_ThrowsNotExistsPurchase() {
+		when(purchaseRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Call service method
-        purchaseBookService.deletePurchaseBook(deletePurchaseBookRequest);
+		assertThrows(NotExistsPurchase.class, () -> {
+			purchaseBookService.readBookByPurchaseResponses(1L, 1L);
+		});
+	}
 
-        // Verify
-        verify(purchaseBookRepository).deleteById(deletePurchaseBookRequest.purchaseBookId());
-    }
+	@Test
+	void testReadBookByPurchaseResponses_ThrowsImPossibleAccessPurchaseBookException() {
+		List<PurchaseBook> purchaseBooks = new ArrayList<>();
+		purchaseBooks.add(purchaseBook);
+		purchase.setPurchaseBookList(purchaseBooks);
 
+		when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
+		purchaseBook.getPurchase().getMember().setId(2L); // Set different member ID to cause exception
 
-    @DisplayName("주문-책 수정서비스")
-    @Test
-    void testUpdatePurchaseBook() {
-        // Mock data
-        UpdatePurchaseBookRequest updatePurchaseBookRequest = UpdatePurchaseBookRequest.builder()
-                .bookId(1L)
-                .quantity(10)
-                .price(1000)
-                .purchaseId(1L)
-                .build();
+		assertThrows(ImPossibleAccessPurchaseBookException.class, () -> {
+			purchaseBookService.readBookByPurchaseResponses(1L, 1L);
+		});
+	}
 
-        PurchaseBook purchaseBook = new PurchaseBook(1L,null,0,0,null);
+	@Test
+	void testReadGuestBookByPurchaseResponses() {
+		when(purchaseBookCustomRepository.readGuestBookPurchaseResponses(anyString())).thenReturn(new ArrayList<>());
 
+		List<ReadPurchaseBookResponse> responses = purchaseBookService.readGuestBookByPurchaseResponses("some-uuid");
+		assertThat(responses).isEmpty();
+	}
 
-        // Mock repository method
-        when(purchaseBookRepository.findByPurchaseIdAndBookId(updatePurchaseBookRequest.purchaseId(), updatePurchaseBookRequest.bookId()))
-                .thenReturn(Optional.of(purchaseBook));
+	@Test
+	void testUpdatePurchaseBook() {
+		UpdatePurchaseBookRequest request = new UpdatePurchaseBookRequest(1L, 1, 3, 2700);
 
-        // Call service method
-        Long resultId = purchaseBookService.updatePurchaseBook(updatePurchaseBookRequest);
+		when(purchaseBookRepository.findByPurchaseIdAndBookId(anyLong(), anyLong())).thenReturn(Optional.of(purchaseBook));
 
-        // Verify
-        assertNotNull(resultId);
-        assertEquals(1L, resultId);
+		Long id = purchaseBookService.updatePurchaseBook(request);
 
-        verify(purchaseBookRepository).findByPurchaseIdAndBookId(updatePurchaseBookRequest.purchaseId(), updatePurchaseBookRequest.bookId());
-    }
+		assertThat(id).isEqualTo(purchaseBook.getId());
+		assertThat(purchaseBook.getQuantity()).isEqualTo(request.quantity());
+		assertThat(purchaseBook.getPrice()).isEqualTo(request.price());
+	}
 
-    @DisplayName("주문-책 조회서비스")
-    @Test
-    void testReadBookByPurchaseResponses() {
-        // Mock data
-        ReadPurchaseIdRequest readPurchaseIdRequest = ReadPurchaseIdRequest.builder()
-                .purchaseId(1L)
-                .build();
-        Book bookMock = mock(Book.class);
+	@Test
+	void testUpdatePurchaseBook_ThrowsNotExistsPurchaseBook() {
+		UpdatePurchaseBookRequest request =  UpdatePurchaseBookRequest.builder().bookId( 1L).quantity(1).price(1000).purchaseId(1L).build();
 
-        Purchase purchase = mock(Purchase.class);
+		when(purchaseBookRepository.findByPurchaseIdAndBookId(anyLong(), anyLong())).thenReturn(Optional.empty());
 
-        PurchaseBook purchaseBook = new PurchaseBook(1L, bookMock,10,1000,purchase);
+		assertThrows(NotExistsPurchaseBook.class, () -> {
+			purchaseBookService.updatePurchaseBook(request);
+		});
+	}
 
-        Page<PurchaseBook> purchaseBooks = new PageImpl<>(List.of(purchaseBook));
+	@Test
+	void testCreatePurchaseBook() {
+		CreatePurchaseBookRequest request =  CreatePurchaseBookRequest.builder().bookId(1L).purchaseId(1L).price(1000).quantity(5).build();
 
-        Pageable pageable = PageRequest.of(1,10);
+		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
+		when(purchaseBookRepository.save(any(PurchaseBook.class))).thenReturn(purchaseBook);
 
-        // Mock repository method
-        when(purchaseBookRepository.findAllByPurchaseId(readPurchaseIdRequest.purchaseId(),pageable))
-                .thenReturn(purchaseBooks);
+		Long id = purchaseBookService.createPurchaseBook(request);
 
-        // Call service method
-        Page<ReadPurchaseBookResponse> responses = purchaseBookService.readBookByPurchaseResponses(readPurchaseIdRequest,pageable);
+		assertThat(id).isEqualTo(purchaseBook.getId());
+	}
 
-        // Verify
-        assertNotNull(responses);
-        assertEquals(1, responses.getSize());
-        assertEquals(10, responses.getContent().getFirst().quantity());
-        assertEquals(1000, responses.getContent().getFirst().price());
+	@Test
+	void testCreatePurchaseBook_ThrowsNotExistsBook() {
+		CreatePurchaseBookRequest request =  CreatePurchaseBookRequest.builder().bookId(1L).purchaseId(1L).price(1000).quantity(5).build();
 
-        verify(purchaseBookRepository).findAllByPurchaseId(readPurchaseIdRequest.purchaseId(),pageable);
-    }
+		when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(NotExistsBook.class, () -> {
+			purchaseBookService.createPurchaseBook(request);
+		});
+	}
+
+	@Test
+	void testCreatePurchaseBook_ThrowsNotExistsPurchase() {
+		CreatePurchaseBookRequest request =  CreatePurchaseBookRequest.builder().bookId(1L).purchaseId(1L).price(1000).quantity(5).build();
+
+		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(purchaseRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(NotExistsPurchase.class, () -> {
+			purchaseBookService.createPurchaseBook(request);
+		});
+	}
+
+	@Test
+	void testDeletePurchaseBook() {
+		doNothing().when(purchaseBookRepository).deleteById(anyLong());
+
+		purchaseBookService.deletePurchaseBook(1L);
+
+		verify(purchaseBookRepository, times(1)).deleteById(eq(1L));
+	}
 }

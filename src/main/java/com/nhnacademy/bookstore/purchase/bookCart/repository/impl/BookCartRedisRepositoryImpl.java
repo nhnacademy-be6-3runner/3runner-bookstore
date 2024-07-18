@@ -21,14 +21,6 @@ import java.util.concurrent.TimeUnit;
 public class BookCartRedisRepositoryImpl implements BookCartRedisRepository {
     private final RedisTemplate<String, Object> redisTemplate;
 
-    /**
-     * 도서장바구니 레디스 저장.
-     *
-     * @param hashName 해쉬
-     * @param id 해쉬키
-     * @param readBookCartGuestResponse 해쉬밸류
-     * @return 해쉬키
-     */
     @Override
     public Long create(String hashName, Long id, ReadBookCartGuestResponse readBookCartGuestResponse) {
         redisTemplate.opsForHash().put(hashName + ":", id.toString(), readBookCartGuestResponse);
@@ -36,14 +28,6 @@ public class BookCartRedisRepositoryImpl implements BookCartRedisRepository {
         return id;
     }
 
-    /**
-     * 도서장바구니 레디스 수정.
-     *
-     * @param hashName 해쉬
-     * @param id 해쉬키
-     * @param quantity 수정데이터
-     * @return 해쉬키
-     */
     @Override
     public Long update(String hashName, Long id, int quantity) {
         ReadBookCartGuestResponse response = (ReadBookCartGuestResponse)redisTemplate.opsForHash().get(hashName + ":", id.toString());
@@ -55,6 +39,7 @@ public class BookCartRedisRepositoryImpl implements BookCartRedisRepository {
                 .url(response.url())
                 .title(response.title())
                 .quantity(quantity)
+                .leftQuantity(response.leftQuantity())
                 .build();
 
         redisTemplate.opsForHash().put(hashName + ":", id.toString(), updatedResponse);
@@ -62,35 +47,19 @@ public class BookCartRedisRepositoryImpl implements BookCartRedisRepository {
         return id;
     }
 
-    /**
-     * 도서장바구니 레디스 삭제.
-     *
-     * @param hashName 해쉬
-     * @param id 해쉬키
-     * @return 해쉬키
-     */
+
     @Override
     public Long delete(String hashName, Long id) {
         redisTemplate.opsForHash().delete(hashName + ":", id.toString());
         return id;
     }
 
-    /**
-     * 도서 장바구니 레디스 해쉬 전체 삭제.
-     *
-     * @param hashName 해쉬
-     */
     @Override
     public void deleteAll(String hashName) {
         redisTemplate.delete(hashName + ":");
     }
 
-    /**
-     * 도서장바구니 레디스 목록 읽기.
-     *
-     * @param hashName 해쉬
-     * @return 도서장바구니 응답 dto
-     */
+
     @Override
     public List<ReadBookCartGuestResponse> readAllHashName(String hashName) {
         List<Object> bookCartList = redisTemplate.opsForHash().values(hashName + ":");
@@ -101,34 +70,16 @@ public class BookCartRedisRepositoryImpl implements BookCartRedisRepository {
                 .toList();
     }
 
-    /**
-     * 도서장바구니 레디스 데이터가 있는지 확인 메소드.
-     *
-     * @param hashName 해쉬
-     * @return boolean
-     */
     @Override
     public boolean isHit(String hashName) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(hashName + ":"));
     }
 
-    /**
-     * 도서장바구니 레디스 데이터가 없는지 확인 메소드.
-     *
-     * @param hashName 해쉬
-     * @return boolean
-     */
     @Override
     public boolean isMiss(String hashName) {
         return Boolean.FALSE.equals(redisTemplate.hasKey(hashName + ":"));
     }
 
-    /**
-     * 도서장바구니 데이터를 레디스에 저장.
-     *
-     * @param bookCartGuestResponses 도서장바구니 dto
-     * @param hashName 해쉬
-     */
     @Override
     public void loadData(List<ReadBookCartGuestResponse> bookCartGuestResponses, String hashName) {
         for (ReadBookCartGuestResponse o : bookCartGuestResponses) {

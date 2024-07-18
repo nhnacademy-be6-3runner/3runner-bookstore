@@ -23,11 +23,16 @@ public interface BookCartRepository extends JpaRepository<BookCart, Long> {
 	@Query("select bk from BookCart bk where bk.cart.id = :cartId")
 	List<BookCart> findAllByCartId(Long cartId);
 
+	List<BookCart> findAllByCart(Cart cart);
+
 	void deleteByCart(Cart cart);
 
 	Optional<BookCart> findBookCartByBookIdAndCartId(Long bookId, Long cartId);
 
     Optional<BookCart> findByBookAndCart(Book book, Cart cart);
+
+	@Query("select bc from BookCart bc join Cart c on bc.cart.id = c.id where c.member.id = :memberId and bc.book.id = :bookId")
+	Optional<BookCart> findBookCartByBookIdAndMemberId(Long bookId, Long memberId);
 
 	boolean existsBookCartByBookAndCart(Book book, Cart cart);
 }

@@ -15,13 +15,12 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 
 @Table(name = "book_image", indexes = {
@@ -37,7 +36,8 @@ public class BookImage {
 	@NotNull
 	private BookImageType type;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@Setter
+	@ManyToOne
 	private Book book;
 
 	@OneToOne(cascade = CascadeType.ALL)
@@ -46,6 +46,11 @@ public class BookImage {
 	public BookImage(BookImageType type, Book book, TotalImage totalImage) {
 		this.type = type;
 		this.book = book;
+		this.totalImage = totalImage;
+	}
+
+	public BookImage(BookImageType type, TotalImage totalImage) {
+		this.type = type;
 		this.totalImage = totalImage;
 	}
 

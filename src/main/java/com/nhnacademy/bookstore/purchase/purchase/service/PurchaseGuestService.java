@@ -1,9 +1,11 @@
 package com.nhnacademy.bookstore.purchase.purchase.service;
 
+import com.nhnacademy.bookstore.entity.purchase.Purchase;
 import com.nhnacademy.bookstore.purchase.purchase.dto.request.CreatePurchaseRequest;
 import com.nhnacademy.bookstore.purchase.purchase.dto.request.UpdatePurchaseGuestRequest;
 import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PurchaseGuestService {
@@ -11,4 +13,6 @@ public interface PurchaseGuestService {
     Long updatePurchase(UpdatePurchaseGuestRequest updatePurchaseGuestRequest);
     ReadPurchaseResponse readPurchase( UUID orderNumber, String password);
     void deletePurchase(UUID orderNumber, String password);
+    Boolean validateGuest(UUID orderNumber, String password);
+
 }

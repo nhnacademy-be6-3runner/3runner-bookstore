@@ -10,13 +10,48 @@ import java.util.List;
  */
 public interface BookCartGuestService {
 
-    Long createBookCart(Long bookId, int quantity);
+    /**
+     * 북카트 생성.
+     *
+     * @param bookId 북아이디
+     * @param cartId 카트아이디
+     * @param quantity 수량
+     * @return 북카트아이디
+     */
+    Long createBookCart(Long bookId, Long cartId, int quantity);
 
+    /**
+     * 북카트 업데이트.
+     *
+     * @param bookId 북아이디
+     * @param cartId 카트아이디
+     * @param quantity 수량
+     * @return 북카트아이디
+     */
     Long updateBookCart(Long bookId, Long cartId, int quantity);
 
+    /**
+     * 북카트 읽기.
+     *
+     * @param cartId 카트아이디
+     * @return 응답Dto
+     */
     List<ReadBookCartGuestResponse> readAllBookCart(Long cartId);
 
+    /**
+     * 북카트 삭제.
+     *
+     * @param bookCartId 북카트 아이디
+     * @param cartId 카트 아이디
+     * @return 북카트아이디
+     */
     Long deleteBookCart(Long bookCartId, Long cartId);
 
+    /**
+     * 카트 삭제
+     *
+     * @param cartId 카트아이디
+     * @return 북카트아이디
+     */
     Long deleteAllBookCart(Long cartId);
 }

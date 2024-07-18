@@ -164,6 +164,20 @@ public class BookCategoryServiceImpl implements BookCategoryService {
 	}
 
 	/**
+	 * 책에 소속된 카테고리 이름만 가져오는 함수
+	 * @param bookId 책
+	 * @return 카테고리 이름 리스트
+	 */
+	@Override
+	public List<String> readBookCategoryNames(Long bookId) {
+		List<BookCategory> categorieList = bookCategoryRepository.findByBookId(bookId);
+
+		List<String> categoryNameList = new ArrayList<>();
+		categorieList.forEach(category -> categoryNameList.add(category.getCategory().getName()));
+		return categoryNameList;
+	}
+
+	/**
 	 * @author 한민기
 	 *
 	 * @param categoryList
@@ -228,6 +242,6 @@ public class BookCategoryServiceImpl implements BookCategoryService {
 			}
 		}
 		return rootList;
-
 	}
+
 }

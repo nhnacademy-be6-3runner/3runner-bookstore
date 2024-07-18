@@ -3,36 +3,38 @@ package com.nhnacademy.bookstore.book.book.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.jsoup.Jsoup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nhnacademy.bookstore.book.book.dto.response.AladinItem;
 import com.nhnacademy.bookstore.book.book.dto.response.ApiCreateBookResponse;
+import com.nhnacademy.bookstore.book.book.exception.ApiBookResponseException;
 import com.nhnacademy.bookstore.book.book.repository.ApiBookRepository;
+import com.nhnacademy.bookstore.book.book.repository.BookRedisRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
-import com.nhnacademy.bookstore.book.bookImage.repository.BookImageRepository;
 import com.nhnacademy.bookstore.book.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
 import com.nhnacademy.bookstore.book.image.exception.MultipartFileException;
 import com.nhnacademy.bookstore.book.image.imageService.ImageService;
 import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
-import com.nhnacademy.bookstore.entity.bookImage.BookImage;
-import com.nhnacademy.bookstore.entity.bookImage.enums.BookImageType;
 import com.nhnacademy.bookstore.entity.category.Category;
-import com.nhnacademy.bookstore.entity.totalImage.TotalImage;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,21 +44,16 @@ class ApiBookServiceImplMockTest {
 
 	@Mock
 	private ApiBookRepository apiBookRepository;
-
 	@Mock
 	private BookRepository bookRepository;
-
 	@Mock
 	private CategoryRepository categoryRepository;
-
 	@Mock
 	private BookCategoryRepository bookCategoryRepository;
-
 	@Mock
 	private ImageService imageService;
-
 	@Mock
-	private BookImageRepository bookImageRepository;
+	private BookRedisRepository redisRepository;
 
 	@InjectMocks
 	private ApiBookServiceImpl apiBookServiceImpl;
@@ -117,7 +114,7 @@ class ApiBookServiceImplMockTest {
 	@Test
 	void testStringToZonedDateTime() {
 		// Given
-		String dateStr = "Tue, 01 Jan 2019 00:00:00 GMT";
+		String dateStr = "2019-01-01";
 
 		// When
 		ZonedDateTime result = apiBookServiceImpl.stringToZonedDateTime(dateStr);
@@ -155,7 +152,6 @@ class ApiBookServiceImplMockTest {
 	void downloadImageAsMultipartFileException() {
 		assertThrows(MultipartFileException.class, () -> apiBookServiceImpl.downloadImageAsMultipartFile(
 			"https://image.aladin.co.kr/product/34132/71/coversum234/e712533508_1.jpg"));
-
 	}
 
 	@Test
@@ -170,23 +166,27 @@ class ApiBookServiceImplMockTest {
 			.cover("https://image.aladin.co.kr/product/34132/71/coversum/e712533508_1.jpg")
 			.categoryName("category1>category2>category3")
 			.publisher("Test Publisher")
+			.pubDate("2019-01-01")
 			.build();
 
-		ApiCreateBookResponse bookResponse = new ApiCreateBookResponse("Test Title", "Tue, 01 Jan 2019 00:00:00 GMT",
-			List.of(item));
+		List<AladinItem> items = new ArrayList<>();
+		items.add(item);
+		ApiCreateBookResponse bookResponse = new ApiCreateBookResponse("Test Title",
+			"http://www.aladin.co.kr/shop/wproduct.aspx?ISBN=334061481",
+			items);
 
 		Book book = new Book(
-			bookResponse.title(),
-			bookResponse.item().getFirst().description(),
+			bookResponse.title().substring(bookResponse.title().indexOf("-") + 2),
+			item.description(),
 			ZonedDateTime.now(),
-			bookResponse.item().getFirst().priceSales(),
+			item.priceSales(),
 			100,
-			bookResponse.item().getFirst().priceSales(),
+			item.priceSales(),
 			0,
 			true,
 			"Test Author",
-			bookResponse.item().getFirst().isbn13(),
-			bookResponse.item().getFirst().publisher(),
+			item.isbn13(),
+			item.publisher(),
 			null,
 			null,
 			null
@@ -194,20 +194,21 @@ class ApiBookServiceImplMockTest {
 
 		Category category1 = new Category("category1");
 		Optional<Category> categoryOptional = Optional.of(category1);
-		BookCategory bookCategory = BookCategory.create(book, categoryOptional.get());
-
-		TotalImage totalImage = new TotalImage("image.png");
-		BookImage bookImage = new BookImage(BookImageType.MAIN, book, totalImage);
+		BookCategory bookCategory = BookCategory.create(book, category1);
 
 		when(apiBookRepository.getBookResponse(any())).thenReturn(bookResponse);
-		when(bookRepository.save(any())).thenReturn(book);
-		when(categoryRepository.findByName(any())).thenReturn(Optional.of(category1));
+		when(categoryRepository.findByName(any())).thenReturn(categoryOptional);
 		when(bookCategoryRepository.save(any(BookCategory.class))).thenReturn(bookCategory);
-		when(imageService.createImage(any(MultipartFile.class), any())).thenReturn("image.png");
-		when(bookImageRepository.save(any(BookImage.class))).thenReturn(bookImage);
+		when(bookRepository.save(any(Book.class))).thenReturn(book);
 
 		apiBookServiceImpl.save("1234567890123");
 
+		verify(apiBookRepository, times(1)).getBookResponse("1234567890123");
+		verify(categoryRepository, times(3)).findByName(anyString());
+
+		verify(bookCategoryRepository, times(3)).save(any(BookCategory.class));
+		verify(bookRepository, times(2)).save(any(Book.class));
+		verify(redisRepository, times(1)).createBook(any(Book.class));
 	}
 
 	@Test
@@ -222,40 +223,52 @@ class ApiBookServiceImplMockTest {
 			.cover("https://image.aladin.co.kr/product/34132/71/coversum/e712533508_1.jpg")
 			.categoryName("category1>category2>category3")
 			.publisher("Test Publisher")
+			.pubDate("2019-01-01")
 			.build();
 
-		ApiCreateBookResponse bookResponse = new ApiCreateBookResponse("Test Title", "Tue, 01 Jan 2019 00:00:00 GMT",
+		ApiCreateBookResponse bookResponse = new ApiCreateBookResponse("Test Title",
+			"https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=334061481",
 			List.of(item));
 
 		Book book = new Book(
-			bookResponse.title(),
-			bookResponse.item().getFirst().description(),
+			bookResponse.title().substring(bookResponse.title().indexOf("-") + 2),
+			item.description(),
 			ZonedDateTime.now(),
-			bookResponse.item().getFirst().priceSales(),
+			item.priceSales(),
 			100,
-			bookResponse.item().getFirst().priceSales(),
+			item.priceSales(),
 			0,
 			true,
 			"Test Author",
-			bookResponse.item().getFirst().isbn13(),
-			bookResponse.item().getFirst().publisher(),
+			item.isbn13(),
+			item.publisher(),
 			null,
 			null,
 			null
 		);
 
-		Category category1 = new Category("category1");
-		Optional<Category> categoryOptional = Optional.of(category1);
-		BookCategory bookCategory = BookCategory.create(book, categoryOptional.get());
-
-		TotalImage totalImage = new TotalImage("image.png");
-		BookImage bookImage = new BookImage(BookImageType.MAIN, book, totalImage);
-
-		when(apiBookRepository.getBookResponse(any())).thenReturn(bookResponse);
-		when(bookRepository.save(any())).thenReturn(book);
-		when(categoryRepository.findByName(any())).thenReturn(Optional.empty());
+		when(apiBookRepository.getBookResponse("1234567890123")).thenReturn(bookResponse);
+		when(categoryRepository.findByName(anyString())).thenReturn(Optional.empty());
 
 		assertThrows(CategoryNotFoundException.class, () -> apiBookServiceImpl.save("1234567890123"));
 
+		verify(apiBookRepository, times(1)).getBookResponse("1234567890123");
+		verify(categoryRepository, times(1)).findByName(anyString());
 	}
+
+	@Test
+	void testGetDetailResponseThrowsException() {
+		// Given
+		String itemId = "123456";
+		String imageUrl = "https://image.aladin.co.kr/product/34132/71/coversum/e712533508_1.jpg";
+
+		try (MockedStatic<Jsoup> jsoupMockedStatic = mockStatic(Jsoup.class)) {
+			jsoupMockedStatic.when(() -> Jsoup.connect(anyString()).get()).thenAnswer(invocation -> {
+				throw new IOException();
+			});
+
+			assertThrows(ApiBookResponseException.class, () -> apiBookServiceImpl.getDetailResponse(itemId, imageUrl));
+		}
+	}
+
 }

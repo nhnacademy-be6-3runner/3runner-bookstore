@@ -6,6 +6,7 @@ import com.nhnacademy.bookstore.purchase.bookCart.dto.response.ReadBookCartGuest
 import com.nhnacademy.bookstore.purchase.bookCart.exception.BookCartArgumentErrorException;
 import com.nhnacademy.bookstore.purchase.bookCart.service.BookCartGuestService;
 import com.nhnacademy.bookstore.purchase.bookCart.service.BookCartMemberService;
+import com.nhnacademy.bookstore.purchase.cart.repository.CartRepository;
 import com.nhnacademy.bookstore.util.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -37,7 +38,7 @@ public class BookCartController {
      */
     @GetMapping("/{cartId}")
     public ApiResponse<List<ReadBookCartGuestResponse>> readCart(
-            @PathVariable("cartId") Long cartId
+            @PathVariable(value = "cartId", required = false) Long cartId
     ) {
         List<ReadBookCartGuestResponse> responses = bookCartGuestService.readAllBookCart(cartId);
         return ApiResponse.success(responses);
@@ -63,11 +64,12 @@ public class BookCartController {
             @RequestHeader(value = "Member-Id", required = false) Long memberId
         ) {
         if (bindingResult.hasErrors()) {
-            throw new BookCartArgumentErrorException("폼 에러");
+            throw new BookCartArgumentErrorException(bindingResult.getFieldErrors().toString());
         }
 
         if (Objects.isNull(memberId)) {
             Long cartId = bookCartGuestService.createBookCart(createBookCartGuestRequest.bookId(),
+                    createBookCartGuestRequest.userId(),
                     createBookCartGuestRequest.quantity());
 
             return ApiResponse.createSuccess(cartId);
@@ -97,7 +99,7 @@ public class BookCartController {
     ) {
 
         if (bindingResult.hasErrors()) {
-            throw new BookCartArgumentErrorException("폼 에러");
+            throw new BookCartArgumentErrorException(bindingResult.getFieldErrors().toString());
         }
 
         if (Objects.isNull(memberId)) {
@@ -108,11 +110,19 @@ public class BookCartController {
             );
             return ApiResponse.success(updateBookCartGuestRequest.cartId());
         } else {
-            return ApiResponse.success(bookCartMemberService.updateBookCartMember(updateBookCartGuestRequest));
+            return ApiResponse.success(bookCartMemberService.updateBookCartMember(updateBookCartGuestRequest, memberId));
         }
 
     }
 
+    /**
+     * 북카트삭제.
+     *
+     * @param deleteBookCartGuestRequest 삭제요청Dto.
+     * @param bindingResult 오류검증
+     * @param memberId 맴버아이디
+     * @return 북카트 아이디
+     */
     @DeleteMapping()
     public ApiResponse<Long> deleteCart(
             @Valid @RequestBody DeleteBookCartRequest deleteBookCartGuestRequest,
@@ -120,7 +130,7 @@ public class BookCartController {
             @RequestHeader(value = "Member-Id", required = false) Long memberId
     ) {
         if (bindingResult.hasErrors()) {
-            throw new BookCartArgumentErrorException("폼 에러");
+            throw new BookCartArgumentErrorException(bindingResult.getFieldErrors().toString());
         }
 
         if (Objects.isNull(memberId)) {
@@ -131,7 +141,29 @@ public class BookCartController {
             return ApiResponse.deleteSuccess(deleteBookCartGuestRequest.cartId());
         } else {
 
-            return ApiResponse.deleteSuccess(bookCartMemberService.deleteBookCartMember(deleteBookCartGuestRequest));
+            return ApiResponse.deleteSuccess(bookCartMemberService.deleteBookCartMember(deleteBookCartGuestRequest, memberId));
+        }
+    }
+
+    /**
+     * 북카트전체삭제.
+     *
+     * @param cartId 카트아이디
+     * @param memberId 맴버아이디
+     * @return 카트아이디
+     */
+    @DeleteMapping("/{cartId}")
+    public ApiResponse<Long> deleteAllCart(
+            @PathVariable(required = false) Long cartId,
+            @RequestHeader(value = "Member-Id", required = false) Long memberId
+    ) {
+        if (Objects.isNull(memberId)) {
+            Long response = bookCartGuestService.deleteAllBookCart(cartId);
+
+            return ApiResponse.deleteSuccess(response);
+        } else {
+
+            return ApiResponse.deleteSuccess(bookCartMemberService.deleteAllBookCart(memberId));
         }
     }
 }

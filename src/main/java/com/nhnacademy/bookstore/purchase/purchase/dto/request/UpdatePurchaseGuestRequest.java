@@ -11,5 +11,5 @@ import java.util.UUID;
 @Builder
 public record UpdatePurchaseGuestRequest(PurchaseStatus purchaseStatus,
                                          @NotNull(message = "orderNumber is mandatory") UUID orderNumber,
-                                         @NotBlank(message = "password is mandatory") String password) {
+                                         String password) {
 }

@@ -40,21 +40,17 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
     private final BookRepository bookRepository;
     private final CartRepository cartRepository;
 
-    /**
-     * 도서장바구니 추가.
-     *
-     * @param bookId 도서아이디
-     * @param quantity 수량
-     * @return bookCartId
-     */
     @Override
-    public Long createBookCart(Long bookId, int quantity) {
+    public Long createBookCart(Long bookId, Long cartId, int quantity) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookDoesNotExistException("도서가 존재하지 않습니다"));
-
-        Cart cart = new Cart();
-        cartRepository.save(cart);
-        long cartId = cart.getId();
+        Cart cart;
+        if (Objects.isNull(cartId) || cartId == 0) {
+            cart = new Cart();
+            cartRepository.save(cart);
+            cartId = cart.getId();
+        }
+        cart = cartRepository.findById(cartId).orElseThrow(()->new CartDoesNotExistException("카트가 존재하지 않습니다."));
 
         if (bookCartRepository.existsBookCartByBookAndCart(book, cart)) {
             updateBookCart(bookId, cartId, quantity);
@@ -64,8 +60,8 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
             bookCartRepository.save(bookCart);
 
 
-            String url = "/img/no-image.png";
-            if (bookCart.getBook().getBookImageList()!=null && !bookCart.getBook().getBookImageList().isEmpty()) {
+            String url = null;
+            if (bookCart.getBook().getBookImageList() != null && !bookCart.getBook().getBookImageList().isEmpty()) {
                 url = bookCart.getBook().getBookImageList().getFirst().getTotalImage().getUrl();
             }
 
@@ -74,10 +70,12 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
                     bookCart.getId(),
                     ReadBookCartGuestResponse.builder()
                             .bookCartId(bookCart.getId())
+                            .bookId(bookId)
                             .price(book.getPrice())
                             .url(url)
                             .title(book.getTitle())
                             .quantity(bookCart.getQuantity())
+                            .leftQuantity(book.getQuantity())
                             .build()
             );
         }
@@ -85,14 +83,6 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
         return cartId;
     }
 
-    /**
-     * 도서장바구니 업데이트.
-     *
-     * @param bookId 도서아이디
-     * @param cartId 장바구니아이디
-     * @param quantity 수량
-     * @return bookCartId
-     */
     @Override
     public Long updateBookCart(Long bookId, Long cartId, int quantity) {
         Book book = bookRepository.findById(bookId)
@@ -135,15 +125,9 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
         bookCartRepository.delete(bookCart);
         bookCartRedisRepository.delete(cartId.toString(), bookCart.getId());
 
-        return cartId;
+        return bookCartId;
     }
 
-    /**
-     * 북카트 전체 삭제.
-     *
-     * @param cartId 카트아이디
-     * @return 카트아이디
-     */
     @Override
     public Long deleteAllBookCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId)
@@ -155,12 +139,6 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
         return cartId;
     }
 
-    /**
-     * 도서장바구니 목록 읽기.
-     *
-     * @param cartId 카트아이디
-     * @return 도서장바구니 목록
-     */
     @Override
     public List<ReadBookCartGuestResponse> readAllBookCart(Long cartId) {
         List<ReadBookCartGuestResponse> bookCartGuestResponseList =  bookCartRedisRepository.readAllHashName(cartId.toString());
@@ -173,12 +151,6 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
     }
 
 
-    /**
-     * 레디스 데이터 업데이트 메서드.
-     *
-     * @param cartId 장바구니아이디
-     * @return 도서장바구니 목록
-     */
     private List<ReadBookCartGuestResponse> hasDataToLoad(Long cartId) {
         List<ReadBookCartGuestResponse> readBookCartGuestResponses = readAllFromDb(cartId);
         if (bookCartRedisRepository.isMiss(cartId.toString()) && !readBookCartGuestResponses.isEmpty()) {
@@ -187,19 +159,13 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
         return readBookCartGuestResponses;
     }
 
-    /**
-     * DB에서 데이터 목록 불러오기.
-     *
-     * @param cartId 카트 아이디
-     * @return DB 도서 장바구니 목록
-     */
     private List<ReadBookCartGuestResponse> readAllFromDb(Long cartId) {
         List<BookCart> list = bookCartRepository.findAllByCartId(cartId);
         List<ReadBookCartGuestResponse> listDto = new ArrayList<>();
         log.info("{}", list);
         for (BookCart bookCart : list) {
-            String url = "/img/no-image.png";
-            if (bookCart.getBook().getBookImageList()!=null && !bookCart.getBook().getBookImageList().isEmpty()) {
+            String url = null;
+            if (bookCart.getBook().getBookImageList() != null && !bookCart.getBook().getBookImageList().isEmpty()) {
                 url = bookCart.getBook().getBookImageList().getFirst().getTotalImage().getUrl();
             }
 
@@ -210,6 +176,7 @@ public class BookCartGuestServiceImpl implements BookCartGuestService {
                     .url(url)
                     .title(bookCart.getBook().getTitle())
                     .quantity(bookCart.getQuantity())
+                    .leftQuantity(bookCart.getBook().getQuantity())
                     .build());
         }
 

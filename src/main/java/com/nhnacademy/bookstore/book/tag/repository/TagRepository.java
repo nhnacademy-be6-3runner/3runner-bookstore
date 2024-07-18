@@ -1,14 +1,15 @@
 package com.nhnacademy.bookstore.book.tag.repository;
 
-import com.nhnacademy.bookstore.entity.tag.Tag;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import com.nhnacademy.bookstore.entity.tag.Tag;
 
 /**
  * 태그 CRUD jpa
  * @author 정주혁
  */
-public interface TagRepository extends JpaRepository<Tag, Long> {
-    Optional<Tag> findByName(String name);
+public interface TagRepository extends JpaRepository<Tag, Long>, TagCustomRepository {
+	Optional<Tag> findByName(String name);
 }

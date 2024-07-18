@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.nhnacademy.bookstore.book.category.dto.request.CreateCategoryRequest;
 import com.nhnacademy.bookstore.book.category.dto.request.UpdateCategoryRequest;
+import com.nhnacademy.bookstore.book.category.dto.response.CategoryForCouponResponse;
 import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
 import com.nhnacademy.bookstore.book.category.dto.response.CategoryResponse;
 
@@ -71,4 +72,11 @@ public interface CategoryService {
 	 * @return category response
 	 */
 	List<CategoryParentWithChildrenResponse> getCategoriesWithChildren();
+
+	/**
+	 * 카테고리 리스트 조회
+	 */
+
+	List<CategoryForCouponResponse> getCategoriesIds(List<Long> ids);
+
 }

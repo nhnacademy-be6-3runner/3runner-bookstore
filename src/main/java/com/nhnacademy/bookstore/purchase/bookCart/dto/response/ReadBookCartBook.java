@@ -4,6 +4,19 @@ import java.time.ZonedDateTime;
 
 import lombok.Builder;
 
+/**
+ * 북카트 읽기 응답.
+ *
+ * @param title
+ * @param description
+ * @param publishedDate
+ * @param price
+ * @param quantity
+ * @param sellingPrice
+ * @param packing
+ * @param author
+ * @param publisher
+ */
 @Builder
 public record ReadBookCartBook(
 	String title,
