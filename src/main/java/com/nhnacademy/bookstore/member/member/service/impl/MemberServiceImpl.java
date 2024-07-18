@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.member.member.service.impl;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -198,11 +199,12 @@ public class MemberServiceImpl implements MemberService {
 	 */
 	public Member updateMember(Long memberId, UpdateMemberRequest updateMemberRequest) {
 		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
-
+		LocalDate birthday = LocalDate.parse(updateMemberRequest.birthday());
+		ZonedDateTime zonedBirthday = birthday.atStartOfDay(ZoneId.systemDefault());
 		member.setName(updateMemberRequest.name());
 		member.setAge(updateMemberRequest.age());
 		member.setPhone(updateMemberRequest.phone());
-		member.setBirthday(updateMemberRequest.birthday());
+		member.setBirthday(zonedBirthday);
 		member.setModifiedAt(ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
 
 		return memberRepository.save(member);

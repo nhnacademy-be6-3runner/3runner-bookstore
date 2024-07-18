@@ -14,5 +14,5 @@ public record UpdateMemberRequest (
     String name,
     int age,
     String phone,
-    ZonedDateTime birthday
+    String birthday
 ){}
