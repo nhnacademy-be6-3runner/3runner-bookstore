@@ -13,14 +13,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Tag {
 	@Id
@@ -32,6 +30,9 @@ public class Tag {
 	@Setter
 	private String name;
 
+	public Tag(String name) {
+		this.name = name;
+	}
 	//연결
 
 	@OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)

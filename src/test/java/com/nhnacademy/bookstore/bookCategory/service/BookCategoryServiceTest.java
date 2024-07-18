@@ -29,6 +29,7 @@ import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.bookCartegory.dto.request.CreateBookCategoryRequest;
 import com.nhnacademy.bookstore.book.bookCartegory.dto.request.UpdateBookCategoryRequest;
 import com.nhnacademy.bookstore.book.bookCartegory.exception.BookCategoryAlreadyExistsException;
+import com.nhnacademy.bookstore.book.bookCartegory.exception.BookCategoryNotFoundException;
 import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
 import com.nhnacademy.bookstore.book.bookCartegory.service.impl.BookCategoryServiceImpl;
 import com.nhnacademy.bookstore.book.category.dto.response.BookDetailCategoryResponse;
@@ -163,6 +164,13 @@ class BookCategoryServiceTest {
 		bookCategoryService.deletedBookCategory(1L);
 
 		verify(bookCategoryRepository, times(1)).deleteById(anyLong());
+	}
+
+	@Test
+	void deletedBookCategory_BookCategoryNotFoundException() {
+		when(bookCategoryRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(BookCategoryNotFoundException.class, () -> bookCategoryService.deletedBookCategory(1L));
 	}
 
 	@DisplayName("도서에 해당하는 카테고리 목록 조회 테스트")

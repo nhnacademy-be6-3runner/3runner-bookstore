@@ -19,7 +19,7 @@ public interface ElasticSearchBookRepository extends ElasticsearchRepository<Boo
 		+ "        \"multi_match\": {"
 		+ "          \"query\": \"?0\", "
 		+ "          \"minimum_should_match\": \"70%\","
-		+ "          \"fields\": [\"title^70\", \"titleNgram^70\", \"author^50\", \"publisher^50\", \"category^50\", \"tag^60\"]"
+		+ "          \"fields\": [\"title^70\", \"titleNgram^70\", \"author^50\", \"publisher^50\", \"categoryList^50\", \"tagList^60\"]"
 		+ "        }"
 		+ "      }"
 		+ "    }"

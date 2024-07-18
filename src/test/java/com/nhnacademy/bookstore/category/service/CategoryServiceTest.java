@@ -44,7 +44,10 @@ class CategoryServiceTest {
 	@DisplayName("상위 카테고리 생성 테스트")
 	@Test
 	void createTopLevelCategory() {
-		CreateCategoryRequest dto = new CreateCategoryRequest("상위 카테고리", null);
+		CreateCategoryRequest dto = CreateCategoryRequest.builder()
+			.name("상위 카테고리")
+			.parentId(null)
+			.build();
 		Category category = new Category();
 		category.setName("상위 카테고리");
 
@@ -114,7 +117,7 @@ class CategoryServiceTest {
 		when(categoryRepository.findById(2L)).thenReturn(Optional.empty());
 		assertThrows(CategoryNotFoundException.class, () -> categoryService.updateCategory(1L, dto));
 	}
-	
+
 	@Test
 	void updateCategory() {
 		long id = 1L;
@@ -217,6 +220,11 @@ class CategoryServiceTest {
 		when(categoryRepository.findAllById(anyList())).thenReturn(categoryList);
 
 		List<CategoryForCouponResponse> getResponse = categoryService.getCategoriesIds(List.of(1L, 2L));
+		CategoryForCouponResponse response = CategoryForCouponResponse.builder()
+			.id(1L)
+			.name("카테고리 1")
+			.build();
+		CategoryForCouponResponse response2 = new CategoryForCouponResponse(2L, "카테고리 2");
 		assertNotNull(getResponse);
 		assertEquals(2, getResponse.size());
 		assertEquals(category1.getId(), getResponse.getFirst().id());

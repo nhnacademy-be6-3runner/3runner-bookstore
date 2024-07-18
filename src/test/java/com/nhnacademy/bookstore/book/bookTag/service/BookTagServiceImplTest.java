@@ -61,6 +61,12 @@ class BookTagServiceImplTest {
 	void readBookByTagId_Success() {
 		// Mocking input
 		ReadTagRequest tagRequest = new ReadTagRequest(1L, 0, 10, "title");
+		ReadTagRequest tagRequest1 = ReadTagRequest.builder()
+			.tagId(1L)
+			.page(1)
+			.size(10)
+			.sort("title")
+			.build();
 		Pageable pageable = PageRequest.of(tagRequest.page(), tagRequest.size());
 
 		// Mocking repository response

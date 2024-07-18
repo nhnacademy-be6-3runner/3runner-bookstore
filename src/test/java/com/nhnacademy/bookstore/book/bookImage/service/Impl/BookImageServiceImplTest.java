@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +20,13 @@ import com.nhnacademy.bookstore.book.bookImage.dto.request.CreateBookImageReques
 import com.nhnacademy.bookstore.book.bookImage.repository.BookImageRepository;
 import com.nhnacademy.bookstore.book.image.exception.NotFindImageException;
 import com.nhnacademy.bookstore.entity.book.Book;
+import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
 import com.nhnacademy.bookstore.entity.bookImage.BookImage;
 import com.nhnacademy.bookstore.entity.bookImage.enums.BookImageType;
+import com.nhnacademy.bookstore.entity.bookTag.BookTag;
+import com.nhnacademy.bookstore.entity.category.Category;
+import com.nhnacademy.bookstore.entity.tag.Tag;
+import com.nhnacademy.bookstore.entity.totalImage.TotalImage;
 
 class BookImageServiceImplTest {
 
@@ -135,5 +141,50 @@ class BookImageServiceImplTest {
 
 		// When / Then
 		assertThrows(NotFindImageException.class, () -> bookImageServiceImpl.createBookImage(request));
+	}
+
+	@Test
+	void updateBookImageTest() {
+		Category category = new Category("Sample Category");
+		Category category2 = new Category("Sample Category2");
+
+		Tag tag = new Tag("Sample Tag");
+		Tag tag2 = new Tag("Sample Tag2");
+
+		TotalImage totalImage = new TotalImage("Sample TotalImage");
+		TotalImage totalImage2 = new TotalImage("Sample TotalImage2");
+		TotalImage totalImage3 = new TotalImage("Sample TotalImage1414");
+
+		Book book = new Book("Sample Book", "Sample Description", ZonedDateTime.now(), 100, 50, 80, 500, true,
+			"12346789",
+			"John Doe", "Sample Publisher", null, null, null);
+
+		BookCategory bookCategory = BookCategory.create(book, category);
+		BookCategory bookCategory2 = BookCategory.create(book, category2);
+		BookTag bookTag = new BookTag(book, tag);
+		BookTag bookTag2 = new BookTag(book, tag2);
+		BookImage bookImage = new BookImage(BookImageType.MAIN, book, totalImage);
+		BookImage bookImage2 = new BookImage(BookImageType.DESCRIPTION, book, totalImage2);
+		BookImage bookImage3 = new BookImage(BookImageType.DESCRIPTION, book, totalImage3);
+
+		List<BookImage> bookImageList = new ArrayList<>();
+		bookImageList.add(bookImage);
+		bookImageList.add(bookImage2);
+		bookImageList.add(bookImage3);
+
+		book.setBookTagList(Arrays.asList(bookTag, bookTag2));
+		book.setBookCategoryList(Arrays.asList(bookCategory, bookCategory2));
+		book.setBookImageList(bookImageList);
+
+		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+
+		List<String> imageList = new ArrayList<>();
+		imageList.add("Sample TotalImage5");
+		imageList.add("Sample TotalImage3");
+		imageList.add("Sample TotalImage2");
+
+		bookImageServiceImpl.updateBookImage("Sample TotalImage4", imageList, 1L);
+
+		verify(bookImageRepository, times(1)).deleteAll(anyList());
 	}
 }
