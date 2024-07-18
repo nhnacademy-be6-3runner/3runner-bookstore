@@ -75,7 +75,7 @@ public class PurchaseGuestServiceImpl implements PurchaseGuestService {
 	@Override
 	public Long updatePurchase(UpdatePurchaseGuestRequest updatePurchaseGuestRequest) {
 		Purchase purchase = purchaseRepository.findPurchaseByOrderNumber(
-			updatePurchaseGuestRequest.orderNumber()).orElseThrow();
+			updatePurchaseGuestRequest.orderNumber()).orElseThrow(()->new PurchaseDoesNotExistException("해당주문이 없습니다."));
 
 		purchase.setStatus(updatePurchaseGuestRequest.purchaseStatus());
 
@@ -98,6 +98,7 @@ public class PurchaseGuestServiceImpl implements PurchaseGuestService {
 			return null;
 		}
 		Optional<Purchase> purchaseOptional = purchaseRepository.findPurchaseByOrderNumber(orderNumber);
+
 		Purchase purchase = validateGuest(purchaseOptional, password);
 
 		return ReadPurchaseResponse.builder()
