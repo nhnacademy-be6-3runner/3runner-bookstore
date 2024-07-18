@@ -183,16 +183,18 @@ public class RefundServiceImpl implements RefundService {
 
 		Purchase purchase;
 
-		if (orderNumber instanceof Long) {
-			purchase = purchaseRepository.findById((Long)orderNumber)
+		try{
+			Integer orderId = Integer.parseInt(orderNumber.toString());
+			purchase = purchaseRepository.findById((long)orderId)
 				.orElseThrow(NotExistsPurchase::new);
 			if (!purchase.getMember().getId().equals(memberId)) {
 				throw new ImpossibleAccessRefundException();
 			}
-		} else {
+		}catch (NumberFormatException e) {
 			purchase = purchaseRepository.findPurchaseByOrderNumber(UUID.fromString(orderNumber.toString()))
 				.orElseThrow(NotExistsPurchase::new);
 		}
+
 
 		Payment payment = paymentRepository.findByPurchase(purchase);
 
