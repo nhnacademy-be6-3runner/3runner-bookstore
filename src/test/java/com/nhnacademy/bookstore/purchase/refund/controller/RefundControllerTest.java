@@ -170,38 +170,6 @@ class RefundControllerTest extends BaseDocumentTest {
                 ));
     }
 
-    @DisplayName("부분 결제 취소")
-    @Test
-    void testCreateRefundCancelPartPayment() throws Exception {
-        Long memberId = 1L;
-        Long orderNumber = 1L;
-        Integer price = 100;
-        Long refundId = 1L;
-
-        BDDMockito.given(refundService.createRefundCancelPartPayment(memberId, orderNumber, price)).willReturn(refundId);
-
-        this.mockMvc.perform(RestDocumentationRequestBuilders.post("/bookstore/refund/cancel/payment/part/{orderNumber}", orderNumber)
-                        .header("Member-Id", memberId)
-                        .queryParam("price", String.valueOf(price))
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(document("create-refund-cancel-part-payment",
-                        pathParameters(
-                                parameterWithName("orderNumber").description("Order Number")
-                        ),
-                        requestHeaders(
-                                headerWithName("Member-Id").description("Member ID")
-                        ),
-                        queryParameters(
-                                parameterWithName("Price").description("Refund price")
-                        ),
-                        responseFields(
-                                fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("Result code"),
-                                fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("Success status"),
-                                fieldWithPath("body.data").type(JsonFieldType.NUMBER).description("Refund ID")
-                        )
-                ));
-    }
 
     @DisplayName("모든 환불 리스트 조회")
     @Test

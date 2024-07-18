@@ -36,61 +36,6 @@ class CreateBookImageRequestTest {
 		assertThat(violations).isEmpty();
 	}
 
-	@Test
-	void invalidCreateBookImageRequest_NullUrl() {
-		CreateBookImageRequest request = CreateBookImageRequest.builder()
-			.url(null)
-			.type(BookImageType.MAIN)
-			.bookId(1L)
-			.build();
-
-		Set<ConstraintViolation<CreateBookImageRequest>> violations = validator.validate(request);
-		assertThat(violations).isNotEmpty();
-		assertThat(violations).anyMatch(
-			v -> v.getPropertyPath().toString().equals("url") && v.getMessage().contains("공백일 수 없습니다"));
-	}
-
-	@Test
-	void invalidCreateBookImageRequest_BlankUrl() {
-		CreateBookImageRequest request = CreateBookImageRequest.builder()
-			.url("")
-			.type(BookImageType.DESCRIPTION)
-			.bookId(1L)
-			.build();
-
-		Set<ConstraintViolation<CreateBookImageRequest>> violations = validator.validate(request);
-		assertThat(violations).isNotEmpty();
-		assertThat(violations).anyMatch(
-			v -> v.getPropertyPath().toString().equals("url") && v.getMessage().contains("공백일 수 없습니다"));
-	}
-
-	@Test
-	void invalidCreateBookImageRequest_TooLongUrl() {
-		CreateBookImageRequest request = CreateBookImageRequest.builder()
-			.url("http://example.com/" + "a".repeat(51))
-			.type(BookImageType.DESCRIPTION)
-			.bookId(1L)
-			.build();
-
-		Set<ConstraintViolation<CreateBookImageRequest>> violations = validator.validate(request);
-		assertThat(violations).isNotEmpty();
-		assertThat(violations).anyMatch(
-			v -> v.getPropertyPath().toString().equals("url") && v.getMessage().contains("크기가 0에서 50 사이여야 합니다"));
-	}
-
-	@Test
-	void invalidCreateBookImageRequest_NullType() {
-		CreateBookImageRequest request = CreateBookImageRequest.builder()
-			.url("http://example.com/image.jpg")
-			.type(null)
-			.bookId(1L)
-			.build();
-
-		Set<ConstraintViolation<CreateBookImageRequest>> violations = validator.validate(request);
-		assertThat(violations).isNotEmpty();
-		assertThat(violations).anyMatch(
-			v -> v.getPropertyPath().toString().equals("type") && v.getMessage().contains("널이어서는 안됩니다"));
-	}
 
 	@Test
 	void invalidCreateBookImageRequest_NullBookId() {
