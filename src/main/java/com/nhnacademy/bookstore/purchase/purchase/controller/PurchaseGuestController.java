@@ -67,7 +67,6 @@ public class PurchaseGuestController {
 			throw new PurchaseFormArgumentErrorException(bindingResult.getFieldErrors().toString());
 		}
 
-		//TODO : 폼에 비밀번호 넣을 수 있도록 뷰에서 따로 설정
 		purchaseGuestService.createPurchase(createPurchaseRequest);
 
 		return new ApiResponse<Void>(new ApiResponse.Header(true, 201));
@@ -104,6 +103,7 @@ public class PurchaseGuestController {
 	public ApiResponse<Void> deletePurchases(
 		@Valid @RequestBody ReadDeletePurchaseGuestRequest readDeletePurchaseGuestRequest,
 		BindingResult bindingResult) {
+		ValidationUtils.validateBindingResult(bindingResult,new PurchaseFormArgumentErrorException(bindingResult.getFieldErrors().toString()));
 
 		purchaseGuestService.deletePurchase(readDeletePurchaseGuestRequest.orderNumber(),
 			readDeletePurchaseGuestRequest.password());

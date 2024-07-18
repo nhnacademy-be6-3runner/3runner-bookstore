@@ -68,7 +68,7 @@ public class PurchaseManagerController {
 	@PutMapping("/{purchaseId}")
 	public ApiResponse<Long> purchaseUpdate(
 		@PathVariable(value = "purchaseId") String purchaseId,
-		@RequestParam String purchaseStatus) {
+		@RequestParam(name = "purchaseStatus") String purchaseStatus) {
 		return ApiResponse.success(purchaseManagerService.updatePurchaseStatus(purchaseId, purchaseStatus));
 	}
 }
