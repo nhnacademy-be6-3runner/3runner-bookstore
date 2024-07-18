@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.book.review.repository;
 
+import com.nhnacademy.bookstore.book.review.dto.response.ReviewAdminListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewDetailResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewListResponse;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,7 @@ public interface ReviewCustomRepository {
 
     ReviewDetailResponse getReviewDetail(long reviewId);
 
-    Page<ReviewListResponse> getReviewList(Pageable pageable);
+    Page<ReviewAdminListResponse> getReviewList(Pageable pageable);
 
     Page<ReviewListResponse> getReviewsByBookId(long bookId, Pageable pageable);
 

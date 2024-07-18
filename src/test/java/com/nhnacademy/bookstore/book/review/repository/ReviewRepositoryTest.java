@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.book.review.repository;
 
+import com.nhnacademy.bookstore.book.review.dto.response.ReviewAdminListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewDetailResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewListResponse;
 import com.nhnacademy.bookstore.book.review.repository.impl.ReviewCustomRepositoryImpl;
@@ -10,6 +11,7 @@ import com.nhnacademy.bookstore.entity.purchase.enums.MemberType;
 import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
 import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.review.Review;
+import com.nhnacademy.bookstore.entity.review.enums.ReviewStatus;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
 import com.nhnacademy.bookstore.member.pointRecord.repository.PointRecordRepository;
 import jakarta.persistence.EntityManager;
@@ -22,6 +24,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -148,6 +151,22 @@ class ReviewRepositoryTest {
         entityManager.flush();
     }
 
+    @DisplayName("리뷰 삭제 테스트")
+    @Test
+    void testDeleteReview() {
+        review.setReviewStatus(ReviewStatus.DELETE);
+        review.setDeletedAt(ZonedDateTime.now());
+        review.setDeletedReason("삭제 이유");
+
+        entityManager.persist(review);
+        entityManager.flush();
+
+        Review foundReview = entityManager.find(Review.class, review.getId());
+        assertThat(foundReview.getReviewStatus()).isEqualTo(ReviewStatus.DELETE);
+        assertThat(foundReview.getDeletedAt()).isNotNull();
+        assertThat(foundReview.getDeletedReason()).isEqualTo("삭제 이유");
+    }
+
     @DisplayName("회원이 주문한 도서가 존재 유무 테스트")
     @Test
     void testExistByPurchaseBook() {
@@ -175,7 +194,7 @@ class ReviewRepositoryTest {
     @DisplayName("리뷰 목록 조회 테스트")
     void testGetReviewList() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<ReviewListResponse> reviewPage = reviewRepository.getReviewList(pageable);
+        Page<ReviewAdminListResponse> reviewPage = reviewRepository.getReviewList(pageable);
 
         assertThat(reviewPage).isNotNull();
         assertThat(reviewPage.getContent()).isNotEmpty();
@@ -218,4 +237,69 @@ class ReviewRepositoryTest {
         assertThat(reviewPage.getContent().getFirst().rating()).isEqualTo(review.getRating());
         assertThat(reviewPage.getContent().getFirst().memberEmail()).isEqualTo(member.getEmail());
     }
+
+    @DisplayName("사용자 아이디로 리뷰 조회 시, 삭제된 리뷰를 제외하는지 테스트")
+    @Test
+    void testGetReviewsByUserId_ExcludesDeletedReview() {
+        review.setReviewStatus(ReviewStatus.DELETE);
+        entityManager.persist(review);
+        entityManager.flush();
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<ReviewListResponse> reviewPage = reviewRepository.getReviewsByUserId(member.getId(), pageable);
+
+        assertThat(reviewPage).isNotNull();
+        assertThat(reviewPage.getContent()).isEmpty();
+    }
+
+    @DisplayName("책 아이디로 평균 별점 조회 테스트")
+    @Test
+    void testGetAverageRatingByBookId() {
+        double averageRating = 4.25;
+        Double fetchedAverageRating = reviewRepository.getAverageRatingByBookId(book.getId());
+        assertThat(fetchedAverageRating).isEqualTo(averageRating);
+    }
+
+    @DisplayName("책 아이디로 리뷰 개수 조회 테스트")
+    @Test
+    void testCountReviewsByBookId() {
+        long reviewCount = 2L;
+        Long fetchedReviewCount = reviewRepository.countReviewsByBookId(book.getId());
+        assertThat(fetchedReviewCount).isEqualTo(reviewCount);
+    }
+
+    @DisplayName("리뷰 전체 보기 테스트 - createdAt 기준으로 정렬")
+    @Test
+    void testGetReviewList_sortedByCreatedAt() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").ascending());
+
+        Page<ReviewAdminListResponse> reviewPage = reviewRepository.getReviewList(pageable);
+
+        assertThat(reviewPage).isNotNull();
+        assertThat(reviewPage.getContent()).isNotEmpty();
+        assertThat(reviewPage.getTotalElements()).isGreaterThan(0);
+
+        ReviewAdminListResponse firstReview = reviewPage.getContent().get(0);
+        ReviewAdminListResponse secondReview = reviewPage.getContent().get(1);
+        assertThat(firstReview.createdAt()).isBefore(secondReview.createdAt());
+    }
+
+    @DisplayName("리뷰 전체 보기 테스트 - title 기준으로 정렬")
+    @Test
+    void testGetReviewList_sortedByTitle() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("title").ascending());
+
+        Page<ReviewAdminListResponse> reviewPage = reviewRepository.getReviewList(pageable);
+
+        assertThat(reviewPage).isNotNull();
+        assertThat(reviewPage.getContent()).isNotEmpty();
+        assertThat(reviewPage.getTotalElements()).isGreaterThan(0);
+
+        ReviewAdminListResponse firstReview = reviewPage.getContent().get(0);
+        ReviewAdminListResponse secondReview = reviewPage.getContent().get(1);
+        assertThat(firstReview.title()).isLessThanOrEqualTo(secondReview.title());
+    }
+
+
 }

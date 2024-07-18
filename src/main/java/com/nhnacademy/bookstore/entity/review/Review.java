@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.entity.review;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nhnacademy.bookstore.entity.comment.Comment;
 import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.review.enums.ReviewStatus;
@@ -47,17 +48,20 @@ public class Review {
     private boolean updated;
 
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private ZonedDateTime createdAt;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private ZonedDateTime updatedAt;
 
     @Setter
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private ZonedDateTime deletedAt;
 
     @Setter
     private ReviewStatus reviewStatus;
 
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 500)
     @Setter
     private String deletedReason;
 
@@ -81,11 +85,6 @@ public class Review {
     protected void onUpdate() {
         this.updatedAt = ZonedDateTime.now();
         this.updated = true;
-    }
-
-    public void addComment(Comment comment) {
-        this.commentList.add(comment);
-        comment.setReview(this);
     }
 
     public void addReviewLike(ReviewLike reviewLike) {

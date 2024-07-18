@@ -2,6 +2,8 @@ package com.nhnacademy.bookstore.book.review.controller;
 
 
 import com.nhnacademy.bookstore.book.review.dto.request.CreateReviewRequest;
+import com.nhnacademy.bookstore.book.review.dto.request.DeleteReviewRequest;
+import com.nhnacademy.bookstore.book.review.dto.response.ReviewAdminListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.UserReadReviewResponse;
 import com.nhnacademy.bookstore.book.review.exception.CreateReviewRequestFormException;
@@ -78,9 +80,9 @@ public class ReviewController {
      * @return ApiResponse<reviewList>
      */
     @GetMapping("/reviews")
-    public ApiResponse<Page<ReviewListResponse>> readAllReviews(@RequestParam int page, @RequestParam int size) {
+    public ApiResponse<Page<ReviewAdminListResponse>> readAllReviews(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ReviewListResponse> reviewList = reviewService.readAllReviews(pageable);
+        Page<ReviewAdminListResponse> reviewList = reviewService.readAllReviews(pageable);
         return ApiResponse.success(reviewList);
     }
 
@@ -162,5 +164,11 @@ public class ReviewController {
     public ApiResponse<Long> getCountReviewsByBookId(@PathVariable long bookId) {
         long cnt = reviewService.reviewCount(bookId);
         return ApiResponse.success(cnt);
+    }
+
+    @PutMapping("/reviews/{reviewId}/delete")
+    public ApiResponse<Void> deleteReview(@PathVariable long reviewId, @RequestHeader(value = "Member-Id") Long memberId, @Valid @RequestBody DeleteReviewRequest deleteReviewRequest) {
+        reviewService.deleteReview(reviewId, memberId, deleteReviewRequest);
+        return new ApiResponse<>(new ApiResponse.Header(true, 200));
     }
 }

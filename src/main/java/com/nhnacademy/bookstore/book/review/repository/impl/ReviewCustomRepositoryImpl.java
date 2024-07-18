@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.book.review.repository.impl;
 
+import com.nhnacademy.bookstore.book.review.dto.response.ReviewAdminListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewDetailResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewListResponse;
 import com.nhnacademy.bookstore.book.review.repository.ReviewCustomRepository;
@@ -108,15 +109,17 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
      * @return 리뷰 페이지
      */
     @Override
-    public Page<ReviewListResponse> getReviewList(Pageable pageable) {
-        List<ReviewListResponse> reviewListResponses = jpaQueryFactory
-                .select(Projections.constructor(ReviewListResponse.class,
+    public Page<ReviewAdminListResponse> getReviewList(Pageable pageable) {
+        List<ReviewAdminListResponse> reviewListResponses = jpaQueryFactory
+                .select(Projections.constructor(ReviewAdminListResponse.class,
                         qReview.id,
                         qReview.title,
                         qTotalImage.url,
                         qReview.rating,
                         qMember.email,
                         qReview.createdAt,
+                        qReview.deletedAt,
+                        qReview.deletedReason,
                         JPAExpressions.select(qReviewLike.count())
                                 .from(qReviewLike)
                                 .where(qReviewLike.review.id.eq(qReview.id))
@@ -133,7 +136,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                                 .where(qReviewImage.review.id.eq(qReview.id))
                 ))
                 .leftJoin(qReviewLike).on(qReviewLike.review.id.eq(qReview.id))
-                .groupBy(qReview.id, qReview.title, qTotalImage.url, qReview.rating, qMember.email, qReview.createdAt)
+                .groupBy(qReview.id, qReview.title, qTotalImage.url, qReview.rating, qMember.email, qReview.createdAt, qReview.deletedAt)
                 .orderBy(getSort(pageable.getSort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

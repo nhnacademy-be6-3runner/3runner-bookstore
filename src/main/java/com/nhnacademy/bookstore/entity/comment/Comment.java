@@ -41,6 +41,7 @@ public class Comment {
     private Review review;
 
     @ManyToOne
+    @Setter
     private Member member;
 
     @PrePersist

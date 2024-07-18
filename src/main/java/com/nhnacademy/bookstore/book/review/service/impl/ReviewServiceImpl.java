@@ -4,6 +4,7 @@ import com.nhnacademy.bookstore.book.book.exception.BookDoesNotExistException;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.review.dto.request.CreateReviewRequest;
 import com.nhnacademy.bookstore.book.review.dto.request.DeleteReviewRequest;
+import com.nhnacademy.bookstore.book.review.dto.response.ReviewAdminListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewDetailResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.UserReadReviewResponse;
@@ -129,20 +130,16 @@ public class ReviewServiceImpl implements ReviewService {
      */
     @Override
     @Transactional
-    public Long deleteReview(long reviewId, long memberId, DeleteReviewRequest deleteReviewRequest) {
+    public Long deleteReview(long reviewId, Long memberId, DeleteReviewRequest deleteReviewRequest) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(ReviewNotExistsException::new);
 
-        // 관리자 권한 확인
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(MemberNotExistsException::new);
-        boolean isAdmin = member.getMemberAuthList().stream()
-                .anyMatch(auth -> "admin".equals(auth.getAuth().getName()));
-        if (!isAdmin) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
+        if (!member.isAdmin()) {
             throw new UnauthorizedReviewAccessException();
         }
         review.setDeletedAt(ZonedDateTime.now());
-        review.setDeletedReason(deleteReviewRequest.deleteReason());
+        review.setDeletedReason(deleteReviewRequest.deletedReason());
         review.setReviewStatus(ReviewStatus.DELETE);
 
         return review.getId();
@@ -199,7 +196,7 @@ public class ReviewServiceImpl implements ReviewService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<ReviewListResponse> readAllReviews(Pageable pageable) {
+    public Page<ReviewAdminListResponse> readAllReviews(Pageable pageable) {
         return reviewRepository.getReviewList(pageable);
     }
 

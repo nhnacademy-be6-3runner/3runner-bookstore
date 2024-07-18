@@ -2,6 +2,7 @@ package com.nhnacademy.bookstore.book.review.service;
 
 import com.nhnacademy.bookstore.book.review.dto.request.CreateReviewRequest;
 import com.nhnacademy.bookstore.book.review.dto.request.DeleteReviewRequest;
+import com.nhnacademy.bookstore.book.review.dto.response.ReviewAdminListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewDetailResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.ReviewListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.UserReadReviewResponse;
@@ -18,13 +19,13 @@ public interface ReviewService {
 
     Long updateReview(long memberId, long reviewId, CreateReviewRequest createReviewRequest);
 
-    Long deleteReview(long reviewId, long memberId, DeleteReviewRequest deleteReviewRequest);
+    Long deleteReview(long reviewId, Long memberId, DeleteReviewRequest deleteReviewRequest);
 
     ReviewDetailResponse readDetailReview(long reviewId);
 
     UserReadReviewResponse readDetailUserReview(long reviewId);
 
-    Page<ReviewListResponse> readAllReviews(Pageable pageable);
+    Page<ReviewAdminListResponse> readAllReviews(Pageable pageable);
 
     Page<ReviewListResponse> readAllReviewsByBookId(long bookId, Pageable pageable);
 
