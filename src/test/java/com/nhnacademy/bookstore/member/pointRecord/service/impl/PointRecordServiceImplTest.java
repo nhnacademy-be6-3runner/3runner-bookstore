@@ -1,145 +1,172 @@
-//package com.nhnacademy.bookstore.member.pointRecord.service.impl;
-//
-//import com.nhnacademy.bookstore.entity.member.Member;
-//import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
-//import com.nhnacademy.bookstore.entity.purchase.Purchase;
-//import com.nhnacademy.bookstore.member.member.exception.MemberNotExistsException;
-//import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
-//import com.nhnacademy.bookstore.member.member.service.MemberPointService;
-//import com.nhnacademy.bookstore.member.pointRecord.dto.response.ReadPointRecordResponse;
-//import com.nhnacademy.bookstore.member.pointRecord.exception.NoBuyPointRecordException;
-//import com.nhnacademy.bookstore.member.pointRecord.exception.NotEnoughPointException;
-//import com.nhnacademy.bookstore.member.pointRecord.repository.PointRecordRepository;
-//import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseDoesNotExistException;
-//import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.MockitoAnnotations;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//
-//import java.time.ZonedDateTime;
-//import java.util.Arrays;
-//import java.util.List;
-//import java.util.Optional;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.anyLong;
-//import static org.mockito.Mockito.*;
-//
-//@ExtendWith(MockitoExtension.class)
-//class PointRecordServiceImplTest {
-//
-//    @Mock
-//    private PointRecordRepository pointRecordRepository;
-//
-//    @Mock
-//    private MemberRepository memberRepository;
-//
-//    @Mock
-//    private PurchaseRepository purchaseRepository;
-//
-//    @Mock
-//    private MemberPointService memberPointService;
-//
-//    @InjectMocks
-//    private PointRecordServiceImpl pointRecordService;
-//
-//    @Test
-//    void testSave() {
-////        Member member = new Member();
-////        member.setId(1L);
-////        member.setPoint(100L);
-////
-////        Purchase purchase = new Purchase();
-////        purchase.setId(1L);
-////
-////        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
-////        when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
-////
-////        PointRecord pointRecord = new PointRecord(10L, "buy point", member, purchase);
-////        when(pointRecordRepository.save(any(PointRecord.class))).thenReturn(pointRecord);
-////
-////        Long savedId = pointRecordService.save(10L, "buy point", 1L, 1L);
-////
-////        verify(pointRecordRepository, times(1)).save(any(PointRecord.class));
-//    }
-//
-//    @Test
-//    void testSave_ThrowsNotEnoughPointException() {
-//        Member member = new Member();
-//        member.setId(1L);
-//        member.setPoint(0L);
-//
-//        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
-//        when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(new Purchase()));
-//
-//        assertThrows(NotEnoughPointException.class, () -> {
-//            pointRecordService.save(-10L, "buy point", 1L, 1L);
-//        });
-//    }
-//
-//    @Test
-//    void testReadByMemberId() {
-////        Member member = new Member();
-////        member.setId(1L);
-////
-////        PointRecord pointRecord1 = new PointRecord();
-////        pointRecord1.setId(1L);
-////        pointRecord1.setUsePoint(10L);
-////        pointRecord1.setCreatedAt(ZonedDateTime.now());
-////        pointRecord1.setContent("Test1");
-////
-////        PointRecord pointRecord2 = new PointRecord();
-////        pointRecord2.setId(2L);
-////        pointRecord2.setUsePoint(20L);
-////        pointRecord2.setCreatedAt(ZonedDateTime.now());
-////        pointRecord2.setContent("Test2");
-////
-////        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
-////        when(pointRecordRepository.findAllByMember(any(Member.class))).thenReturn(Arrays.asList(pointRecord1, pointRecord2));
-////
-////        List<ReadPointRecordResponse> responses = pointRecordService.readByMemberId(1L);
-////
-////        assertNotNull(responses);
-////        assertEquals(2, responses.size());
-////        assertEquals(10L, responses.get(0).usePoint());
-////        assertEquals(20L, responses.get(1).usePoint());
-//    }
-//
-//    @Test
-//    void testRefundByPurchaseId() {
-////        Purchase purchase = new Purchase();
-////        purchase.setId(1L);
-////
-////        PointRecord pointRecord = new PointRecord();
-////        pointRecord.setId(1L);
-////        pointRecord.setUsePoint(10L);
-////        pointRecord.setContent("buy point");
-////        pointRecord.setMember(new Member());
-////        pointRecord.setPurchase(purchase);
-////
-////        when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
-////        when(pointRecordRepository.findAllByPurchase(any(Purchase.class))).thenReturn(Arrays.asList(pointRecord));
-////        when(pointRecordRepository.save(any(PointRecord.class))).thenReturn(pointRecord);
-////
-////
-////        verify(pointRecordRepository, times(1)).save(any(PointRecord.class));
-//    }
-//
-//    @Test
-//    void testRefundByPurchaseId_NoBuyPointRecordException() {
-//        Purchase purchase = new Purchase();
-//        purchase.setId(1L);
-//
-//        when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
-//        when(pointRecordRepository.findAllByPurchase(any(Purchase.class))).thenReturn(Arrays.asList());
-//
-//        assertThrows(NoBuyPointRecordException.class, () -> {
-//            pointRecordService.refundByPurchaseId(1L);
-//        });
-//    }
-//}
+package com.nhnacademy.bookstore.member.pointRecord.service.impl;
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import com.nhnacademy.bookstore.entity.member.Member;
+import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
+import com.nhnacademy.bookstore.entity.purchase.Purchase;
+import com.nhnacademy.bookstore.member.member.exception.MemberNotExistsException;
+import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
+import com.nhnacademy.bookstore.member.member.service.MemberPointService;
+import com.nhnacademy.bookstore.member.pointRecord.exception.NoBuyPointRecordException;
+import com.nhnacademy.bookstore.member.pointRecord.repository.PointRecordRepository;
+import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
+
+@ExtendWith(MockitoExtension.class)
+public class PointRecordServiceImplTest {
+
+    @InjectMocks
+    private PointRecordServiceImpl pointRecordService;
+
+    @Mock
+    private MemberPointService memberPointService;
+
+    @Mock
+    private PointRecordRepository pointRecordRepository;
+
+    @Mock
+    private MemberRepository memberRepository;
+
+    @Mock
+    private PurchaseRepository purchaseRepository;
+
+    @Test
+    public void testSave_Success() {
+        Long memberId = 1L;
+        Long purchaseId = 1L;
+        Long usePoint = 100L;
+        String content = "buy point";
+
+        Member member = new Member();
+        member.setId(memberId);
+
+        Purchase purchase = new Purchase();
+        purchase.setId(purchaseId);
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(purchaseRepository.findById(purchaseId)).thenReturn(Optional.of(purchase));
+
+        Long savedId = pointRecordService.save(usePoint, content, memberId, purchaseId);
+
+        verify(pointRecordRepository, times(1)).save(any(PointRecord.class));
+        verify(memberPointService, times(1)).updatePoint(memberId, usePoint);
+    }
+
+    @Test
+    public void testSave_MemberNotExists() {
+        Long memberId = 1L;
+        Long purchaseId = 1L;
+        Long usePoint = 100L;
+        String content = "buy point";
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+
+        assertThrows(MemberNotExistsException.class, () -> {
+            pointRecordService.save(usePoint, content, memberId, purchaseId);
+        });
+
+        verify(pointRecordRepository, times(0)).save(any(PointRecord.class));
+        verify(memberPointService, times(0)).updatePoint(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testSave_PurchaseNotExists() {
+        Long memberId = 1L;
+        Long purchaseId = 1L;
+        Long usePoint = 100L;
+        String content = "buy point";
+
+        Member member = new Member();
+        member.setId(memberId);
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(purchaseRepository.findById(purchaseId)).thenReturn(Optional.empty());
+
+        assertThrows(PurchaseDoesNotExistException.class, () -> {
+            pointRecordService.save(usePoint, content, memberId, purchaseId);
+        });
+
+        verify(pointRecordRepository, times(0)).save(any(PointRecord.class));
+        verify(memberPointService, times(0)).updatePoint(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testReadByMemberId_MemberNotExists() {
+        Long memberId = 1L;
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+
+        assertThrows(MemberNotExistsException.class, () -> {
+            pointRecordService.readByMemberId(memberId, pageable);
+        });
+
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(pointRecordRepository, times(0)).findAllByMember(any(Member.class), any(Pageable.class));
+    }
+
+    @Test
+    public void testRefundByPurchaseId_Success() {
+        Long purchaseId = 1L;
+        Purchase purchase = new Purchase();
+        purchase.setId(purchaseId);
+
+        Member member = new Member();
+        member.setId(1L);
+
+        PointRecord pointRecord = new PointRecord(100L, "buy point", member, purchase);
+        List<PointRecord> pointRecords = Arrays.asList(pointRecord);
+
+        when(purchaseRepository.findById(purchaseId)).thenReturn(Optional.of(purchase));
+        when(pointRecordRepository.findAllByPurchase(purchase)).thenReturn(pointRecords);
+
+        Long refundedRecordId = pointRecordService.refundByPurchaseId(purchaseId);
+
+        verify(pointRecordRepository, times(1)).save(any(PointRecord.class));
+        verify(memberPointService, times(1)).updatePoint(member.getId(), -100L);
+    }
+
+    @Test
+    public void testRefundByPurchaseId_PurchaseNotExists() {
+        Long purchaseId = 1L;
+
+        when(purchaseRepository.findById(purchaseId)).thenReturn(Optional.empty());
+
+        assertThrows(PurchaseDoesNotExistException.class, () -> {
+            pointRecordService.refundByPurchaseId(purchaseId);
+        });
+
+        verify(pointRecordRepository, times(0)).save(any(PointRecord.class));
+        verify(memberPointService, times(0)).updatePoint(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testRefundByPurchaseId_NoBuyPointRecord() {
+        Long purchaseId = 1L;
+        Purchase purchase = new Purchase();
+        purchase.setId(purchaseId);
+
+        when(purchaseRepository.findById(purchaseId)).thenReturn(Optional.of(purchase));
+        when(pointRecordRepository.findAllByPurchase(purchase)).thenReturn(Arrays.asList());
+
+        assertThrows(NoBuyPointRecordException.class, () -> {
+            pointRecordService.refundByPurchaseId(purchaseId);
+        });
+
+        verify(pointRecordRepository, times(0)).save(any(PointRecord.class));
+        verify(memberPointService, times(0)).updatePoint(anyLong(), anyLong());
+    }
+}

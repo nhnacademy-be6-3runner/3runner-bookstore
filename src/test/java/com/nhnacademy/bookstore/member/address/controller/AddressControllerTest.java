@@ -82,7 +82,8 @@ class AddressControllerTest extends BaseDocumentTest {
                         ),
                         responseFields(
                                 fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
-                                fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("성공 여부")
+                                fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                fieldWithPath("body.data").type(JsonFieldType.NULL).description("주소 아이디")
                         )
                         ));
     }
