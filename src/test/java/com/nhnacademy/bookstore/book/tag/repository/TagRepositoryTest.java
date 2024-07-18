@@ -1,7 +1,7 @@
-package com.nhnacademy.bookstore.book.tag.repository.impl;
+package com.nhnacademy.bookstore.book.tag.repository;
 
 import com.nhnacademy.bookstore.book.tag.dto.response.TagResponse;
-import com.nhnacademy.bookstore.book.tag.repository.TagCustomRepository;
+import com.nhnacademy.bookstore.book.tag.repository.impl.TagCustomRepositoryImpl;
 import com.nhnacademy.bookstore.entity.tag.QTag;
 import com.nhnacademy.bookstore.entity.tag.Tag;
 import jakarta.persistence.EntityManager;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @Import(TagCustomRepositoryImpl.class)
-public class TagRepositoryTest {
+class TagRepositoryTest {
 
     @Qualifier("tagCustomRepositoryImpl")
     @Autowired
