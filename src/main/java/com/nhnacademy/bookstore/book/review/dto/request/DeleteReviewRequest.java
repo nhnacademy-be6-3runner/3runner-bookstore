@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.book.review.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
@@ -11,6 +12,6 @@ import lombok.Builder;
  */
 @Builder
 public record DeleteReviewRequest(
-        @Size(min = 1, max = 500) String deletedReason
+        @Size(min = 1, max = 500) @NotBlank String deletedReason
 ) {
 }

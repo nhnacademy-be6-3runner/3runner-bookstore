@@ -110,4 +110,17 @@ public class Member {
         return memberAuthList.stream()
                 .anyMatch(memberAuth -> memberAuth.getAuth().getName().equals("ADMIN"));
     }
+
+    /**
+     * 멤버 권한을 추가하는 메서드입니다.
+     *
+     * @param memberAuth 추가할 멤버 권한
+     * @author 김은비
+     */
+    public void addMemberAuth(MemberAuth memberAuth) {
+        if (memberAuthList.stream().noneMatch(auth -> auth.getAuth().getName().equals(memberAuth.getAuth().getName()))) {
+            memberAuthList.add(memberAuth);
+            memberAuth.setMember(this);
+        }
+    }
 }

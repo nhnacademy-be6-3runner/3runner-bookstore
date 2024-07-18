@@ -62,12 +62,6 @@ public class ReviewLikeServiceImpl implements ReviewLikeService {
     @Override
     @Transactional
     public void deleteReviewLike(Long reviewId, Long memberId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(ReviewNotExistsException::new);
-        if (review.getPurchaseBook().getPurchase().getMember().getId().equals(memberId)) {
-            throw new CannotLikeOwnReviewLikeException();
-        }
-
         reviewLikeRepository.deleteByReviewIdAndMemberId(reviewId, memberId);
     }
 

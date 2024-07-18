@@ -1,6 +1,7 @@
 package com.nhnacademy.bookstore.book.reviewLike.service;
 
 import com.nhnacademy.bookstore.book.bookLike.exception.CannotLikeOwnReviewLikeException;
+import com.nhnacademy.bookstore.book.review.exception.ReviewNotExistsException;
 import com.nhnacademy.bookstore.book.review.repository.ReviewRepository;
 import com.nhnacademy.bookstore.book.reviewLike.repository.ReviewLikeRepository;
 import com.nhnacademy.bookstore.book.reviewLike.service.impl.ReviewLikeServiceImpl;
@@ -12,6 +13,7 @@ import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
 import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.review.Review;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
+import com.nhnacademy.bookstore.member.member.exception.MemberNotExistsException;
 import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,8 +27,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -52,7 +53,7 @@ class ReviewLikeServiceTest {
                 .name("1")
                 .age(1)
                 .phone("1")
-                .birthday("2024-05-28".toString())
+                .birthday("2024-05-28")
                 .email("dfdaf@nav.com")
                 .build());
         member.setId(1L);
@@ -62,7 +63,7 @@ class ReviewLikeServiceTest {
                 .name("1")
                 .age(1)
                 .phone("1")
-                .birthday("2024-05-28".toString())
+                .birthday("2024-05-28")
                 .email("dfdaf2@nav.com")
                 .build());
         member2.setId(2L);
@@ -108,7 +109,6 @@ class ReviewLikeServiceTest {
                 null,
                 null
         );
-
     }
 
     @DisplayName("리뷰 좋아요 생성 테스트")
@@ -131,15 +131,66 @@ class ReviewLikeServiceTest {
         assertThrows(CannotLikeOwnReviewLikeException.class, () -> reviewLikeService.createReviewLike(1L, 1L));
     }
 
-    // TODO 리뷰 좋아요 삭제 테스트 추가해야함
+    @DisplayName("리뷰가 존재하지 않는 경우 좋아요 생성 시도시 예외 발생 테스트")
+    @Test
+    void createReviewLikeReviewNotExistsTest() {
+        given(reviewRepository.findById(1L)).willReturn(Optional.empty());
+
+        assertThrows(ReviewNotExistsException.class, () -> reviewLikeService.createReviewLike(1L, 2L));
+    }
+
+    @DisplayName("멤버가 존재하지 않는 경우 좋아요 생성 시도시 예외 발생 테스트")
+    @Test
+    void createReviewLikeMemberNotExistsTest() {
+        given(reviewRepository.findById(1L)).willReturn(Optional.of(review));
+        given(memberRepository.findById(2L)).willReturn(Optional.empty());
+
+        assertThrows(MemberNotExistsException.class, () -> reviewLikeService.createReviewLike(1L, 2L));
+    }
+
+    @DisplayName("리뷰 좋아요 삭제 테스트")
+    @Test
+    void deletedReviewLikeTest() {
+        reviewLikeService.deleteReviewLike(1L, 2L);
+
+        verify(reviewLikeRepository).deleteByReviewIdAndMemberId(1L, 2L);
+    }
+
+    @DisplayName("리뷰 좋아요 여부 판단 테스트")
+    @Test
+    void isReviewLikedByMemberTest() {
+        given(reviewLikeRepository.existsByReviewIdAndMemberId(1L, 2L)).willReturn(true);
+
+        boolean isLiked = reviewLikeService.isReviewLikedByMember(1L, 2L);
+
+        assertTrue(isLiked);
+    }
+
+    @DisplayName("리뷰 좋아요 두 번 생성 및 취소 테스트")
+    @Test
+    void doubleLikeAndUnlikeTest() {
+        given(reviewRepository.findById(1L)).willReturn(Optional.of(review));
+        given(memberRepository.findById(2L)).willReturn(Optional.of(member2));
+
+        // 첫 번째 좋아요 시도
+        given(reviewLikeRepository.existsByReviewIdAndMemberId(1L, 2L)).willReturn(false);
+        reviewLikeService.createReviewLike(1L, 2L);
+        verify(reviewRepository).save(review);
+
+        // 두 번째 좋아요 시도 (좋아요 취소)
+        given(reviewLikeRepository.existsByReviewIdAndMemberId(1L, 2L)).willReturn(true);
+        reviewLikeService.createReviewLike(1L, 2L);
+        verify(reviewLikeRepository).deleteByReviewIdAndMemberId(1L, 2L);
+    }
 
     @DisplayName("리뷰 좋아요 카운트 테스트")
     @Test
     void countReviewLikeTest() {
-        given(reviewLikeRepository.countByReviewId(1L)).willReturn(1L);
+        given(reviewLikeRepository.countByReviewId(1L)).willReturn(5L);
 
-        Long count = reviewLikeService.countReviewLike(1L);
+        Long likeCount = reviewLikeService.countReviewLike(1L);
 
-        assertThat(count).isEqualTo(1L);
+        assertEquals(5L, likeCount);
     }
+
 }
