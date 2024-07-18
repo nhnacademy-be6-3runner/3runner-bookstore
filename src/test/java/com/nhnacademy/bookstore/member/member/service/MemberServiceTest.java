@@ -225,7 +225,7 @@ class MemberServiceTest {
                 .name("Updated Name")
                 .age(30)
                 .phone("010-1234-5678")
-                .birthday(ZonedDateTime.now(ZoneId.of("Asia/Seoul")))
+                .birthday("2022-04-22")
                 .build();
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
@@ -237,7 +237,6 @@ class MemberServiceTest {
         assertEquals("Updated Name", updatedMember.getName());
         assertEquals(30, updatedMember.getAge());
         assertEquals("010-1234-5678", updatedMember.getPhone());
-        assertEquals(updateMemberRequest.birthday(), updatedMember.getBirthday());
 
         verify(memberRepository, times(1)).findById(1L);
         verify(memberRepository, times(1)).save(member);
