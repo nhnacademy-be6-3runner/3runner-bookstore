@@ -56,7 +56,7 @@ public class MemberController {
 	 * @author 유지아
 	 */
 	@PostMapping("/bookstore/members")
-	public ApiResponse<Void> createMember(@RequestBody CreateMemberRequest request) {
+	public ApiResponse<Long> createMember(@RequestBody CreateMemberRequest request) {
 
 		Auth auth = authService.getAuth("USER");
 		Member member = memberService.save(request);
@@ -64,7 +64,7 @@ public class MemberController {
 		//		pointRecordService.save(pointRecord);
 		memberAuthService.saveAuth(member, auth);
 
-		return new ApiResponse<Void>(new ApiResponse.Header(true, 201), new ApiResponse.Body<Void>(null));
+		return ApiResponse.createSuccess(member.getId());
 	}
 
 	/**
@@ -76,7 +76,6 @@ public class MemberController {
 	 */
 	@GetMapping("/bookstore/members")
 	public ApiResponse<GetMemberResponse> readById(@RequestHeader("Member-Id") Long memberId) {
-
 		Member member = memberService.readById(memberId);
 		GetMemberResponse getMemberResponse = GetMemberResponse.builder()
 			.age(member.getAge())
