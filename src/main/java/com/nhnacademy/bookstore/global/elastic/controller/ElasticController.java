@@ -34,49 +34,6 @@ public class ElasticController {
 	private final BookTagService bookTagService;
 
 	/**
-	 * 책 밀어 넣어주기
-	 * 나중에 배치서버로 이동시키거나 삭제할 예정
-	 * @return 성공 메시지
-	 */
-	// @GetMapping("/push")
-	// String push() {
-	// 	for (long i = 1; i <= 713; i++) {
-	// 		try {
-	// 			ReadBookResponse book = bookService.readBookById(i);
-	//
-	// 			List<String> categoryList = bookCategoryService.readBookCategoryNames(
-	// 				i);
-	// 			List<ReadTagByBookResponse> readTagList =
-	// 				bookTagService.readTagByBookId(ReadBookIdRequest.builder().bookId(i).build());
-	//
-	// 			List<String> tagList = new ArrayList<>();
-	// 			for (ReadTagByBookResponse tag : readTagList) {
-	// 				tagList.add(tag.name());
-	// 			}
-	//
-	// 			BookDocument bookDocument = new BookDocument(
-	// 				book.id(),
-	// 				book.title(),
-	// 				book.author(),
-	// 				book.imagePath(),
-	// 				book.publisher(),
-	// 				book.publishedDate().toString(),
-	// 				tagList,
-	// 				categoryList,
-	// 				book.price(),
-	// 				book.sellingPrice()
-	// 			);
-	//
-	// 			elasticSearchBookRepository.save(bookDocument);
-	// 		} catch (Exception e) {
-	// 			log.info("{}, 번째", i);
-	// 		}
-	// 	}
-	//
-	// 	return "good";
-	// }
-
-	/**
 	 * 검색 결과 보내주기
 	 * @param page 페이지
 	 * @param size    페이지 사이즈
