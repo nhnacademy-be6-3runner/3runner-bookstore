@@ -83,6 +83,9 @@ public class PaymentGuestServiceImpl implements PaymentGuestService {
 
             bookRepository.save(book);
         }
+
+        bookCartGuestService.deleteAllBookCart(createPaymentGuestRequest.cartId());
+
         return purchaseId;
     }
 }

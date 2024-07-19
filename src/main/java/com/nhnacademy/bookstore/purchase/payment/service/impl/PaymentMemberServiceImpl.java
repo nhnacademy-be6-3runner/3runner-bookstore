@@ -26,6 +26,7 @@ import com.nhnacademy.bookstore.purchase.purchaseCoupon.service.PurchaseCouponSe
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CookieValue;
 
 import java.util.List;
 
@@ -133,6 +134,8 @@ public class PaymentMemberServiceImpl implements PaymentMemberService {
                     createPaymentMemberRequest.discountedPrice()
             );
         }
+
+        bookCartMemberService.deleteAllBookCart(createPaymentMemberRequest.memberId());
 
         return purchaseId;
     }

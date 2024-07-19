@@ -48,7 +48,6 @@ public class PaymentMemberController {
         String orderId;
         String amount;
         String paymentKey;
-        memberId = 1L;
 
         try {
             // 클라이언트에서 받은 JSON 요청 바디입니다.

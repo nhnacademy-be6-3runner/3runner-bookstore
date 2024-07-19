@@ -22,25 +22,6 @@ public class ElasticSearchCustomBookRepositoryImpl implements ElasticSearchCusto
 
 	private final ElasticsearchOperations elasticsearchOperations;
 
-	// @Override
-	// public List<BookDocument> searchBooks(String keyword) {
-	// 	BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-	// 		.should(QueryBuilders.matchQuery("title", keyword).boost(2))
-	// 		.should(QueryBuilders.matchQuery("author", keyword).boost(1))
-	// 		.should(QueryBuilders.matchQuery("publisher", keyword).boost(1))
-	// 		.should(QueryBuilders.matchQuery("categoryList", keyword).boost(199));
-	//
-	// 	NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-	// 		.withQuery(boolQuery)
-	// 		.build();
-	//
-	// 	SearchHits<BookDocument> searchHits = elasticsearchOperations.search(searchQuery, BookDocument.class);
-	// 	return searchHits.getSearchHits().stream()
-	// 		.map(hit -> hit.getContent())
-	// 		.collect(Collectors.toList());
-	// }
-	// Query query = new CriteriaQuery(criteria).setPageable(pageable);
-
 	@Override
 	public SearchHits<BookDocument> searchProductsByProductName(String keyword, Pageable pageable) {
 		// JSON 쿼리 작성
@@ -49,10 +30,6 @@ public class ElasticSearchCustomBookRepositoryImpl implements ElasticSearchCusto
 			.should(QueryBuilders.matchQuery("author", keyword).boost(3))
 			.should(QueryBuilders.matchQuery("publisher", keyword).boost(1))
 			.should(QueryBuilders.matchQuery("categoryList", keyword).boost(199));
-
-		// // NativeSearchQuery 생성
-		// Query searchQuery = new NativeSearchQuery(boolQuery);
-		// searchQuery.setPageable(pageable);
 
 		QueryBuilder query = QueryBuilders.boolQuery();
 		SearchTemplateQueryBuilder searchTemplateQueryBuilder = new SearchTemplateQueryBuilder();
