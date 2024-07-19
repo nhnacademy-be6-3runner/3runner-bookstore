@@ -110,7 +110,7 @@ public class RefundController {
 	 */
 	@PostMapping("/cancel/payment/part/{orderNumber}")
 	public ApiResponse<Long> createRefundCancelPartPayment(
-			@RequestHeader(name = "Member-Id") Long memberId,
+			@RequestHeader(name = "Member-Id", required = false) Long memberId,
 			@PathVariable("orderNumber") Object orderNumber,
 			@RequestParam(name = "price") Integer price) {
 		return ApiResponse.success(refundService.createRefundCancelPartPayment(memberId, orderNumber, price));

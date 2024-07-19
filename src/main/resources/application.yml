@@ -15,12 +15,14 @@ spring:
     open-in-view: false
     show-sql: true
 
+
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
         highlight_sql: true
         auto_quote_keyword: true
+
 
   servlet:
     multipart:

@@ -21,6 +21,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookstore.BaseDocumentTest;
 import com.nhnacademy.bookstore.entity.purchase.enums.MemberType;
@@ -69,12 +70,12 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 
 		when(purchaseGuestService.readPurchase(orderNumber, password)).thenReturn(response);
 
-		mockMvc.perform(get(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL)
 				.param("orderNumber", orderNumber.toString())
 				.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.body").isNotEmpty())
-			.andDo(document("주문 조회",
+			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,"주문 조회",
 				queryParameters(
 					parameterWithName("orderNumber").description("Order number of the purchase"),
 					parameterWithName("password").description("Password for the purchase")

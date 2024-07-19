@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
+import com.nhnacademy.bookstore.entity.coupon.Coupon;
+import com.nhnacademy.bookstore.entity.coupon.enums.CouponStatus;
 import com.nhnacademy.bookstore.entity.member.Member;
 import com.nhnacademy.bookstore.entity.payment.Payment;
 import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
@@ -22,6 +24,7 @@ import com.nhnacademy.bookstore.entity.refund.enums.RefundStatus;
 import com.nhnacademy.bookstore.entity.refundRecord.RefundRecord;
 import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
 import com.nhnacademy.bookstore.member.pointRecord.repository.PointRecordRepository;
+import com.nhnacademy.bookstore.purchase.coupon.repository.CouponRepository;
 import com.nhnacademy.bookstore.purchase.payment.repository.PaymentRepository;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsPurchase;
@@ -56,6 +59,7 @@ public class RefundServiceImpl implements RefundService {
 	private final RefundRecordRepository refundRecordRepository;
 	private final RefundRecordRedisRepository refundRecordRedisRepository;
 	private final BookRepository bookRepository;
+	private final CouponRepository couponRepository;
 
 	@Override
 	public String readTossOrderId(String orderId) {
@@ -182,6 +186,7 @@ public class RefundServiceImpl implements RefundService {
 	public Long createRefundCancelPartPayment(Long memberId, Object orderNumber, Integer price) {
 
 		Purchase purchase;
+		List<ReadRefundRecordResponse> responses;
 
 		try{
 			Integer orderId = Integer.parseInt(orderNumber.toString());
@@ -190,9 +195,12 @@ public class RefundServiceImpl implements RefundService {
 			if (!purchase.getMember().getId().equals(memberId)) {
 				throw new ImpossibleAccessRefundException();
 			}
+			responses = refundRecordRedisRepository.readAll("Refund_member " + orderNumber);
 		}catch (NumberFormatException e) {
 			purchase = purchaseRepository.findPurchaseByOrderNumber(UUID.fromString(orderNumber.toString()))
 				.orElseThrow(NotExistsPurchase::new);
+			responses = refundRecordRedisRepository.readAll(orderNumber.toString());
+
 		}
 
 
@@ -207,9 +215,9 @@ public class RefundServiceImpl implements RefundService {
 
 		refundRepository.save(refund);
 
-		List<ReadRefundRecordResponse> responses;
 
-		responses = refundRecordRedisRepository.readAll(orderNumber.toString());
+
+
 
 		for (ReadRefundRecordResponse readRefundRecordResponse : responses) {
 			PurchaseBook purchaseBook = purchaseBookRepository.findById(readRefundRecordResponse.id()).orElseThrow(
@@ -241,6 +249,10 @@ public class RefundServiceImpl implements RefundService {
 			if (!purchaseCouponList.isEmpty()) {
 				for (PurchaseCoupon purchaseCoupon : purchaseCouponList) {
 					purchaseCoupon.setStatus((short)0);
+
+					Coupon coupon = purchaseCoupon.getCoupon();
+					coupon.setCouponStatus(CouponStatus.READY);
+					couponRepository.save(coupon);
 					purchaseCouponRepository.save(purchaseCoupon);
 				}
 			}
@@ -249,6 +261,12 @@ public class RefundServiceImpl implements RefundService {
 		}
 
 		purchaseRepository.save(purchase);
+		try{
+			Integer orderId = Integer.parseInt(orderNumber.toString());
+			refundRecordRedisRepository.deleteAll("Refund_member " + orderId);
+		}catch (NumberFormatException e) {
+			refundRecordRedisRepository.deleteAll(orderNumber.toString());
+		}
 
 		return refund.getId();
 
