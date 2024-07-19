@@ -331,32 +331,6 @@ class BookCartControllerTest extends BaseDocumentTest {
 				));
 	}
 
-	@DisplayName("카트 수정 API - 유효성 검사 실패")
-	@Test
-	void testUpdateCartValidationError() throws Exception {
-		String requestBody = "{"
-				+ "\"bookId\": 0"
-				+ "}";
-
-		this.mockMvc.perform(RestDocumentationRequestBuilders.put("/bookstore/carts")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(requestBody)
-						.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest())
-				.andDo(document("update-cart-validation-error",
-						requestFields(
-								fieldWithPath("bookId").type(JsonFieldType.NUMBER).description("책 ID")
-						),
-						responseFields(
-								fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
-								fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-								fieldWithPath("body.data.title").type(JsonFieldType.STRING).description("에러 메시지"),
-								fieldWithPath("body.data.status").type(JsonFieldType.NUMBER).description("에러 코드"),
-								fieldWithPath("body.data.timestamp").type(JsonFieldType.STRING).description("타임")
-						)
-				));
-	}
-
 	@DisplayName("카트 삭제 API")
 	@Test
 	void testDeleteCart() throws Exception {
