@@ -56,7 +56,7 @@ public class MemberController {
 	 * @author 유지아
 	 */
 	@PostMapping("/bookstore/members")
-	public ApiResponse<Void> createMember(@RequestBody @Valid CreateMemberRequest request) {
+	public ApiResponse<Void> createMember(@RequestBody CreateMemberRequest request) {
 
 		Auth auth = authService.getAuth("USER");
 		Member member = memberService.save(request);
