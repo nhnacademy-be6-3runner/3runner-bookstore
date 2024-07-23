@@ -142,7 +142,8 @@ public class RefundServiceImpl implements RefundService {
 		if (count == purchase.getPurchaseBookList().size()) {
 			purchase.setStatus(PurchaseStatus.REFUNDED_COMPLETED);
 			List<PurchaseCoupon> purchaseCouponList = purchase.getPurchaseCouponList();
-			if (!purchaseCouponList.isEmpty()) {
+			if (!purchaseCouponList.isEmpty() && refundRepository.findByRefundId(purchase.getId()).size() > 1) {
+				refund.setPrice(purchase.getTotalPrice() - purchase.getDeliveryPrice());
 				for (PurchaseCoupon purchaseCoupon : purchaseCouponList) {
 					purchaseCoupon.setStatus((short)0);
 					purchaseCouponRepository.save(purchaseCoupon);
@@ -239,7 +240,8 @@ public class RefundServiceImpl implements RefundService {
 			purchase.setStatus(PurchaseStatus.REFUNDED_COMPLETED);
 
 			List<PurchaseCoupon> purchaseCouponList = purchase.getPurchaseCouponList();
-			if (!purchaseCouponList.isEmpty() && refundRepository.findByRefundId(purchase.getId()).size() > 1) { // 이번이 최초환불 & 쿠폰이 사용됨
+			if (!purchaseCouponList.isEmpty()
+				&& refundRepository.findByRefundId(purchase.getId()).size() > 1) { // 이번이 최초환불 & 쿠폰이 사용됨
 				refund.setPrice(payment.getTossAmount() - purchase.getDeliveryPrice());
 				refundRepository.save(refund);
 				for (PurchaseCoupon purchaseCoupon : purchaseCouponList) {
