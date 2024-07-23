@@ -14,7 +14,7 @@ import lombok.Builder;
  */
 @Builder
 public record UpdateBookCartRequest(
-        @Min(0) long cartId,
-        @Min(1) long bookId,
-        @Min(1) int quantity) {
+        long cartId,
+        long bookId,
+        int quantity) {
 }

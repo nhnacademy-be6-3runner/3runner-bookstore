@@ -49,7 +49,7 @@ public class AddressController {
      *
      */
     @PostMapping("/bookstore/members/addresses")
-    public ApiResponse<Void> createAddress(@RequestBody @Valid CreateAddressRequest request,
+    public ApiResponse<Long> createAddress(@RequestBody CreateAddressRequest request,
                                            BindingResult bindingResult,
                                            @RequestHeader(value = "Member-Id") Long memberId) {
         if (bindingResult.hasErrors()) {
@@ -59,7 +59,7 @@ public class AddressController {
         Member member = memberService.readById(memberId);
         Address address = new Address(request, member);
         addressServiceImpl.save(address, member);
-        return ApiResponse.createSuccess(null);
+        return ApiResponse.createSuccess(address.getId());
     }
 
 

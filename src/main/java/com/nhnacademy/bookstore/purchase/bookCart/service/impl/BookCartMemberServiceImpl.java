@@ -68,7 +68,7 @@ public class BookCartMemberServiceImpl implements BookCartMemberService {
         }
 
         cartRepository.save(cart);
-        List<ReadBookCartGuestResponse> redisResponses = bookCartRedisRepository.readAllHashName("Member"+readAllCartMemberRequest.userId());
+        List<ReadBookCartGuestResponse> redisResponses = bookCartRedisRepository.readAllHashName("Member" + readAllCartMemberRequest.userId());
 
         if (redisResponses.size() == 0 ) {
             List<BookCart> allBookCarts = bookCartRepository.findAllByCart(cart);
@@ -85,6 +85,7 @@ public class BookCartMemberServiceImpl implements BookCartMemberService {
                                 .bookId(bookCart.getBook().getId())
                                 .price(bookCart.getBook().getPrice())
                                 .url(url)
+                                .title(bookCart.getBook().getTitle())
                                 .quantity(bookCart.getQuantity())
                                 .leftQuantity(bookCart.getBook().getQuantity())
                                 .build()
@@ -169,6 +170,7 @@ public class BookCartMemberServiceImpl implements BookCartMemberService {
                         .price(bookCart.getBook().getPrice())
                         .url(url)
                         .quantity(createBookCartRequest.quantity())
+                        .title(bookCart.getBook().getTitle())
                         .leftQuantity(bookCart.getBook().getQuantity())
                         .build()
         );
