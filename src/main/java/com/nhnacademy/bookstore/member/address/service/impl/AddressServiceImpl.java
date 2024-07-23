@@ -28,8 +28,8 @@ public class AddressServiceImpl implements AddressService {
      * @param address the address -Address값을 받아 repository에 저장한다.  null -컨트롤러에서 전체 주소조회해서 반환하기 때문에 void반환으로 해둠.
      * @author 유지아, 오연수 Save. -주소를 받아 저장한다.
      */
-    public void save(Address address,Member member) {
-        if(this.readAll(member).size()>9) {
+    public void save(Address address, Member member) {
+        if (this.readAll(member).size() > 9) {
             throw new AddressFullException();
         }
         addressRepository.save(address);

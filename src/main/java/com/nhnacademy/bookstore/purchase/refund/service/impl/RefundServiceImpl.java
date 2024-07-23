@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
+import com.nhnacademy.bookstore.entity.coupon.Coupon;
+import com.nhnacademy.bookstore.entity.coupon.enums.CouponStatus;
 import com.nhnacademy.bookstore.entity.member.Member;
 import com.nhnacademy.bookstore.entity.payment.Payment;
 import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
@@ -22,6 +24,7 @@ import com.nhnacademy.bookstore.entity.refund.enums.RefundStatus;
 import com.nhnacademy.bookstore.entity.refundRecord.RefundRecord;
 import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
 import com.nhnacademy.bookstore.member.pointRecord.repository.PointRecordRepository;
+import com.nhnacademy.bookstore.purchase.coupon.repository.CouponRepository;
 import com.nhnacademy.bookstore.purchase.payment.repository.PaymentRepository;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsPurchase;
@@ -39,7 +42,6 @@ import com.nhnacademy.bookstore.purchase.refundRecord.repository.RefundRecordRep
 
 import lombok.RequiredArgsConstructor;
 
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -56,6 +58,7 @@ public class RefundServiceImpl implements RefundService {
 	private final RefundRecordRepository refundRecordRepository;
 	private final RefundRecordRedisRepository refundRecordRedisRepository;
 	private final BookRepository bookRepository;
+	private final CouponRepository couponRepository;
 
 	@Override
 	public String readTossOrderId(String orderId) {
@@ -139,7 +142,8 @@ public class RefundServiceImpl implements RefundService {
 		if (count == purchase.getPurchaseBookList().size()) {
 			purchase.setStatus(PurchaseStatus.REFUNDED_COMPLETED);
 			List<PurchaseCoupon> purchaseCouponList = purchase.getPurchaseCouponList();
-			if (!purchaseCouponList.isEmpty()) {
+			if (!purchaseCouponList.isEmpty() && refundRepository.findByRefundId(purchase.getId()).size() > 1) {
+				refund.setPrice(purchase.getTotalPrice() - purchase.getDeliveryPrice());
 				for (PurchaseCoupon purchaseCoupon : purchaseCouponList) {
 					purchaseCoupon.setStatus((short)0);
 					purchaseCouponRepository.save(purchaseCoupon);
@@ -182,19 +186,22 @@ public class RefundServiceImpl implements RefundService {
 	public Long createRefundCancelPartPayment(Long memberId, Object orderNumber, Integer price) {
 
 		Purchase purchase;
+		List<ReadRefundRecordResponse> responses;
 
-		try{
+		try {
 			Integer orderId = Integer.parseInt(orderNumber.toString());
 			purchase = purchaseRepository.findById((long)orderId)
 				.orElseThrow(NotExistsPurchase::new);
 			if (!purchase.getMember().getId().equals(memberId)) {
 				throw new ImpossibleAccessRefundException();
 			}
-		}catch (NumberFormatException e) {
+			responses = refundRecordRedisRepository.readAll("Refund_member " + orderNumber);
+		} catch (NumberFormatException e) {
 			purchase = purchaseRepository.findPurchaseByOrderNumber(UUID.fromString(orderNumber.toString()))
 				.orElseThrow(NotExistsPurchase::new);
-		}
+			responses = refundRecordRedisRepository.readAll(orderNumber.toString());
 
+		}
 
 		Payment payment = paymentRepository.findByPurchase(purchase);
 
@@ -206,10 +213,6 @@ public class RefundServiceImpl implements RefundService {
 		refund.setRefundStatus(RefundStatus.SUCCESS);
 
 		refundRepository.save(refund);
-
-		List<ReadRefundRecordResponse> responses;
-
-		responses = refundRecordRedisRepository.readAll(orderNumber.toString());
 
 		for (ReadRefundRecordResponse readRefundRecordResponse : responses) {
 			PurchaseBook purchaseBook = purchaseBookRepository.findById(readRefundRecordResponse.id()).orElseThrow(
@@ -233,14 +236,20 @@ public class RefundServiceImpl implements RefundService {
 
 		}
 
-		if (count == purchase.getPurchaseBookList().size()) {
+		if (count == purchase.getPurchaseBookList().size()) { // 모두 환불 완료
 			purchase.setStatus(PurchaseStatus.REFUNDED_COMPLETED);
-			refund.setPrice(payment.getTossAmount() - purchase.getDeliveryPrice());
-			refundRepository.save(refund);
+
 			List<PurchaseCoupon> purchaseCouponList = purchase.getPurchaseCouponList();
-			if (!purchaseCouponList.isEmpty()) {
+			if (!purchaseCouponList.isEmpty()
+				&& refundRepository.findByRefundId(purchase.getId()).size() > 1) { // 이번이 최초환불 & 쿠폰이 사용됨
+				refund.setPrice(payment.getTossAmount() - purchase.getDeliveryPrice());
+				refundRepository.save(refund);
 				for (PurchaseCoupon purchaseCoupon : purchaseCouponList) {
 					purchaseCoupon.setStatus((short)0);
+
+					Coupon coupon = purchaseCoupon.getCoupon();
+					coupon.setCouponStatus(CouponStatus.READY);
+					couponRepository.save(coupon);
 					purchaseCouponRepository.save(purchaseCoupon);
 				}
 			}
@@ -249,6 +258,12 @@ public class RefundServiceImpl implements RefundService {
 		}
 
 		purchaseRepository.save(purchase);
+		try {
+			Integer orderId = Integer.parseInt(orderNumber.toString());
+			refundRecordRedisRepository.deleteAll("Refund_member " + orderId);
+		} catch (NumberFormatException e) {
+			refundRecordRedisRepository.deleteAll(orderNumber.toString());
+		}
 
 		return refund.getId();
 

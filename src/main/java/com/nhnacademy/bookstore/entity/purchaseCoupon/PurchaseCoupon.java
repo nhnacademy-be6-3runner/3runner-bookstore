@@ -20,7 +20,7 @@ public class PurchaseCoupon {
     @NotNull
     private int discountPrice;
 
-    //미사용:0, 사용:1
+    //환불:0, 사용:1
     private Short status;
 
     @ManyToOne

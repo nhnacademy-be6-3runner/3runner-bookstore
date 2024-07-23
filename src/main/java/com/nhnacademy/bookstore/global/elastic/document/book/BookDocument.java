@@ -12,8 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// @Document(indexName = "3runner_book_1")
-// @Setting(settingPath = "/elastic/book-document-settings.json")
 @Document(indexName = "3runner_book_alias")
 @Getter
 @Setter

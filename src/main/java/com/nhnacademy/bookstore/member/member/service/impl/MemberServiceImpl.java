@@ -81,7 +81,7 @@ public class MemberServiceImpl implements MemberService {
 			member.setGrade(Grade.General);
 			member.setName(userProfile.getName()!=null? userProfile.getName() : "Payco");
 			member.setPhone(userProfile.getMobile()!=null? userProfile.getMobile() : "EmptyNumber");
-			member.setPoint(0L);
+			member.setPoint(5000L);
 			member.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
 			member.setAuthProvider(AuthProvider.PAYCO);
 			member.setLastLoginDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
