@@ -42,7 +42,6 @@ import com.nhnacademy.bookstore.purchase.refundRecord.repository.RefundRecordRep
 
 import lombok.RequiredArgsConstructor;
 
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -188,7 +187,7 @@ public class RefundServiceImpl implements RefundService {
 		Purchase purchase;
 		List<ReadRefundRecordResponse> responses;
 
-		try{
+		try {
 			Integer orderId = Integer.parseInt(orderNumber.toString());
 			purchase = purchaseRepository.findById((long)orderId)
 				.orElseThrow(NotExistsPurchase::new);
@@ -196,13 +195,12 @@ public class RefundServiceImpl implements RefundService {
 				throw new ImpossibleAccessRefundException();
 			}
 			responses = refundRecordRedisRepository.readAll("Refund_member " + orderNumber);
-		}catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			purchase = purchaseRepository.findPurchaseByOrderNumber(UUID.fromString(orderNumber.toString()))
 				.orElseThrow(NotExistsPurchase::new);
 			responses = refundRecordRedisRepository.readAll(orderNumber.toString());
 
 		}
-
 
 		Payment payment = paymentRepository.findByPurchase(purchase);
 
@@ -214,10 +212,6 @@ public class RefundServiceImpl implements RefundService {
 		refund.setRefundStatus(RefundStatus.SUCCESS);
 
 		refundRepository.save(refund);
-
-
-
-
 
 		for (ReadRefundRecordResponse readRefundRecordResponse : responses) {
 			PurchaseBook purchaseBook = purchaseBookRepository.findById(readRefundRecordResponse.id()).orElseThrow(
@@ -241,12 +235,13 @@ public class RefundServiceImpl implements RefundService {
 
 		}
 
-		if (count == purchase.getPurchaseBookList().size()) {
+		if (count == purchase.getPurchaseBookList().size()) { // 모두 환불 완료
 			purchase.setStatus(PurchaseStatus.REFUNDED_COMPLETED);
-			refund.setPrice(payment.getTossAmount() - purchase.getDeliveryPrice());
-			refundRepository.save(refund);
+
 			List<PurchaseCoupon> purchaseCouponList = purchase.getPurchaseCouponList();
-			if (!purchaseCouponList.isEmpty()) {
+			if (!purchaseCouponList.isEmpty() && refundRepository.findByRefundId(purchase.getId()).size() > 1) { // 이번이 최초환불 & 쿠폰이 사용됨
+				refund.setPrice(payment.getTossAmount() - purchase.getDeliveryPrice());
+				refundRepository.save(refund);
 				for (PurchaseCoupon purchaseCoupon : purchaseCouponList) {
 					purchaseCoupon.setStatus((short)0);
 
@@ -261,10 +256,10 @@ public class RefundServiceImpl implements RefundService {
 		}
 
 		purchaseRepository.save(purchase);
-		try{
+		try {
 			Integer orderId = Integer.parseInt(orderNumber.toString());
 			refundRecordRedisRepository.deleteAll("Refund_member " + orderId);
-		}catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			refundRecordRedisRepository.deleteAll(orderNumber.toString());
 		}
 
