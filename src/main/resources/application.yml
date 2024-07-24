@@ -43,7 +43,7 @@ spring:
     name: 3runner-bookstore
 
   elasticsearch:
-    uris: 115.94.72.198:9200
+    uris: 115.94.72.197:9200
     username: elastic
     password: nhnacademy123!
 
