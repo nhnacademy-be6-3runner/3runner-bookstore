@@ -88,3 +88,17 @@ db:
   max-total: 20
   max-idle: 20
   min-idle: 5
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, beans, conditions, prometheus
+  endpoint:
+    health:
+      show-details: always
+  info:
+    java:
+      enabled: true
+    os:
+      enabled: true
