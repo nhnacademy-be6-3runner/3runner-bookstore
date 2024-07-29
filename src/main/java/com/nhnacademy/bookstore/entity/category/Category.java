@@ -3,7 +3,7 @@ package com.nhnacademy.bookstore.entity.category;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
+import com.nhnacademy.bookstore.entity.bookcategory.BookCategory;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

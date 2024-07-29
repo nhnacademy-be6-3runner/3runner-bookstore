@@ -12,7 +12,7 @@ import com.nhnacademy.bookstore.member.auth.repository.AuthRepository;
 import com.nhnacademy.bookstore.member.member.dto.request.UpdatePasswordRequest;
 import com.nhnacademy.bookstore.member.member.exception.GeneralNotPayco;
 import com.nhnacademy.bookstore.member.member.service.MemberPointService;
-import com.nhnacademy.bookstore.member.memberAuth.repository.MemberAuthRepository;
+import com.nhnacademy.bookstore.member.memberauth.repository.MemberAuthRepository;
 import com.nhnacademy.bookstore.purchase.coupon.service.CouponMemberService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import com.nhnacademy.bookstore.entity.member.Member;
 import com.nhnacademy.bookstore.entity.member.enums.AuthProvider;
 import com.nhnacademy.bookstore.entity.member.enums.Grade;
 import com.nhnacademy.bookstore.entity.member.enums.Status;
-import com.nhnacademy.bookstore.entity.memberAuth.MemberAuth;
+import com.nhnacademy.bookstore.entity.memberauth.MemberAuth;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UpdateMemberRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UserProfile;
@@ -33,8 +33,7 @@ import com.nhnacademy.bookstore.member.member.exception.LoginOauthEmailException
 import com.nhnacademy.bookstore.member.member.exception.MemberNotExistsException;
 import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
 import com.nhnacademy.bookstore.member.member.service.MemberService;
-import com.nhnacademy.bookstore.member.memberAuth.dto.response.MemberAuthResponse;
-import com.nhnacademy.bookstore.purchase.coupon.service.CouponMemberService;
+import com.nhnacademy.bookstore.member.memberauth.dto.response.MemberAuthResponse;
 import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
 

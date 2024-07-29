@@ -12,10 +12,8 @@ import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UpdateMemberRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UpdatePasswordRequest;
 import com.nhnacademy.bookstore.member.member.dto.request.UserProfile;
-import com.nhnacademy.bookstore.member.memberAuth.dto.response.MemberAuthResponse;
+import com.nhnacademy.bookstore.member.memberauth.dto.response.MemberAuthResponse;
 import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
-
-import org.springframework.stereotype.Service;
 
 @Service
 public interface MemberService {

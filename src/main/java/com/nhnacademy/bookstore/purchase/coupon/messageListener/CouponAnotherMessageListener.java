@@ -1,14 +1,14 @@
 package com.nhnacademy.bookstore.purchase.coupon.messageListener;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.bookstore.entity.coupon.Coupon;
-import com.nhnacademy.bookstore.entity.memberMessage.MemberMessage;
+import com.nhnacademy.bookstore.entity.membermessage.MemberMessage;
 import com.nhnacademy.bookstore.member.member.exception.MemberNotExistsException;
 import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
 import com.nhnacademy.bookstore.purchase.coupon.dto.CouponResponse;
 import com.nhnacademy.bookstore.purchase.coupon.repository.CouponCustomRepository;
-import com.nhnacademy.bookstore.purchase.memberMessage.dto.CouponFormDto;
-import com.nhnacademy.bookstore.purchase.memberMessage.service.MemberMessageService;
+import com.nhnacademy.bookstore.purchase.membermessage.dto.CouponFormDto;
+import com.nhnacademy.bookstore.purchase.membermessage.service.MemberMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;

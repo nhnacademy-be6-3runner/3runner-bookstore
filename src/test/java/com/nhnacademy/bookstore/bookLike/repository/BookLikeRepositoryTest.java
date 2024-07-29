@@ -15,10 +15,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
-import com.nhnacademy.bookstore.book.bookLike.repository.BookLikeRepository;
-import com.nhnacademy.bookstore.book.bookLike.repository.impl.BookLikeCustomRepositoryImpl;
+import com.nhnacademy.bookstore.book.booklike.repository.BookLikeRepository;
+import com.nhnacademy.bookstore.book.booklike.repository.impl.BookLikeCustomRepositoryImpl;
 import com.nhnacademy.bookstore.entity.book.Book;
-import com.nhnacademy.bookstore.entity.bookLike.BookLike;
+import com.nhnacademy.bookstore.entity.booklike.BookLike;
 import com.nhnacademy.bookstore.entity.member.Member;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
 

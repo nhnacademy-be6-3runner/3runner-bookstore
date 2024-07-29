@@ -31,17 +31,17 @@ import com.nhnacademy.bookstore.book.book.repository.ApiBookRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRedisRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.book.service.ApiBookService;
-import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
+import com.nhnacademy.bookstore.book.bookcategory.repository.BookCategoryRepository;
 import com.nhnacademy.bookstore.book.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
 import com.nhnacademy.bookstore.book.image.exception.MultipartFileException;
 import com.nhnacademy.bookstore.book.image.imageService.ImageService;
 import com.nhnacademy.bookstore.entity.book.Book;
-import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
-import com.nhnacademy.bookstore.entity.bookImage.BookImage;
-import com.nhnacademy.bookstore.entity.bookImage.enums.BookImageType;
+import com.nhnacademy.bookstore.entity.bookcategory.BookCategory;
+import com.nhnacademy.bookstore.entity.bookimage.BookImage;
+import com.nhnacademy.bookstore.entity.bookimage.enums.BookImageType;
 import com.nhnacademy.bookstore.entity.category.Category;
-import com.nhnacademy.bookstore.entity.totalImage.TotalImage;
+import com.nhnacademy.bookstore.entity.totalimage.TotalImage;
 
 import lombok.extern.slf4j.Slf4j;
 

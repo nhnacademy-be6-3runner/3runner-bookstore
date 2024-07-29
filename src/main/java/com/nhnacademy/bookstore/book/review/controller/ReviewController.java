@@ -8,7 +8,7 @@ import com.nhnacademy.bookstore.book.review.dto.response.ReviewListResponse;
 import com.nhnacademy.bookstore.book.review.dto.response.UserReadReviewResponse;
 import com.nhnacademy.bookstore.book.review.exception.CreateReviewRequestFormException;
 import com.nhnacademy.bookstore.book.review.service.ReviewService;
-import com.nhnacademy.bookstore.book.reviewImage.service.ReviewImageService;
+import com.nhnacademy.bookstore.book.reviewimage.service.ReviewImageService;
 import com.nhnacademy.bookstore.util.ApiResponse;
 import com.nhnacademy.bookstore.util.ValidationUtils;
 import jakarta.validation.Valid;

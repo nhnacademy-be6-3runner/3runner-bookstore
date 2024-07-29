@@ -32,10 +32,10 @@ import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.BookManagementResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
 import com.nhnacademy.bookstore.book.book.service.BookService;
-import com.nhnacademy.bookstore.book.bookCartegory.service.BookCategoryService;
-import com.nhnacademy.bookstore.book.bookTag.dto.request.ReadBookIdRequest;
-import com.nhnacademy.bookstore.book.bookTag.dto.response.ReadTagByBookResponse;
-import com.nhnacademy.bookstore.book.bookTag.service.BookTagService;
+import com.nhnacademy.bookstore.book.bookcategory.service.BookCategoryService;
+import com.nhnacademy.bookstore.book.booktag.dto.request.ReadBookIdRequest;
+import com.nhnacademy.bookstore.book.booktag.dto.response.ReadTagByBookResponse;
+import com.nhnacademy.bookstore.book.booktag.service.BookTagService;
 import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
 
 @WebMvcTest(

@@ -70,19 +70,25 @@ public class AddressController {
      * @param memberId the member id
      * @return the response entity
      */
-//주소를 추가한다.
     @GetMapping("/bookstore/members/addresses")
     public ApiResponse<List<AddressResponse>> readAllAddresses(@RequestHeader("Member-Id") Long memberId) {
 
-        Member member = memberService.readById(Long.valueOf(memberId));
+        Member member = memberService.readById(memberId);
         List<Address> addresses = addressServiceImpl.readAll(member);
-        return new ApiResponse<List<AddressResponse>>(new ApiResponse.Header(true, 200),
-                new ApiResponse.Body<>(addresses.stream().map(a -> AddressResponse.builder().addressId(a.getId())
-                        .name(a.getName()).country(a.getCountry()).city(a.getCity()).state(a.getState()).road(a.getRoad()).postalCode(a.getPostalCode()).build()).collect(Collectors.toList())));
-
-
+        return new ApiResponse<>(new ApiResponse.Header(true, 200),
+                new ApiResponse.Body<>(
+                        addresses.stream()
+                                .map(a -> AddressResponse.builder()
+                                        .addressId(a.getId())
+                                        .name(a.getName())
+                                        .country(a.getCountry())
+                                        .city(a.getCity())
+                                        .state(a.getState())
+                                        .road(a.getRoad())
+                                        .postalCode(a.getPostalCode())
+                                        .build()
+                                ).toList()));
     }
-    //멤버의 주소를 가져온다.
 
     /**
      * 주소 업데이트

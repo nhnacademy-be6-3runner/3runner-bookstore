@@ -14,20 +14,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
+import com.nhnacademy.bookstore.entity.purchasebook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.refund.Refund;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
-import com.nhnacademy.bookstore.purchase.purchaseBook.dto.response.ReadBookByPurchase;
-import com.nhnacademy.bookstore.purchase.purchaseBook.dto.response.ReadPurchaseBookResponse;
-import com.nhnacademy.bookstore.purchase.purchaseBook.repository.PurchaseBookCustomRepository;
-import com.nhnacademy.bookstore.purchase.purchaseBook.repository.PurchaseBookRepository;
+import com.nhnacademy.bookstore.purchase.purchasebook.dto.response.ReadBookByPurchase;
+import com.nhnacademy.bookstore.purchase.purchasebook.dto.response.ReadPurchaseBookResponse;
+import com.nhnacademy.bookstore.purchase.purchasebook.repository.PurchaseBookCustomRepository;
+import com.nhnacademy.bookstore.purchase.purchasebook.repository.PurchaseBookRepository;
 import com.nhnacademy.bookstore.purchase.refund.repository.RefundRepository;
-import com.nhnacademy.bookstore.purchase.refundRecord.dto.response.ReadRefundRecordResponse;
-import com.nhnacademy.bookstore.purchase.refundRecord.exception.AlreadyExistsRefundRecordRedis;
-import com.nhnacademy.bookstore.purchase.refundRecord.exception.NotExistsRefundRecordRedis;
-import com.nhnacademy.bookstore.purchase.refundRecord.repository.RefundRecordRedisRepository;
-import com.nhnacademy.bookstore.purchase.refundRecord.repository.RefundRecordRepository;
-import com.nhnacademy.bookstore.purchase.refundRecord.service.impl.RefundRecordGuestServiceImpl;
+import com.nhnacademy.bookstore.purchase.refundrecord.dto.response.ReadRefundRecordResponse;
+import com.nhnacademy.bookstore.purchase.refundrecord.exception.AlreadyExistsRefundRecordRedis;
+import com.nhnacademy.bookstore.purchase.refundrecord.exception.NotExistsRefundRecordRedis;
+import com.nhnacademy.bookstore.purchase.refundrecord.repository.RefundRecordRedisRepository;
+import com.nhnacademy.bookstore.purchase.refundrecord.repository.RefundRecordRepository;
+import com.nhnacademy.bookstore.purchase.refundrecord.service.impl.RefundRecordGuestServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class RefundRecordGuestServiceImplTest {

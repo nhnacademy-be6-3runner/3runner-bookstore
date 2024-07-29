@@ -16,12 +16,12 @@ import org.springframework.data.domain.Pageable;
 
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
-import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
-import com.nhnacademy.bookstore.book.bookCartegory.repository.impl.BookCategoryCustomRepositoryImpl;
+import com.nhnacademy.bookstore.book.bookcategory.repository.BookCategoryRepository;
+import com.nhnacademy.bookstore.book.bookcategory.repository.impl.BookCategoryCustomRepositoryImpl;
 import com.nhnacademy.bookstore.book.category.dto.response.BookDetailCategoryResponse;
 import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
-import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
+import com.nhnacademy.bookstore.entity.bookcategory.BookCategory;
 import com.nhnacademy.bookstore.entity.category.Category;
 
 @DataJpaTest

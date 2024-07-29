@@ -19,17 +19,17 @@ import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.BookManagementResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
-import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
-import com.nhnacademy.bookstore.book.bookCartegory.repository.impl.BookCategoryCustomRepositoryImpl;
-import com.nhnacademy.bookstore.book.bookImage.repository.BookImageRepository;
+import com.nhnacademy.bookstore.book.bookcategory.repository.BookCategoryRepository;
+import com.nhnacademy.bookstore.book.bookcategory.repository.impl.BookCategoryCustomRepositoryImpl;
+import com.nhnacademy.bookstore.book.bookimage.repository.BookImageRepository;
 import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
-import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
-import com.nhnacademy.bookstore.entity.bookImage.BookImage;
-import com.nhnacademy.bookstore.entity.bookImage.enums.BookImageType;
+import com.nhnacademy.bookstore.entity.bookcategory.BookCategory;
+import com.nhnacademy.bookstore.entity.bookimage.BookImage;
+import com.nhnacademy.bookstore.entity.bookimage.enums.BookImageType;
 import com.nhnacademy.bookstore.entity.category.Category;
-import com.nhnacademy.bookstore.entity.totalImage.TotalImage;
-import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsBook;
+import com.nhnacademy.bookstore.entity.totalimage.TotalImage;
+import com.nhnacademy.bookstore.purchase.purchasebook.exception.NotExistsBook;
 
 import lombok.extern.slf4j.Slf4j;
 

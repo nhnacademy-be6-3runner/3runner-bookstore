@@ -7,12 +7,11 @@ import com.nhnacademy.bookstore.entity.member.enums.Status;
 import com.nhnacademy.bookstore.member.auth.service.impl.AuthServiceImpl;
 import com.nhnacademy.bookstore.member.member.dto.request.*;
 import com.nhnacademy.bookstore.member.member.service.impl.MemberServiceImpl;
-import com.nhnacademy.bookstore.member.memberAuth.service.impl.MemberAuthServiceImpl;
-import com.nhnacademy.bookstore.member.pointRecord.service.impl.PointRecordServiceImpl;
+import com.nhnacademy.bookstore.member.memberauth.service.impl.MemberAuthServiceImpl;
+import com.nhnacademy.bookstore.member.pointrecord.service.impl.PointRecordServiceImpl;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springdoc.core.service.GenericParameterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +34,6 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @WebMvcTest(controllers = MemberController.class)
 class MemberControllerTest extends BaseDocumentTest {

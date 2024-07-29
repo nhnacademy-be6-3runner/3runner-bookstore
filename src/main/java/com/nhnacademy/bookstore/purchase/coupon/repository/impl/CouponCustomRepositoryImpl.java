@@ -41,7 +41,7 @@ public class CouponCustomRepositoryImpl implements CouponCustomRepository {
                         qCoupon.id
                 )
                 .from(qCoupon)
-                .join(qCoupon.member, qMember)
+                .join(qCoupon.member, qMember).fetchJoin()
                 .where(qCoupon.couponFormId.in(couponFormIds))
                 .fetch();
 

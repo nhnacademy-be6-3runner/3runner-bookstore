@@ -1,12 +1,11 @@
 package com.nhnacademy.bookstore.entity.purchase;
 
-import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
+import com.nhnacademy.bookstore.entity.pointrecord.PointRecord;
 import com.nhnacademy.bookstore.entity.purchase.enums.MemberType;
 import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
-import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
-import com.nhnacademy.bookstore.entity.purchaseCoupon.PurchaseCoupon;
+import com.nhnacademy.bookstore.entity.purchasebook.PurchaseBook;
+import com.nhnacademy.bookstore.entity.purchasecoupon.PurchaseCoupon;
 import com.nhnacademy.bookstore.entity.member.Member;
-import com.nhnacademy.bookstore.entity.refundRecord.RefundRecord;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

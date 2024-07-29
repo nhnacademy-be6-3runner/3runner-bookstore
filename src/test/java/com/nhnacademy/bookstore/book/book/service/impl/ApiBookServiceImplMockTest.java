@@ -27,13 +27,13 @@ import com.nhnacademy.bookstore.book.book.exception.ApiBookResponseException;
 import com.nhnacademy.bookstore.book.book.repository.ApiBookRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRedisRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
-import com.nhnacademy.bookstore.book.bookCartegory.repository.BookCategoryRepository;
+import com.nhnacademy.bookstore.book.bookcategory.repository.BookCategoryRepository;
 import com.nhnacademy.bookstore.book.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookstore.book.category.repository.CategoryRepository;
 import com.nhnacademy.bookstore.book.image.exception.MultipartFileException;
 import com.nhnacademy.bookstore.book.image.imageService.ImageService;
 import com.nhnacademy.bookstore.entity.book.Book;
-import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
+import com.nhnacademy.bookstore.entity.bookcategory.BookCategory;
 import com.nhnacademy.bookstore.entity.category.Category;
 
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,5 @@
 package com.nhnacademy.bookstore.global.elastic.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,12 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
 import com.nhnacademy.bookstore.book.book.service.BookService;
-import com.nhnacademy.bookstore.book.bookCartegory.service.BookCategoryService;
-import com.nhnacademy.bookstore.book.bookTag.dto.request.ReadBookIdRequest;
-import com.nhnacademy.bookstore.book.bookTag.dto.response.ReadTagByBookResponse;
-import com.nhnacademy.bookstore.book.bookTag.service.BookTagService;
+import com.nhnacademy.bookstore.book.bookcategory.service.BookCategoryService;
+import com.nhnacademy.bookstore.book.booktag.service.BookTagService;
 import com.nhnacademy.bookstore.global.elastic.book.repository.ElasticSearchBookRepository;
 import com.nhnacademy.bookstore.global.elastic.document.book.BookDocument;
 import com.nhnacademy.bookstore.util.ApiResponse;

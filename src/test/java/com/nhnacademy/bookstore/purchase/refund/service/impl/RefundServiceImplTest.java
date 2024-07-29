@@ -12,8 +12,8 @@ import java.util.UUID;
 
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
-import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
-import com.nhnacademy.bookstore.purchase.purchaseBook.exception.NotExistsPurchase;
+import com.nhnacademy.bookstore.entity.pointrecord.PointRecord;
+import com.nhnacademy.bookstore.purchase.purchasebook.exception.NotExistsPurchase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,18 +21,18 @@ import org.mockito.Mock;
 import com.nhnacademy.bookstore.entity.member.Member;
 import com.nhnacademy.bookstore.entity.payment.Payment;
 import com.nhnacademy.bookstore.entity.purchase.Purchase;
-import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
+import com.nhnacademy.bookstore.entity.purchasebook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.refund.Refund;
 import com.nhnacademy.bookstore.entity.refund.enums.RefundStatus;
-import com.nhnacademy.bookstore.entity.refundRecord.RefundRecord;
+import com.nhnacademy.bookstore.entity.refundrecord.RefundRecord;
 import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
-import com.nhnacademy.bookstore.member.pointRecord.repository.PointRecordRepository;
+import com.nhnacademy.bookstore.member.pointrecord.repository.PointRecordRepository;
 import com.nhnacademy.bookstore.purchase.payment.repository.PaymentRepository;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
-import com.nhnacademy.bookstore.purchase.purchaseBook.repository.PurchaseBookRepository;
+import com.nhnacademy.bookstore.purchase.purchasebook.repository.PurchaseBookRepository;
 import com.nhnacademy.bookstore.purchase.refund.repository.RefundCustomRepository;
 import com.nhnacademy.bookstore.purchase.refund.repository.RefundRepository;
-import com.nhnacademy.bookstore.purchase.refundRecord.repository.RefundRecordRepository;
+import com.nhnacademy.bookstore.purchase.refundrecord.repository.RefundRecordRepository;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)

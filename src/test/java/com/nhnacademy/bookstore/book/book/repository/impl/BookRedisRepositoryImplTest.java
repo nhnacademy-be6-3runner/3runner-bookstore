@@ -14,13 +14,13 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.nhnacademy.bookstore.entity.book.Book;
-import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
-import com.nhnacademy.bookstore.entity.bookImage.BookImage;
-import com.nhnacademy.bookstore.entity.bookImage.enums.BookImageType;
-import com.nhnacademy.bookstore.entity.bookTag.BookTag;
+import com.nhnacademy.bookstore.entity.bookcategory.BookCategory;
+import com.nhnacademy.bookstore.entity.bookimage.BookImage;
+import com.nhnacademy.bookstore.entity.bookimage.enums.BookImageType;
+import com.nhnacademy.bookstore.entity.booktag.BookTag;
 import com.nhnacademy.bookstore.entity.category.Category;
 import com.nhnacademy.bookstore.entity.tag.Tag;
-import com.nhnacademy.bookstore.entity.totalImage.TotalImage;
+import com.nhnacademy.bookstore.entity.totalimage.TotalImage;
 
 public class BookRedisRepositoryImplTest {
 

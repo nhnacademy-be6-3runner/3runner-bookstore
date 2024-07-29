@@ -5,28 +5,27 @@ import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
 import com.nhnacademy.bookstore.entity.payment.Payment;
 import com.nhnacademy.bookstore.entity.payment.enums.PaymentStatus;
-import com.nhnacademy.bookstore.entity.pointPolicy.PointPolicy;
-import com.nhnacademy.bookstore.member.pointRecord.service.PointRecordService;
-import com.nhnacademy.bookstore.purchase.bookCart.dto.request.ReadAllBookCartMemberRequest;
-import com.nhnacademy.bookstore.purchase.bookCart.dto.response.ReadAllBookCartMemberResponse;
-import com.nhnacademy.bookstore.purchase.bookCart.service.BookCartMemberService;
+import com.nhnacademy.bookstore.entity.pointpolicy.PointPolicy;
+import com.nhnacademy.bookstore.member.pointrecord.service.PointRecordService;
+import com.nhnacademy.bookstore.purchase.bookcart.dto.request.ReadAllBookCartMemberRequest;
+import com.nhnacademy.bookstore.purchase.bookcart.dto.response.ReadAllBookCartMemberResponse;
+import com.nhnacademy.bookstore.purchase.bookcart.service.BookCartMemberService;
 import com.nhnacademy.bookstore.purchase.coupon.service.CouponMemberService;
 import com.nhnacademy.bookstore.purchase.payment.dto.CreatePaymentMemberRequest;
 import com.nhnacademy.bookstore.purchase.payment.repository.PaymentRepository;
 import com.nhnacademy.bookstore.purchase.payment.service.PaymentMemberService;
-import com.nhnacademy.bookstore.purchase.pointPolicy.exception.PointPolicyDoesNotExistException;
-import com.nhnacademy.bookstore.purchase.pointPolicy.repository.PointPolicyRepository;
+import com.nhnacademy.bookstore.purchase.pointpolicy.exception.PointPolicyDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.pointpolicy.repository.PointPolicyRepository;
 import com.nhnacademy.bookstore.purchase.purchase.dto.request.CreatePurchaseRequest;
 import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseDoesNotExistException;
 import com.nhnacademy.bookstore.purchase.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookstore.purchase.purchase.service.PurchaseMemberService;
-import com.nhnacademy.bookstore.purchase.purchaseBook.dto.request.CreatePurchaseBookRequest;
-import com.nhnacademy.bookstore.purchase.purchaseBook.service.PurchaseBookService;
-import com.nhnacademy.bookstore.purchase.purchaseCoupon.service.PurchaseCouponService;
+import com.nhnacademy.bookstore.purchase.purchasebook.dto.request.CreatePurchaseBookRequest;
+import com.nhnacademy.bookstore.purchase.purchasebook.service.PurchaseBookService;
+import com.nhnacademy.bookstore.purchase.purchasecoupon.service.PurchaseCouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import java.util.List;
 
@@ -100,7 +99,6 @@ public class PaymentMemberServiceImpl implements PaymentMemberService {
         }
 
 
-        //포인트 적립
         pointRecordService.save(
                 (long)(createPaymentMemberRequest.amount() * POINT_RATE),
                 createPaymentMemberRequest.orderId() + " : 주문 적립",
@@ -108,7 +106,6 @@ public class PaymentMemberServiceImpl implements PaymentMemberService {
                 purchaseId
         );
 
-        //포인트 사용 0
         if (createPaymentMemberRequest.discountedPoint() != 0) {
             pointRecordService.save(
                     -1L * createPaymentMemberRequest.discountedPoint(),

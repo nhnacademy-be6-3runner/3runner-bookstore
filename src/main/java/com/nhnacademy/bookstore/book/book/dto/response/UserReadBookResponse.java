@@ -3,7 +3,7 @@ package com.nhnacademy.bookstore.book.book.dto.response;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import com.nhnacademy.bookstore.book.bookTag.dto.response.ReadTagByBookResponse;
+import com.nhnacademy.bookstore.book.booktag.dto.response.ReadTagByBookResponse;
 import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
 
 import lombok.Builder;

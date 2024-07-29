@@ -3,7 +3,7 @@ package com.nhnacademy.bookstore;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhnacademy.bookstore.global.keyManager.manager.KeyManager;
+import com.nhnacademy.bookstore.global.keymanager.manager.KeyManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

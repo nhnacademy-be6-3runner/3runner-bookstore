@@ -1,17 +1,15 @@
 package com.nhnacademy.bookstore.entity.cart;
 
-import com.nhnacademy.bookstore.entity.bookCart.BookCart;
+import com.nhnacademy.bookstore.entity.bookcart.BookCart;
 import com.nhnacademy.bookstore.entity.member.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
 import lombok.Setter;
 
 @Getter@Setter

@@ -1,6 +1,6 @@
 package com.nhnacademy.bookstore.entity.auth;
 
-import com.nhnacademy.bookstore.entity.memberAuth.MemberAuth;
+import com.nhnacademy.bookstore.entity.memberauth.MemberAuth;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

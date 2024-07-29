@@ -33,9 +33,9 @@ public class CouponAdminController {
     public ApiResponse<List<ReadCouponTypeResponse>> getTypes() {
         return ApiResponse.success(couponAdminService.readTypes());
     }
-
     /**
      * 쿠폰 정책 사용처 읽기.
+
      *
      * @return 쿠폰 사용처 dto 리스트
      */

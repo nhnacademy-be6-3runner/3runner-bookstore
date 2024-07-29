@@ -1,6 +1,5 @@
 package com.nhnacademy.bookstore.member.member.controller;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,9 +25,9 @@ import com.nhnacademy.bookstore.member.member.dto.response.GetMemberResponse;
 import com.nhnacademy.bookstore.member.member.dto.response.UpdateMemberResponse;
 import com.nhnacademy.bookstore.member.member.exception.GeneralNotPayco;
 import com.nhnacademy.bookstore.member.member.service.impl.MemberServiceImpl;
-import com.nhnacademy.bookstore.member.memberAuth.dto.response.MemberAuthResponse;
-import com.nhnacademy.bookstore.member.memberAuth.service.impl.MemberAuthServiceImpl;
-import com.nhnacademy.bookstore.member.pointRecord.service.impl.PointRecordServiceImpl;
+import com.nhnacademy.bookstore.member.memberauth.dto.response.MemberAuthResponse;
+import com.nhnacademy.bookstore.member.memberauth.service.impl.MemberAuthServiceImpl;
+import com.nhnacademy.bookstore.member.pointrecord.service.impl.PointRecordServiceImpl;
 import com.nhnacademy.bookstore.util.ApiResponse;
 
 import jakarta.transaction.Transactional;
@@ -87,40 +86,10 @@ public class MemberController {
 			.email(member.getEmail())
 			.name(member.getName())
 			.password(member.getPassword()).build();
-		return new ApiResponse<GetMemberResponse>(new ApiResponse.Header(true, 200),
+		return new ApiResponse<>(new ApiResponse.Header(true, 200),
 			new ApiResponse.Body<>(getMemberResponse));
 
 	}
-
-//	/**
-//	 * Find by email and password response entity. -이메일과 비밀번호에 맞는 멤버정보를 반환한다.
-//	 *
-//	 * @param
-//	 * @return the response entity -멤버 정보에 대한 응답을 담아서 apiresponse로 응답한다.
-//	 * @author 유지아
-//	 */
-//	@PostMapping("/bookstore/members/login")
-//	public ApiResponse<GetMemberResponse> readByEmailAndPassword(
-//		@RequestBody @Valid LoginRequest loginRequest) {
-//		Member member = memberService.readByEmailAndPassword(loginRequest.email(), loginRequest.password());
-//		GetMemberResponse getMemberResponse = GetMemberResponse.builder()
-//			.age(member.getAge())
-//			.grade(member.getGrade())
-//			.point(member.getPoint())
-//			.phone(member.getPhone())
-//			.createdAt(member.getCreatedAt())
-//			.birthday(member.getBirthday())
-//			.email(member.getEmail())
-//			.name(member.getName())
-//			.password(member.getPassword()).build();
-//		memberService.updateStatus(member.getId(), Status.Active);//응답이 만들어 졌다는거는 로그인성공이란 소리니까 멤버를 업데이트 해야할 것같다..
-//		memberService.updateLastLogin(member.getId(), ZonedDateTime.now());
-//
-//		return new ApiResponse<GetMemberResponse>(new ApiResponse.Header(true, 200),
-//			new ApiResponse.Body<>(getMemberResponse));
-//
-//	}
-//
 	/**
 	 * Find auths list. -권한에 대한 리스트를 받아온다.
 	 *
@@ -131,7 +100,7 @@ public class MemberController {
 	@GetMapping("/bookstore/members/auths")
 	public ApiResponse<List<AuthResponse>> readAuths(@RequestHeader("Member-Id") Long memberId) {
 
-		return new ApiResponse<List<AuthResponse>>(new ApiResponse.Header(true, 200),
+		return new ApiResponse<>(new ApiResponse.Header(true, 200),
 			new ApiResponse.Body<>(memberAuthService.readAllAuths(memberId)
 				.stream()
 				.map(a -> AuthResponse.builder().auth(a.getName()).build())
@@ -174,71 +143,82 @@ public class MemberController {
 		return new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.NO_CONTENT.value()));
 
     }
+
 	@PostMapping("/bookstore/members/oauth")
-	public MemberAuthResponse oauthMember(@RequestBody @Valid UserProfile userProfile){
+	public MemberAuthResponse oauthMember(@RequestBody @Valid UserProfile userProfile) {
 		Auth auth = authService.getAuth("USER");
 		Member member;
 		try {
 			member = memberService.saveOrGetPaycoMember(userProfile);
-		}catch(GeneralNotPayco ex){
+		} catch (GeneralNotPayco ex) {
 			return null;
 		}
-		if(memberAuthService.readAllAuths(member.getId()).size() == 0){
+		if (memberAuthService.readAllAuths(member.getId()).size() == 0) {
 			memberAuthService.saveAuth(member, auth);
 		}
 
-		MemberAuthResponse memberAuthResponse = MemberAuthResponse.builder().email(member.getEmail()).memberId(member.getId()).auth(memberAuthService.readAllAuths(
-			member.getId()).stream().map(Auth::getName).toList()).password(member.getPassword()).build();
-		return memberAuthResponse;
+		return MemberAuthResponse.builder()
+				.email(member.getEmail())
+				.memberId(member.getId())
+				.auth(memberAuthService.readAllAuths(member.getId()).stream()
+						.map(Auth::getName)
+						.toList())
+				.password(member.getPassword())
+				.build();
 	}
+
 	@GetMapping("/bookstore/members/email")
-	public ApiResponse<Boolean> emailExists(@RequestParam String email){
+	public ApiResponse<Boolean> emailExists(@RequestParam String email) {
 		try {
 			Member member = memberService.readByEmail(email);
 			return new ApiResponse<>(new ApiResponse.Header(true, 200), new ApiResponse.Body<>(Boolean.TRUE));
-		}catch (Exception e){
+		} catch (Exception e) {
 			return new ApiResponse<>(new ApiResponse.Header(true, 500), new ApiResponse.Body<>(Boolean.FALSE));
 		}
 	}
+
 	@PutMapping("/bookstore/members/password")
-	public ApiResponse<Void> updatePassword(@RequestHeader(name = "Member-Id") Long memberId, @RequestBody UpdatePasswordRequest updatePasswordRequest){
-		try{
+	public ApiResponse<Void> updatePassword(@RequestHeader(name = "Member-Id") Long memberId, @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+		try {
 			memberService.updatePassword(memberId, updatePasswordRequest);
 			return  new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.ACCEPTED.value()));
-		}catch (Exception e){
-			return new ApiResponse<>(new ApiResponse.Header(false,HttpStatus.BAD_REQUEST.value()));
+		} catch (Exception e) {
+			return new ApiResponse<>(new ApiResponse.Header(false, HttpStatus.BAD_REQUEST.value()));
 		}
 	}
+
 	@PostMapping("/bookstore/members/password")
-	public ApiResponse<Void> isPasswordMatch(@RequestHeader(name = "Member-Id") Long memberId,@RequestBody PasswordCorrectRequest request){
-		try{
-			if(memberService.isCorrectPassword(memberId,request.password())){
+	public ApiResponse<Void> isPasswordMatch(@RequestHeader(name = "Member-Id") Long memberId, @RequestBody PasswordCorrectRequest request) {
+		try {
+			if (memberService.isCorrectPassword(memberId,request.password())) {
 				return new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.ACCEPTED.value()));
-			}else{
+			} else {
 				return new ApiResponse<>(new ApiResponse.Header(false, HttpStatus.NOT_FOUND.value()));
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			return new ApiResponse<>(new ApiResponse.Header(false, HttpStatus.NOT_FOUND.value()));
 		}
 	}
+
 	@PutMapping("/bookstore/members/lastLogin")
-	ApiResponse<Void> lastLoginUpdate(@RequestBody LastLoginRequest request){
+	ApiResponse<Void> lastLoginUpdate(@RequestBody LastLoginRequest request) {
 		Member member = memberService.readById(request.memberId());
-		if(member.getStatus() == Status.Active) {
+		if (member.getStatus() == Status.Active) {
 
 			memberService.updateStatus(request.memberId(), Status.Active);
 			memberService.updateLastLogin(request.memberId(), ZonedDateTime.now());
 			return new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.ACCEPTED.value()));
-		} else{
+		} else {
 			return new ApiResponse<>(new ApiResponse.Header(false, HttpStatus.NOT_FOUND.value()));
-		}//inactive상태일때 상태를 바꾸지 않고 보낸다.
+		}
 	}
+
 	@PutMapping("/bookstore/members/lastLogin/dormantAwake")
 	ApiResponse<Void> dormantAwake(@RequestBody DormantAwakeRequest request) {
 		Member member = memberService.readByEmail(request.email());
 		memberService.updateStatus(member.getId(), Status.Active);
 		memberService.updateLastLogin(member.getId(), ZonedDateTime.now());
 		return new ApiResponse<>(new ApiResponse.Header(true, HttpStatus.ACCEPTED.value()));
-	}//무조건 상태 변경
+	}
 }
 

@@ -1,17 +1,15 @@
 package com.nhnacademy.bookstore.member.member.service.impl;
 
 import com.nhnacademy.bookstore.entity.member.Member;
-import com.nhnacademy.bookstore.entity.pointPolicy.PointPolicy;
-import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
-import com.nhnacademy.bookstore.member.member.dto.response.GetMemberResponse;
+import com.nhnacademy.bookstore.entity.pointpolicy.PointPolicy;
+import com.nhnacademy.bookstore.entity.pointrecord.PointRecord;
 import com.nhnacademy.bookstore.member.member.dto.response.ReadMemberResponse;
 import com.nhnacademy.bookstore.member.member.exception.MemberNotExistsException;
 import com.nhnacademy.bookstore.member.member.repository.MemberRepository;
 import com.nhnacademy.bookstore.member.member.service.MemberPointService;
-import com.nhnacademy.bookstore.member.pointRecord.repository.PointRecordRepository;
-import com.nhnacademy.bookstore.member.pointRecord.service.PointRecordService;
-import com.nhnacademy.bookstore.purchase.pointPolicy.exception.PointPolicyDoesNotExistException;
-import com.nhnacademy.bookstore.purchase.pointPolicy.repository.PointPolicyRepository;
+import com.nhnacademy.bookstore.member.pointrecord.repository.PointRecordRepository;
+import com.nhnacademy.bookstore.purchase.pointpolicy.exception.PointPolicyDoesNotExistException;
+import com.nhnacademy.bookstore.purchase.pointpolicy.repository.PointPolicyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

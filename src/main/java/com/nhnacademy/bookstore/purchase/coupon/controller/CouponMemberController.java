@@ -1,11 +1,9 @@
 package com.nhnacademy.bookstore.purchase.coupon.controller;
 
 import com.nhnacademy.bookstore.purchase.coupon.dto.CouponRegistorRequest;
-import com.nhnacademy.bookstore.purchase.coupon.dto.ReadCouponResponseForMember;
 import com.nhnacademy.bookstore.purchase.coupon.feign.dto.response.ReadCouponFormResponse;
 import com.nhnacademy.bookstore.purchase.coupon.service.CouponMemberService;
 import com.nhnacademy.bookstore.util.ApiResponse;
-import jakarta.ws.rs.GET;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

@@ -2,8 +2,7 @@ package com.nhnacademy.bookstore.entity.coupon;
 
 import com.nhnacademy.bookstore.entity.coupon.enums.CouponStatus;
 import com.nhnacademy.bookstore.entity.member.Member;
-import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
-import com.nhnacademy.bookstore.entity.purchaseCoupon.PurchaseCoupon;
+import com.nhnacademy.bookstore.entity.purchasecoupon.PurchaseCoupon;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

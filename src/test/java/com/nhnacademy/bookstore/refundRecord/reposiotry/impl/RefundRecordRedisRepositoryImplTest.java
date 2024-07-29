@@ -18,9 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import com.nhnacademy.bookstore.purchase.refundRecord.dto.response.ReadRefundRecordResponse;
-import com.nhnacademy.bookstore.purchase.refundRecord.exception.NotExistsRefundRecordRedis;
-import com.nhnacademy.bookstore.purchase.refundRecord.repository.impl.RefundRecordRedisRepositoryImpl;
+import com.nhnacademy.bookstore.purchase.refundrecord.dto.response.ReadRefundRecordResponse;
+import com.nhnacademy.bookstore.purchase.refundrecord.exception.NotExistsRefundRecordRedis;
+import com.nhnacademy.bookstore.purchase.refundrecord.repository.impl.RefundRecordRedisRepositoryImpl;
 
 @ExtendWith(MockitoExtension.class)
 class RefundRecordRedisRepositoryImplTest {

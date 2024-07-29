@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nhnacademy.bookstore.book.book.repository.BookRedisRepository;
 import com.nhnacademy.bookstore.entity.book.Book;
-import com.nhnacademy.bookstore.entity.bookCategory.BookCategory;
-import com.nhnacademy.bookstore.entity.bookTag.BookTag;
+import com.nhnacademy.bookstore.entity.bookcategory.BookCategory;
+import com.nhnacademy.bookstore.entity.booktag.BookTag;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -8,7 +8,7 @@ import com.nhnacademy.bookstore.entity.member.Member;
 import com.nhnacademy.bookstore.entity.purchase.Purchase;
 import com.nhnacademy.bookstore.entity.purchase.enums.MemberType;
 import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
-import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
+import com.nhnacademy.bookstore.entity.purchasebook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.review.Review;
 import com.nhnacademy.bookstore.member.member.dto.request.CreateMemberRequest;
 import jakarta.persistence.EntityManager;

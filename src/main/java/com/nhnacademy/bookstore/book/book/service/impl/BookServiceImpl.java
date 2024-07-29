@@ -18,14 +18,14 @@ import com.nhnacademy.bookstore.book.book.exception.BookDoesNotExistException;
 import com.nhnacademy.bookstore.book.book.repository.BookRedisRepository;
 import com.nhnacademy.bookstore.book.book.repository.BookRepository;
 import com.nhnacademy.bookstore.book.book.service.BookService;
-import com.nhnacademy.bookstore.book.bookCartegory.dto.request.CreateBookCategoryRequest;
-import com.nhnacademy.bookstore.book.bookCartegory.dto.request.UpdateBookCategoryRequest;
-import com.nhnacademy.bookstore.book.bookCartegory.service.BookCategoryService;
-import com.nhnacademy.bookstore.book.bookImage.service.BookImageService;
-import com.nhnacademy.bookstore.book.bookTag.dto.request.CreateBookTagListRequest;
-import com.nhnacademy.bookstore.book.bookTag.service.BookTagService;
+import com.nhnacademy.bookstore.book.bookcategory.dto.request.CreateBookCategoryRequest;
+import com.nhnacademy.bookstore.book.bookcategory.dto.request.UpdateBookCategoryRequest;
+import com.nhnacademy.bookstore.book.bookcategory.service.BookCategoryService;
+import com.nhnacademy.bookstore.book.bookimage.service.BookImageService;
+import com.nhnacademy.bookstore.book.booktag.dto.request.CreateBookTagListRequest;
+import com.nhnacademy.bookstore.book.booktag.service.BookTagService;
 import com.nhnacademy.bookstore.entity.book.Book;
-import com.nhnacademy.bookstore.entity.bookImage.enums.BookImageType;
+import com.nhnacademy.bookstore.entity.bookimage.enums.BookImageType;
 
 import lombok.RequiredArgsConstructor;
 

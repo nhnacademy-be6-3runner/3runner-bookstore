@@ -19,10 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.nhnacademy.bookstore.BaseDocumentTest;
-import com.nhnacademy.bookstore.purchase.purchaseBook.dto.response.ReadBookByPurchase;
-import com.nhnacademy.bookstore.purchase.refundRecord.controller.RefundRecordGuestController;
-import com.nhnacademy.bookstore.purchase.refundRecord.dto.request.CreateRefundRecordRedisRequest;
-import com.nhnacademy.bookstore.purchase.refundRecord.service.RefundRecordGuestService;
+import com.nhnacademy.bookstore.purchase.purchasebook.dto.response.ReadBookByPurchase;
+import com.nhnacademy.bookstore.purchase.refundrecord.controller.RefundRecordGuestController;
+import com.nhnacademy.bookstore.purchase.refundrecord.dto.request.CreateRefundRecordRedisRequest;
+import com.nhnacademy.bookstore.purchase.refundrecord.service.RefundRecordGuestService;
 
 @WebMvcTest(RefundRecordGuestController.class)
 public class RefundRecordGuestControllerTest extends BaseDocumentTest {

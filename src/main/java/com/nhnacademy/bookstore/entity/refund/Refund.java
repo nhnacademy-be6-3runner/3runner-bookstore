@@ -3,10 +3,8 @@ package com.nhnacademy.bookstore.entity.refund;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nhnacademy.bookstore.entity.pointRecord.PointRecord;
-import com.nhnacademy.bookstore.entity.purchase.Purchase;
 import com.nhnacademy.bookstore.entity.refund.enums.RefundStatus;
-import com.nhnacademy.bookstore.entity.refundRecord.RefundRecord;
+import com.nhnacademy.bookstore.entity.refundrecord.RefundRecord;
 
 import jakarta.persistence.*;
 import lombok.Getter;

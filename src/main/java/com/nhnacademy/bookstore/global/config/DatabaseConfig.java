@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.nhnacademy.bookstore.global.config.properties.DbProperties;
-import com.nhnacademy.bookstore.global.keyManager.manager.KeyManager;
+import com.nhnacademy.bookstore.global.keymanager.manager.KeyManager;
 
 import lombok.RequiredArgsConstructor;
 

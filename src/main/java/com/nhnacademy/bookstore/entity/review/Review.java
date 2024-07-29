@@ -2,10 +2,10 @@ package com.nhnacademy.bookstore.entity.review;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nhnacademy.bookstore.entity.comment.Comment;
-import com.nhnacademy.bookstore.entity.purchaseBook.PurchaseBook;
+import com.nhnacademy.bookstore.entity.purchasebook.PurchaseBook;
 import com.nhnacademy.bookstore.entity.review.enums.ReviewStatus;
-import com.nhnacademy.bookstore.entity.reviewImage.ReviewImage;
-import com.nhnacademy.bookstore.entity.reviewLike.ReviewLike;
+import com.nhnacademy.bookstore.entity.reviewimage.ReviewImage;
+import com.nhnacademy.bookstore.entity.reviewlike.ReviewLike;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
