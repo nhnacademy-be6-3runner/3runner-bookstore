@@ -1,5 +1,8 @@
 package com.nhnacademy.bookstore.global.appender;
 
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,12 +12,11 @@ import org.springframework.web.client.RestTemplate;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 
-public class NHNLogCrashAppender extends AppenderBase<ILoggingEvent> {
-	private String url;
+@Setter
+@Slf4j
+public class LogCrashAppender extends AppenderBase<ILoggingEvent> {
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+	private String url;
 
 	@Override
 	protected void append(ILoggingEvent iLoggingEvent) {
@@ -36,7 +38,7 @@ public class NHNLogCrashAppender extends AppenderBase<ILoggingEvent> {
 		obj.put("body", event.getFormattedMessage());
 		obj.put("logSource", "http");
 		obj.put("logType", "nelo2-http");
-		obj.put("host", "3runner");
+		obj.put("host", "3runner-bookstore");
 
 		return obj;
 	}

@@ -26,3 +26,4 @@ management:
 feign:
   coupon:
     url: localhost:8080
+

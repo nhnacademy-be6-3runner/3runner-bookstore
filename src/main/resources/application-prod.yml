@@ -22,3 +22,6 @@ management:
 feign:
   coupon:
     url: gateway:8080
+
+log:
+  directory: logs/prod
