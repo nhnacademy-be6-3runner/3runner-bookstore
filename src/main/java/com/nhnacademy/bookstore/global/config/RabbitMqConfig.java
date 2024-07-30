@@ -1,6 +1,9 @@
 package com.nhnacademy.bookstore.global.config;
 
+import com.nhnacademy.bookstore.global.config.properties.RabbitMqProperties;
+import com.nhnacademy.bookstore.global.keymanager.manager.KeyManager;
 import com.nhnacademy.bookstore.purchase.coupon.messageListener.CouponAnotherMessageListener;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -13,24 +16,18 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
+@EnableConfigurationProperties(RabbitMqProperties.class)
 public class RabbitMqConfig {
 
-    @Value("${spring.rabbitmq.host}")
-    private String rabbitmqHost;
+    private final KeyManager keyManager;
+    private final RabbitMqProperties rabbitMqProperties;
 
-    @Value("${spring.rabbitmq.port}")
-    private int rabbitmqPort;
-
-    @Value("${spring.rabbitmq.username}")
-    private String rabbitmqUsername;
-
-    @Value("${spring.rabbitmq.password}")
-    private String rabbitmqPassword;
 
     private static final String queueName1 = "3RUNNER-COUPON-ISSUED";
     private static final String queueName2 = "3RUNNER-COUPON-EXPIRED-IN-THREE-DAY";
@@ -78,10 +75,10 @@ public class RabbitMqConfig {
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setHost(rabbitmqHost);
-        connectionFactory.setPort(rabbitmqPort);
-        connectionFactory.setUsername(rabbitmqUsername);
-        connectionFactory.setPassword(rabbitmqPassword);
+        connectionFactory.setHost(keyManager.getValue(rabbitMqProperties.getHost()));
+        connectionFactory.setPort(Integer.parseInt(keyManager.getValue(rabbitMqProperties.getPort())));
+        connectionFactory.setUsername(keyManager.getValue(rabbitMqProperties.getUsername()));
+        connectionFactory.setPassword(keyManager.getValue(rabbitMqProperties.getPassword()));
         return connectionFactory;
     }
 

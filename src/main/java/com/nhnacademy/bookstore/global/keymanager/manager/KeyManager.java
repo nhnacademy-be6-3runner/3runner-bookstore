@@ -16,7 +16,8 @@ import lombok.RequiredArgsConstructor;
 public class KeyManager {
 
 	/**
-	 * 키를 -> nhn key manager 로 보냄 -> RestTemplate 으로 보내서 값을 얻어옴
+	 * 키를 -> nhn key manager 로 보냄 -> RestTemplate 으로 보내서 값을 얻어옴.
+	 *
 	 * @param key 가져올 키
 	 * @return 키 값을 통해 가져올 값
 	 */
@@ -38,6 +39,5 @@ public class KeyManager {
 		KeyManagerResponse response = restTemplate.exchange(url, HttpMethod.GET, entity, KeyManagerResponse.class)
 			.getBody();
 		return response.getBody().getSecret();
-
 	}
 }

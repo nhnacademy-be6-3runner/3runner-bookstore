@@ -2,6 +2,12 @@ spring:
   config:
     activate:
       on-profile: prod
+
+  elasticsearch:
+    uris: 115.94.72.197:9200
+    username: elastic
+    password: nhnacademy123!
+
 eureka:
   client:
     fetch-registry: true

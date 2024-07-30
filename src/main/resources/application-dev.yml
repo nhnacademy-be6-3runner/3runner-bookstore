@@ -3,6 +3,11 @@ spring:
     activate:
       on-profile: dev
 
+  elasticsearch:
+    uris: 115.94.72.197:9200
+    username: elastic
+    password: nhnacademy123!
+
 server:
   shutdown: graceful
   port: 8081
