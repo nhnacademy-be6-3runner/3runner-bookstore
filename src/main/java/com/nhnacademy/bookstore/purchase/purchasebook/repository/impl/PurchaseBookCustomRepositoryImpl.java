@@ -61,8 +61,8 @@ public class PurchaseBookCustomRepositoryImpl implements PurchaseBookCustomRepos
 					qPurchaseBook.price
 				))
 			.from(qPurchaseBook)
-			.leftJoin(qPurchaseBook.book, qBook).fetchJoin()
-			.join(qPurchaseBook.purchase, qPurchase).fetchJoin()
+			.leftJoin(qPurchaseBook.book, qBook)
+			.join(qPurchaseBook.purchase, qPurchase)
 			.leftJoin(qBookImage).fetchJoin()
 			.on(qBookImage.book.id.eq(qPurchaseBook.book.id).and(qBookImage.type.eq(BookImageType.MAIN)))
 			.leftJoin(qTotalImage).fetchJoin()
@@ -94,11 +94,11 @@ public class PurchaseBookCustomRepositoryImpl implements PurchaseBookCustomRepos
 					qPurchaseBook.price
 				))
 			.from(qPurchaseBook)
-			.leftJoin(qPurchaseBook.book, qBook).fetchJoin()
-			.join(qPurchaseBook.purchase, qPurchase).fetchJoin()
-			.leftJoin(qBookImage).fetchJoin()
+			.leftJoin(qPurchaseBook.book, qBook)
+			.join(qPurchaseBook.purchase, qPurchase)
+			.leftJoin(qBookImage)
 			.on(qBookImage.book.id.eq(qPurchaseBook.book.id).and(qBookImage.type.eq(BookImageType.MAIN)))
-			.leftJoin(qTotalImage).fetchJoin()
+			.leftJoin(qTotalImage)
 			.on(qTotalImage.bookImage.id.eq(qBookImage.id))
 			.where(qPurchaseBook.purchase.orderNumber.eq(UUID.fromString(purchaseId)))
 			.fetch();
@@ -121,11 +121,10 @@ public class PurchaseBookCustomRepositoryImpl implements PurchaseBookCustomRepos
 					qPurchaseBook.price
 				))
 			.from(qPurchaseBook)
-			.leftJoin(qPurchaseBook.book, qBook).fetchJoin()
-			.join(qPurchaseBook.purchase, qPurchase).fetchJoin()
-			.leftJoin(qBookImage).fetchJoin()
+			.leftJoin(qPurchaseBook.book, qBook)
+			.leftJoin(qBookImage)
 			.on(qBookImage.book.id.eq(qPurchaseBook.book.id).and(qBookImage.type.eq(BookImageType.MAIN)))
-			.leftJoin(qTotalImage).fetchJoin()
+			.leftJoin(qTotalImage)
 			.on(qTotalImage.bookImage.id.eq(qBookImage.id))
 			.where(qPurchaseBook.id.eq(purchaseBookId))
 			.fetch().getFirst();
