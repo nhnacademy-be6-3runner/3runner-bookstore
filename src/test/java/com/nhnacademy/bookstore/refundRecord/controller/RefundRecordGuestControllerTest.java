@@ -132,7 +132,7 @@ public class RefundRecordGuestControllerTest extends BaseDocumentTest {
 		mockMvc.perform(RestDocumentationRequestBuilders.post("/bookstore/refundRecord/guests/save/{orderNumber}/{refundId}", "order123", 1L)
 				.accept("application/json"))
 			.andExpect(status().isOk())
-			.andDo(MockMvcRestDocumentationWrapper.document("create-refund-record-guest",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 환불 기록 임시 저장",
 				pathParameters(
 					parameterWithName("orderNumber").description("주문 order-number"),
 					parameterWithName("refundId").description("환불 내역에 저장될 환불 ID")
