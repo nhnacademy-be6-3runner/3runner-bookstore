@@ -1,10 +1,8 @@
 package com.nhnacademy.bookstore.global.config;
 
-import com.nhnacademy.bookstore.global.config.properties.DbProperties;
 import com.nhnacademy.bookstore.global.config.properties.RedisProperties;
 import com.nhnacademy.bookstore.global.keymanager.manager.KeyManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
