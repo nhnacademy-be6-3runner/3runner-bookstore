@@ -22,8 +22,7 @@ import jakarta.persistence.EntityManager;
 /**
  * 주문 책 repository
  *
- * @author 정주혁
- * @fix 김병우
+ * @author 정주혁, 김병우
  */
 @Repository
 public class PurchaseBookCustomRepositoryImpl implements PurchaseBookCustomRepository {

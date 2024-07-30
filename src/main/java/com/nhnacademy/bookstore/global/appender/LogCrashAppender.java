@@ -1,6 +1,6 @@
 package com.nhnacademy.bookstore.global.appender;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
