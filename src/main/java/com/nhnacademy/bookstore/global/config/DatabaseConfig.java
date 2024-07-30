@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(DataSourceProperties.class)
-
 public class DatabaseConfig {
 	private final KeyManager keyManager;
 	private final DbProperties dbProperties;

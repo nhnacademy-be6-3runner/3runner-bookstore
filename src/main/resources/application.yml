@@ -1,20 +1,12 @@
 spring:
   data:
-
     elasticsearch:
       repositories:
         enabled: true
 
-    redis:
-      host: 133.186.241.167
-      port: 6379
-      database: 11
-      password: "*N2vya7H@muDTwdNMR!"
-
   jpa:
     open-in-view: false
     show-sql: true
-
 
     properties:
       hibernate:
@@ -23,17 +15,10 @@ spring:
         highlight_sql: true
         auto_quote_keyword: true
 
-
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
-  rabbitmq:
-    host: 133.186.241.167
-    port: 5672
-    username: admin
-    password: nhnacademy123!
 
   profiles:
     active: prod
@@ -42,10 +27,7 @@ spring:
   application:
     name: 3runner-bookstore
 
-  elasticsearch:
-    uris: 115.94.72.197:9200
-    username: elastic
-    password: nhnacademy123!
+
 
 
 server:
@@ -74,9 +56,20 @@ springdoc:
 
 
 elasticsearch:
+  url: 115.94.72.197:9200
   key: Q0I4SjQ1QUIyMlNic1BPbmdUVmU6YlRpV3RwSlFTMGFESjQxWnRXWlBiUQ==
 
+rabbitmq:
+  host: de13e885d6e049dea299f18c8230e9c0
+  port: 218c9dcd765f4898a30adbcfbb063a3a
+  username: dfb26a5df5894adf85a9ca9ed6e19425
+  password: 973a4f67c38d4c3483cc77b3f05f69b9
 
+redis:
+  host: de13e885d6e049dea299f18c8230e9c0
+  port: 1301db88c68c4580a1d55ac02eeb3f5d
+  database: 142c3823c4164aa09e96667ee6e6c8e8
+  password: 5f68348fe61f4fd996101aed141021ac
 
 db:
   driver: com.mysql.cj.jdbc.Driver
