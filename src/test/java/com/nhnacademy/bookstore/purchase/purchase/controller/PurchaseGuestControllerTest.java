@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 조회")
 	void testReadPurchase() throws Exception {
 		UUID orderNumber = UUID.randomUUID();
 		String password = "testPassword";
@@ -75,7 +77,7 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 				.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.body").isNotEmpty())
-			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,"주문 조회",
+			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,"비회원 주문 조회하는 API",
 				queryParameters(
 					parameterWithName("orderNumber").description("Order number of the purchase"),
 					parameterWithName("password").description("Password for the purchase")
@@ -99,6 +101,7 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 조회 실패")
 	void testReadPurchase_NotFound() throws Exception {
 		UUID orderNumber = UUID.randomUUID();
 		String password = "testPassword";
@@ -109,7 +112,7 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 				.param("orderNumber", orderNumber.toString())
 				.param("password", password))
 			.andExpect(status().isNotFound())
-			.andDo(document("주문 조회 실패",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 조회 실패",
 				queryParameters(
 					parameterWithName("orderNumber").description("주문 order-number"),
 					parameterWithName("password").description("비회원 주문 비밀번호")
@@ -118,6 +121,7 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 등록")
 	void testCreatePurchase() throws Exception {
 		CreatePurchaseRequest request = CreatePurchaseRequest.builder()
 			.deliveryPrice(2000)
@@ -130,11 +134,11 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 
 		doAnswer(invocation -> null).when(purchaseGuestService).createPurchase(any(CreatePurchaseRequest.class));
 
-		mockMvc.perform(post(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated())
-			.andDo(document("create-purchase",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 등록 API",
 				requestFields(
 					fieldWithPath("deliveryPrice").type(JsonFieldType.NUMBER).description("배달 요금"),
 					fieldWithPath("totalPrice").type(JsonFieldType.NUMBER).description("총 요금"),
@@ -148,15 +152,16 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 등록 실패")
 	void testCreatePurchase_Invalid() throws Exception {
 		CreatePurchaseRequest request = CreatePurchaseRequest.builder().build();
 		// Fill the request object with invalid data to trigger validation errors
 
-		mockMvc.perform(post(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest())
-			.andDo(document("주문 생성 실패",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 등록 실패",
 				requestFields(
 					fieldWithPath("deliveryPrice").type(JsonFieldType.NUMBER).optional().description("배달 요금"),
 					fieldWithPath("totalPrice").type(JsonFieldType.NUMBER).optional().description("총 요금"),
@@ -170,6 +175,7 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 상태 수정")
 	void testUpdatePurchaseStatus() throws Exception {
 		UpdatePurchaseGuestRequest request = UpdatePurchaseGuestRequest.builder()
 			.orderNumber(UUID.randomUUID())
@@ -178,11 +184,11 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 
 		doAnswer(invocation -> null).when(purchaseGuestService).updatePurchase(any(UpdatePurchaseGuestRequest.class));
 
-		mockMvc.perform(put(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.put(BASE_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
-			.andDo(document("주문 수정",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 수정 API",
 				requestFields(
 					fieldWithPath("purchaseStatus").type(JsonFieldType.STRING).optional().description("주문 상태"),
 					fieldWithPath("orderNumber").type(JsonFieldType.STRING).optional().description("주문 order-number"),
@@ -192,15 +198,16 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 상태 실패")
 	void testUpdatePurchaseStatus_Invalid() throws Exception {
 		UpdatePurchaseGuestRequest request = UpdatePurchaseGuestRequest.builder().build();
 		// Fill the request object with invalid data to trigger validation errors
 
-		mockMvc.perform(put(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.put(BASE_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest())
-			.andDo(document("주문 수정 실패",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 수정 실패",
 				requestFields(
 					fieldWithPath("purchaseStatus").type(JsonFieldType.STRING).optional().description("주문 상태"),
 					fieldWithPath("orderNumber").type(JsonFieldType.STRING).optional().description("주문 order-number"),
@@ -211,16 +218,17 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 삭제")
 	void testDeletePurchases() throws Exception {
 		ReadDeletePurchaseGuestRequest request = new ReadDeletePurchaseGuestRequest(UUID.randomUUID(), "password");
 
 		doNothing().when(purchaseGuestService).deletePurchase(any(UUID.class), any(String.class));
 
-		mockMvc.perform(delete(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isNoContent())
-			.andDo(document("주문 삭제",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 삭제 API",
 				requestFields(
 					fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("주문 order-number"),
 					fieldWithPath("password").type(JsonFieldType.STRING).description("비회원 주문 비밀번호")
@@ -230,13 +238,15 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 삭제 실패")
 	void testDeletePurchases_Invalid() throws Exception {
 		ReadDeletePurchaseGuestRequest request = new ReadDeletePurchaseGuestRequest(UUID.randomUUID(), "");
 
-		mockMvc.perform(delete(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
-			.andExpect(status().isBadRequest()).andDo(document("주문 삭제 실패",
+			.andExpect(status().isBadRequest())
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 삭제 실패",
 				requestFields(
 					fieldWithPath("orderNumber").type(JsonFieldType.STRING).optional().description("주문 order-number"),
 					fieldWithPath("password").type(JsonFieldType.STRING).optional().description("비회원 주문 비밀번호")
@@ -246,18 +256,19 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 인증")
 	void testValidatePurchases() throws Exception {
 		UUID orderNumber = UUID.randomUUID();
 		String password = "testPassword";
 
 		when(purchaseGuestService.validateGuest(orderNumber, password)).thenReturn(true);
 
-		mockMvc.perform(get(BASE_URL + "/validate")
+		mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/validate")
 				.param("orderNumber", orderNumber.toString())
 				.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.body.data").value(true))
-			.andDo(document("비회원 주문 인증",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 인증 API",
 				queryParameters(
 					parameterWithName("orderNumber").description("주문 order-number"),
 					parameterWithName("password").description("비회원 주문 비밀번호")
@@ -266,16 +277,17 @@ class PurchaseGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 주문 인증 실패")
 	void testValidatePurchases_InvalidOrderNumber() throws Exception {
 		String invalidOrderNumber = "invalid-order-number";
 		String password = "testPassword";
 
-		mockMvc.perform(get(BASE_URL + "/validate")
+		mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/validate")
 				.param("orderNumber", invalidOrderNumber)
 				.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.body.data").value(false))
-			.andDo(document("비회원 주문 인증 실패(orderNumber가 UUID 아님)",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 인증 실패(orderNumber가 UUID 아님)",
 				queryParameters(
 					parameterWithName("orderNumber").description("주문 order-number"),
 					parameterWithName("password").description("비회원 주문 비밀번호")

@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.purchase.purchase.controller;
 
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookstore.BaseDocumentTest;
 import com.nhnacademy.bookstore.entity.purchase.enums.MemberType;
@@ -76,14 +77,14 @@ class PurchaseManagerControllerTest extends BaseDocumentTest {
 
 		when(purchaseManagerService.readPurchaseAll(any(Pageable.class))).thenReturn(pageResponse);
 
-		this.mockMvc.perform(get(BASE_URL)
+		this.mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL)
 				.param("page", "0")
 				.param("size", "10")
 				.param("sort", "createdAt"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.body.data.content").isArray())
 			.andExpect(jsonPath("$.body.data.content[0]").isNotEmpty())
-			.andDo(document("모든 주문 조회",
+			.andDo(MockMvcRestDocumentationWrapper.document("관리자 권한 모든 주문 조회 API",
 				queryParameters(
 					parameterWithName("page").description("요청한 현재 페이지"),
 					parameterWithName("size").description("한페이지당 저장되는 개수"),
@@ -156,13 +157,13 @@ class PurchaseManagerControllerTest extends BaseDocumentTest {
 
 		when(purchaseManagerService.readPurchaseAll(any(Pageable.class))).thenReturn(pageResponse);
 
-		mockMvc.perform(get(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL)
 				.param("page", "0")
 				.param("size", "10"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.body.data.content").isArray())
 			.andExpect(jsonPath("$.body.data.content[0]").isNotEmpty())
-			.andDo(document("모든 주문 조회(정렬 안됨)",
+			.andDo(MockMvcRestDocumentationWrapper.document("관리자 권한 모든 주문 조회(정렬 안됨)",
 				queryParameters(
 					parameterWithName("page").description("요청한 현재 페이지"),
 					parameterWithName("size").description("한페이지당 저장되는 개수")
@@ -233,7 +234,7 @@ class PurchaseManagerControllerTest extends BaseDocumentTest {
 				.queryParam("purchaseStatus", purchaseStatus))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.body.data").value(1L))
-			.andDo(document("주문 수정",
+			.andDo(MockMvcRestDocumentationWrapper.document("관리자 권한으로 주문 수정 API",
 				pathParameters(
 					parameterWithName("purchaseId").description("수정할 주문 orderNumber")
 				),

@@ -1,10 +1,14 @@
 package com.nhnacademy.bookstore.purchase.refund.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.bookstore.BaseDocumentTest;
-import com.nhnacademy.bookstore.purchase.refund.dto.request.CreateRefundRequest;
-import com.nhnacademy.bookstore.purchase.refund.dto.response.ReadRefundResponse;
-import com.nhnacademy.bookstore.purchase.refund.service.RefundService;
+import static org.mockito.ArgumentMatchers.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,17 +22,12 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.bookstore.BaseDocumentTest;
+import com.nhnacademy.bookstore.purchase.refund.dto.request.CreateRefundRequest;
+import com.nhnacademy.bookstore.purchase.refund.dto.response.ReadRefundResponse;
+import com.nhnacademy.bookstore.purchase.refund.service.RefundService;
 
 @WebMvcTest(RefundController.class)
 class RefundControllerTest extends BaseDocumentTest {
@@ -55,7 +54,7 @@ class RefundControllerTest extends BaseDocumentTest {
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("/bookstore/refund/{purchaseId}", purchaseId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("read-toss-order-id",
+                .andDo(MockMvcRestDocumentationWrapper.document("read-toss-order-id",
                         pathParameters(
                                 parameterWithName("purchaseId").description("Order UUID")
                         ),
@@ -78,7 +77,7 @@ class RefundControllerTest extends BaseDocumentTest {
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("/bookstore/refund/member/{purchaseId}", purchaseId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("read-toss-order-id-member",
+                .andDo(MockMvcRestDocumentationWrapper.document("read-toss-order-id-member",
                         pathParameters(
                                 parameterWithName("purchaseId").description("Purchase ID")
                         ),
@@ -107,7 +106,7 @@ class RefundControllerTest extends BaseDocumentTest {
                         .content(new ObjectMapper().writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("create-refund",
+                .andDo(MockMvcRestDocumentationWrapper.document("create-refund",
                         pathParameters(
                                 parameterWithName("orderId").description("Order ID")
                         ),
@@ -136,7 +135,7 @@ class RefundControllerTest extends BaseDocumentTest {
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("/bookstore/refund/success/{refundRecord}", refundId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("update-success-refund",
+                .andDo(MockMvcRestDocumentationWrapper.document("update-success-refund",
                         pathParameters(
                                 parameterWithName("refundRecord").description("Refund ID")
                         ),
@@ -158,7 +157,7 @@ class RefundControllerTest extends BaseDocumentTest {
         this.mockMvc.perform(RestDocumentationRequestBuilders.put("/bookstore/refund/reject/{refundRecord}", refundId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("update-reject-refund",
+                .andDo(MockMvcRestDocumentationWrapper.document("update-reject-refund",
                         pathParameters(
                                 parameterWithName("refundRecord").description("Refund ID")
                         ),
@@ -181,7 +180,7 @@ class RefundControllerTest extends BaseDocumentTest {
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("/bookstore/refund/managers/all")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("read-all-refunds",
+                .andDo(MockMvcRestDocumentationWrapper.document("read-all-refunds",
                         responseFields(
                                 fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("Result code"),
                                         fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("Success status"),
