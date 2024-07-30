@@ -9,15 +9,18 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.nhnacademy.bookstore.BaseDocumentTest;
 import com.nhnacademy.bookstore.purchase.purchasebook.dto.response.ReadBookByPurchase;
 import com.nhnacademy.bookstore.purchase.refundrecord.controller.RefundRecordGuestController;
@@ -39,17 +42,18 @@ public class RefundRecordGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("환불 시킬 물품 임시저장")
 	void testCreateRefundRecordGuestRedis() throws Exception {
 		CreateRefundRecordRedisRequest request =  CreateRefundRecordRedisRequest.builder().quantity(2).price(1000).readBookByPurchase(
 			ReadBookByPurchase.builder().build()).build();
 		when(refundRecordGuestService.createRefundRecordRedis(anyString(), anyLong(), anyInt(), anyInt(), any())).thenReturn(1L);
 
-		mockMvc.perform(post("/bookstore/refundRecord/guests/{orderNumber}/{purchaseBookId}", "order123", 1L)
+		mockMvc.perform(RestDocumentationRequestBuilders.post("/bookstore/refundRecord/guests/{orderNumber}/{purchaseBookId}", "order123", 1L)
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(request))
 				.accept("application/json"))
 			.andExpect(status().isOk())
-			.andDo(document("환불 내역 redis 생성(비회원)",
+			.andDo(MockMvcRestDocumentationWrapper.document("환불 내역 redis 생성(비회원)",
 				pathParameters(
 					parameterWithName("orderNumber").description("주문 Order-number"),
 					parameterWithName("purchaseBookId").description("주문-책 id")
@@ -75,14 +79,15 @@ public class RefundRecordGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 임시저장한 환불 시킬 물품 수정")
 	void testUpdateRefundRecordGuest() throws Exception {
 		when(refundRecordGuestService.updateRefundRecordRedis(anyString(), anyLong(), anyInt())).thenReturn(1L);
 
-		mockMvc.perform(put("/bookstore/refundRecord/guests/{orderNumber}/{purchaseBookId}", "order123", 1L)
+		mockMvc.perform(RestDocumentationRequestBuilders.put("/bookstore/refundRecord/guests/{orderNumber}/{purchaseBookId}", "order123", 1L)
 				.queryParam("quantity", "3")
 				.accept("application/json"))
 			.andExpect(status().isOk())
-			.andDo(document("환불 내역 수정 Redis(비회원)",
+			.andDo(MockMvcRestDocumentationWrapper.document("환불 내역 수정 Redis(비회원)",
 				pathParameters(
 					parameterWithName("orderNumber").description("주문 order-number"),
 					parameterWithName("purchaseBookId").description("주문-책 id")
@@ -99,13 +104,14 @@ public class RefundRecordGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 임시저장한 환불 시킬 물품 제거")
 	void testDeleteRefundRecordGuest() throws Exception {
 		when(refundRecordGuestService.deleteRefundRecordRedis(anyString(), anyLong())).thenReturn(1L);
 
-		mockMvc.perform(delete("/bookstore/refundRecord/guests/{orderNumber}/{purchaseBookId}", "order123", 1L)
+		mockMvc.perform(RestDocumentationRequestBuilders.delete("/bookstore/refundRecord/guests/{orderNumber}/{purchaseBookId}", "order123", 1L)
 				.accept("application/json"))
 			.andExpect(status().isOk())
-			.andDo(document("비회원 환불 기록 제거",
+			.andDo(MockMvcRestDocumentationWrapper.document("비회원 환불 기록 제거",
 				pathParameters(
 					parameterWithName("orderNumber").description("삭제할 주문 Order-number"),
 					parameterWithName("purchaseBookId").description("삭제할 주문-책 id")
@@ -119,13 +125,14 @@ public class RefundRecordGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 환불 시킬 물품 임시저장")
 	void testCreateRefundRecordGuest() throws Exception {
 		when(refundRecordGuestService.createRefundRecord(anyString(), anyLong())).thenReturn(true);
 
-		mockMvc.perform(post("/bookstore/refundRecord/guests/save/{orderNumber}/{refundId}", "order123", 1L)
+		mockMvc.perform(RestDocumentationRequestBuilders.post("/bookstore/refundRecord/guests/save/{orderNumber}/{refundId}", "order123", 1L)
 				.accept("application/json"))
 			.andExpect(status().isOk())
-			.andDo(document("create-refund-record-guest",
+			.andDo(MockMvcRestDocumentationWrapper.document("create-refund-record-guest",
 				pathParameters(
 					parameterWithName("orderNumber").description("주문 order-number"),
 					parameterWithName("refundId").description("환불 내역에 저장될 환불 ID")
@@ -139,14 +146,15 @@ public class RefundRecordGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 임시저장한 환불 시킬 물품 모두 수정(최대)")
 	void testUpdateRefundRecordAllMember() throws Exception {
 		when(refundRecordGuestService.updateRefundRecordAllRedis(anyString())).thenReturn(true);
 
-		mockMvc.perform(put("/bookstore/refundRecord/guests/all/{orderNumber}", "order123")
+		mockMvc.perform(RestDocumentationRequestBuilders.put("/bookstore/refundRecord/guests/all/{orderNumber}", "order123")
 				.accept("application/json"))
 			.andExpect(status().isOk())
 
-			.andDo(document("모든 주문-환불 속 환불 내역 수정(최댓값)",
+			.andDo(MockMvcRestDocumentationWrapper.document("모든 주문-환불 속 환불 내역 수정(최댓값)",
 				pathParameters(
 					parameterWithName("orderNumber").description("주문 order-number")
 				),
@@ -159,14 +167,16 @@ public class RefundRecordGuestControllerTest extends BaseDocumentTest {
 	}
 
 	@Test
+	@DisplayName("비회원 임시저장한 환불 시킬 물품 모두 수정(0)")
 	void testUpdateRefundRecordAllZeroMember() throws Exception {
 		when(refundRecordGuestService.updateRefundRecordZeroAllRedis(anyString())).thenReturn(true);
 
-		mockMvc.perform(put("/bookstore/refundRecord/guests/all/zero/{orderNumber}", "order123")
+		mockMvc.perform(
+				RestDocumentationRequestBuilders.put("/bookstore/refundRecord/guests/all/zero/{orderNumber}", "order123")
 				.accept("application/json"))
 			.andExpect(status().isOk())
 
-			.andDo(document("모든 주문-환불 속 환불 내역 수정(0)",
+			.andDo(MockMvcRestDocumentationWrapper.document("모든 주문-환불 속 환불 내역 수정(0)",
 				pathParameters(
 					parameterWithName("orderNumber").description("주문 order-number")
 				),

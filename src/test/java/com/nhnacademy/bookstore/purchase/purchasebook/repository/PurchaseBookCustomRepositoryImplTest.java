@@ -88,14 +88,14 @@ public class PurchaseBookCustomRepositoryImplTest {
 	void testReadBookPurchaseResponses() {
 		List<ReadPurchaseBookResponse> responses = purchaseBookCustomRepository.readBookPurchaseResponses(purchase.getId());
 		assertThat(responses).isNotEmpty();
-		assertThat(responses.get(0).readBookByPurchase().title()).isEqualTo("Sample Book");
+		assertThat(responses.getFirst().readBookByPurchase().title()).isEqualTo("Sample Book");
 	}
 
 	@Test
 	void testReadGuestBookPurchaseResponses() {
 		List<ReadPurchaseBookResponse> responses = purchaseBookCustomRepository.readGuestBookPurchaseResponses(purchase.getOrderNumber().toString());
 		assertThat(responses).isNotEmpty();
-		assertThat(responses.get(0).readBookByPurchase().title()).isEqualTo("Sample Book");
+		assertThat(responses.getFirst().readBookByPurchase().title()).isEqualTo("Sample Book");
 	}
 
 	@Test

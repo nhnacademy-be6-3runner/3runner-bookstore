@@ -1,21 +1,17 @@
 package com.nhnacademy.bookstore.purchase.purchase.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.bookstore.BaseDocumentTest;
-import com.nhnacademy.bookstore.entity.purchase.enums.MemberType;
-import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
-import com.nhnacademy.bookstore.purchase.purchase.dto.request.CreatePurchaseRequest;
-import com.nhnacademy.bookstore.purchase.purchase.dto.request.UpdatePurchaseMemberRequest;
-import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
-import com.nhnacademy.bookstore.purchase.purchase.exception.PurchaseFormArgumentErrorException;
-import com.nhnacademy.bookstore.purchase.purchase.service.PurchaseMemberService;
-import com.nhnacademy.bookstore.member.member.service.MemberService;
-import com.nhnacademy.bookstore.util.ApiResponse;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,18 +21,16 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.bookstore.BaseDocumentTest;
+import com.nhnacademy.bookstore.entity.purchase.enums.MemberType;
+import com.nhnacademy.bookstore.entity.purchase.enums.PurchaseStatus;
+import com.nhnacademy.bookstore.member.member.service.MemberService;
+import com.nhnacademy.bookstore.purchase.purchase.dto.request.CreatePurchaseRequest;
+import com.nhnacademy.bookstore.purchase.purchase.dto.request.UpdatePurchaseMemberRequest;
+import com.nhnacademy.bookstore.purchase.purchase.dto.response.ReadPurchaseResponse;
+import com.nhnacademy.bookstore.purchase.purchase.service.PurchaseMemberService;
 
 @WebMvcTest(PurchaseMemberController.class)
 class PurchaseMemberControllerTest extends BaseDocumentTest {
@@ -84,7 +78,7 @@ class PurchaseMemberControllerTest extends BaseDocumentTest {
 				.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.body.data").isNotEmpty())
-			.andDo(document("주문 조회",
+			.andDo(MockMvcRestDocumentationWrapper.document("주문 조회 API",
 				pathParameters(
 					parameterWithName("purchaseId").description("조회할 주문Id")
 				),
@@ -113,11 +107,11 @@ class PurchaseMemberControllerTest extends BaseDocumentTest {
 
 		when(memberService.getPurchasesByMemberId(memberId)).thenReturn(responses);
 
-		mockMvc.perform(get(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL)
 				.header("Member-Id", memberId))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.body.data").isArray())
-			.andDo(document("회원 주문 모두 조회",
+			.andDo(MockMvcRestDocumentationWrapper.document("회원 주문 모두 조회",
 				requestHeaders(
 					headerWithName("Member-Id").description("회원 Id")
 				),
@@ -159,12 +153,12 @@ class PurchaseMemberControllerTest extends BaseDocumentTest {
 		doAnswer(invocation -> null).when(purchaseMemberService)
 			.createPurchase(any(CreatePurchaseRequest.class), any(Long.class));
 
-		mockMvc.perform(post(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL)
 				.header("Member-Id", memberId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated())
-			.andDo(document("create-purchase",
+			.andDo(MockMvcRestDocumentationWrapper.document("create-purchase",
 				requestHeaders(
 					headerWithName("Member-Id").description("회원 Id")
 				),
@@ -191,7 +185,7 @@ class PurchaseMemberControllerTest extends BaseDocumentTest {
 		Long memberId = 1L;
 		CreatePurchaseRequest request = CreatePurchaseRequest.builder().build();
 
-		mockMvc.perform(post(BASE_URL)
+		mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL)
 				.header("Member-Id", memberId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
@@ -214,7 +208,7 @@ class PurchaseMemberControllerTest extends BaseDocumentTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
-			.andDo(document("주문 상태 수정(회원)",
+			.andDo(MockMvcRestDocumentationWrapper.document("주문 상태 수정(회원)",
 				pathParameters(
 					parameterWithName("purchaseId").description("업데이트할 주문 Id")
 				),
@@ -238,7 +232,7 @@ class PurchaseMemberControllerTest extends BaseDocumentTest {
 		Long purchaseId = 1L;
 		UpdatePurchaseMemberRequest request = UpdatePurchaseMemberRequest.builder().build();
 
-		mockMvc.perform(put(BASE_URL + "/{purchaseId}", purchaseId)
+		mockMvc.perform(RestDocumentationRequestBuilders.put(BASE_URL + "/{purchaseId}", purchaseId)
 				.header("Member-Id", memberId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
@@ -255,7 +249,7 @@ class PurchaseMemberControllerTest extends BaseDocumentTest {
 		mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + "/{purchaseId}", purchaseId)
 				.header("Member-Id", memberId))
 			.andExpect(status().isNoContent())
-			.andDo(document("주문 제거(회원)",
+			.andDo(MockMvcRestDocumentationWrapper.document("주문 제거(회원)",
 				pathParameters(
 					parameterWithName("purchaseId").description("삭제할 주문 Id")
 				),

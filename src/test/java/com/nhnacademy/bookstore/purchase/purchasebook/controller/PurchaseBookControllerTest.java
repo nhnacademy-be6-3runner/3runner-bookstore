@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.purchase.purchasebook.controller;
 
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.nhnacademy.bookstore.BaseDocumentTest;
 import com.nhnacademy.bookstore.purchase.purchasebook.dto.request.CreatePurchaseBookRequest;
 import com.nhnacademy.bookstore.purchase.purchasebook.dto.request.UpdatePurchaseBookRequest;
@@ -7,6 +8,7 @@ import com.nhnacademy.bookstore.purchase.purchasebook.dto.response.ReadBookByPur
 import com.nhnacademy.bookstore.purchase.purchasebook.dto.response.ReadPurchaseBookResponse;
 import com.nhnacademy.bookstore.purchase.purchasebook.service.PurchaseBookService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,7 @@ public class PurchaseBookControllerTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("회원 주문-책 조회")
     void testReadPurchaseBook() throws Exception {
         List<ReadPurchaseBookResponse> responses = Collections.singletonList(
             ReadPurchaseBookResponse.builder().id(1L).quantity(5).price(5000).readBookByPurchase(ReadBookByPurchase.builder().title("Book Title")
@@ -63,7 +66,7 @@ public class PurchaseBookControllerTest extends BaseDocumentTest {
             .andExpect(jsonPath("$.body.data[0].id").value(1L))
             .andExpect(jsonPath("$.body.data[0].readBookByPurchase.title").value("Book Title"))
             .andExpect(jsonPath("$.body.data[0].quantity").value(5)) // Fixed the expected value to match the mock response
-            .andDo(document("비회원 주문 책 조회",
+            .andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 책 조회",
                 pathParameters(
                     parameterWithName("purchaseId").description("주문 ID")
                 ),
@@ -85,6 +88,7 @@ public class PurchaseBookControllerTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("비회원 주문-책 조회")
     void testReadGuestPurchaseBook() throws Exception {
         List<ReadPurchaseBookResponse> responses = Collections.singletonList(
             ReadPurchaseBookResponse.builder().id(1L).quantity(5).price(5000).readBookByPurchase(ReadBookByPurchase.builder().title("Book Title")
@@ -99,7 +103,7 @@ public class PurchaseBookControllerTest extends BaseDocumentTest {
             .andExpect(jsonPath("$.body.data[0].id").value(1L))
             .andExpect(jsonPath("$.body.data[0].readBookByPurchase.title").value("Book Title"))
             .andExpect(jsonPath("$.body.data[0].quantity").value(5)) // Fixed the expected value to match the mock response
-            .andDo(document("비회원 주문 책 조회",
+            .andDo(MockMvcRestDocumentationWrapper.document("비회원 주문 책 조회",
                 pathParameters(
                     parameterWithName("purchaseId").description("주문 ID")
                 ),
@@ -121,6 +125,7 @@ public class PurchaseBookControllerTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("회원 주문-책 셍성")
     void testCreatePurchaseBook() throws Exception {
         CreatePurchaseBookRequest request = CreatePurchaseBookRequest.builder().purchaseId(1L).bookId(1L).quantity(2).price(10000).build();
 
@@ -132,7 +137,7 @@ public class PurchaseBookControllerTest extends BaseDocumentTest {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.body.data").value(1L))
-            .andDo(document("주문 책 생성",
+            .andDo(MockMvcRestDocumentationWrapper.document("주문 책 생성",
                 requestFields(
                     fieldWithPath("purchaseId").type(JsonFieldType.NUMBER).description("주문 ID"),
                     fieldWithPath("bookId").type(JsonFieldType.NUMBER).description("책 ID"),
@@ -148,11 +153,12 @@ public class PurchaseBookControllerTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("주문-책 제거")
     void testDeletePurchaseBook() throws Exception {
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/bookstore/purchases/books/{purchaseBookId}", 1L)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk()) // Updated to match the correct status for a successful delete
-            .andDo(document("주문 책 제거",
+            .andDo(MockMvcRestDocumentationWrapper.document("주문 책 제거",
                 pathParameters(
                     parameterWithName("purchaseBookId").description("삭제할 주문 책 ID")
                 )
@@ -160,6 +166,7 @@ public class PurchaseBookControllerTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("주문-책 상태 수정")
     void testUpdatePurchaseBook() throws Exception {
         UpdatePurchaseBookRequest request = UpdatePurchaseBookRequest.builder().bookId( 1L).purchaseId(1L).quantity(3).price(10000).build();
 
@@ -171,7 +178,7 @@ public class PurchaseBookControllerTest extends BaseDocumentTest {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.body.data").value(1L))
-            .andDo(document("주문 책 수정",
+            .andDo(MockMvcRestDocumentationWrapper.document("주문 책 수정",
                 requestFields(
                     fieldWithPath("purchaseId").type(JsonFieldType.NUMBER).description("주문 ID"),
                     fieldWithPath("bookId").type(JsonFieldType.NUMBER).description("책 ID"),
