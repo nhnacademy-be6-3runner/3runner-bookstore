@@ -35,6 +35,7 @@ public interface CouponMemberService {
      */
     void issueBirthdayCoupon(Long memberId);
 
+
     /**
      * 웰컴쿠폰 발급.
      *

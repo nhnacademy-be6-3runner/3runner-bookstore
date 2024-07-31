@@ -29,17 +29,26 @@ public class CouponAdminServiceImpl implements CouponAdminService {
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ReadCouponTypeResponse> readTypes() {
         return couponControllerClient.readAllTypes().getBody().getData();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ReadCouponUsageResponse> readUsages() {
         return couponControllerClient.readAllUsages().getBody().getData();
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long createCoupon(CreateCouponFormRequest createCouponFormRequest, Long memberId) {
         Long couponFormId = couponControllerClient.createCouponForm(createCouponFormRequest).getBody().getData();

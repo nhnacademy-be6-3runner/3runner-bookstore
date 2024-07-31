@@ -40,10 +40,7 @@ public class PurchaseBookServiceImpl implements PurchaseBookService {
 
 
 	/**
-	 * 주문으로 해당 주문의 책들을 조회
-	 *
-	 * @param purchaseId 주문 id
-	 * @return 해당 주문의 책 리스트를 반환
+	 * {@inheritDoc}
 	 */
 	@Override
 	public List<ReadPurchaseBookResponse> readBookByPurchaseResponses(Long purchaseId, Long memberId) {
@@ -58,6 +55,9 @@ public class PurchaseBookServiceImpl implements PurchaseBookService {
 		return  purchaseBookCustomRepository.readBookPurchaseResponses(purchaseId);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<ReadPurchaseBookResponse> readGuestBookByPurchaseResponses(String purchaseId) {
 
@@ -65,10 +65,7 @@ public class PurchaseBookServiceImpl implements PurchaseBookService {
 	}
 
 	/**
-	 * bookId와 purchaseId로 수정한 주문-책을 조회한후 update
-	 *
-	 * @param updatePurchaseBookRequest bookId와 purchaseId,수정사항이 있는 requestDto
-	 * @return 수정한 주문-책 Id
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Long updatePurchaseBook(UpdatePurchaseBookRequest updatePurchaseBookRequest) {
@@ -84,10 +81,7 @@ public class PurchaseBookServiceImpl implements PurchaseBookService {
 	}
 
 	/**
-	 * 주문-책 생성, 책id로 책을 조회하고,주문id로 주문을 조회한다음 추가적인 사항 추가하여 생성
-	 *
-	 * @param createPurchaseBookRequest bookId와 purchaseId, 추가 사항이있는 requestDto
-	 * @return 생성한 id 반환
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Long createPurchaseBook(CreatePurchaseBookRequest createPurchaseBookRequest) {
@@ -96,18 +90,16 @@ public class PurchaseBookServiceImpl implements PurchaseBookService {
 
 
 		PurchaseBook purchaseBook = new PurchaseBook(
-			book
-			, createPurchaseBookRequest.quantity()
-			, price
-			, purchaseRepository.findById(createPurchaseBookRequest.purchaseId()).orElseThrow(NotExistsPurchase::new));
+			book,
+			createPurchaseBookRequest.quantity(),
+			price,
+			purchaseRepository.findById(createPurchaseBookRequest.purchaseId()).orElseThrow(NotExistsPurchase::new));
 
 		return purchaseBookRepository.save(purchaseBook).getId();
 	}
 
 	/**
-	 * 주문-책 삭제
-	 *
-	 * @param purchaseBookId 삭제할 주문-책id requestDto
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void deletePurchaseBook(long purchaseBookId) {

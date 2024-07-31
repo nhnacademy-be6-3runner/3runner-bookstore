@@ -35,6 +35,9 @@ public class RefundRecordMemberServiceImpl implements RefundRecordMemberService 
 	private final RefundRepository refundRepository;
 	private final PurchaseBookCustomRepository purchaseBookCustomRepository;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long createRefundRecordRedis(Long orderNumber, Long purchaseBookId, int price, int quantity,
 		ReadBookByPurchase readBookByPurchase) {
@@ -50,6 +53,9 @@ public class RefundRecordMemberServiceImpl implements RefundRecordMemberService 
 		return refundRecordRedisRepository.create("Refund_member " + orderNumber, purchaseBookId, readRefundRecordResponse);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long createRefundRecordAllRedis(Long orderNumber) {
 		if (refundRecordRedisRepository.isHit("Refund_member " + orderNumber)) {
@@ -64,6 +70,9 @@ public class RefundRecordMemberServiceImpl implements RefundRecordMemberService 
 		return orderNumber;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long updateRefundRecordRedis(Long orderNumber, Long purchaseBookId, int quantity) {
 		ReadPurchaseBookResponse purchaseBook = purchaseBookCustomRepository.readPurchaseBookResponse(
@@ -79,6 +88,9 @@ public class RefundRecordMemberServiceImpl implements RefundRecordMemberService 
 			purchaseBook.price() / purchaseBook.quantity());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long updateRefundRecordAllRedis(Long orderNumber) {
 		if (!refundRecordRedisRepository.isHit("Refund_member " + orderNumber)) {
@@ -101,6 +113,9 @@ public class RefundRecordMemberServiceImpl implements RefundRecordMemberService 
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long updateRefundRecordZeroAllRedis(Long orderNumber) {
 		if (!refundRecordRedisRepository.isHit("Refund_member " + orderNumber)) {
@@ -120,6 +135,9 @@ public class RefundRecordMemberServiceImpl implements RefundRecordMemberService 
 		return orderNumber;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long deleteRefundRecordRedis(Long orderNumber, Long purchaseBookId) {
 		if (!refundRecordRedisRepository.isHit("Refund_member " + orderNumber)) {
@@ -128,6 +146,9 @@ public class RefundRecordMemberServiceImpl implements RefundRecordMemberService 
 		return refundRecordRedisRepository.delete("Refund_member " + orderNumber, purchaseBookId);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<ReadRefundRecordResponse> readRefundRecordRedis(Long orderNumber) {
 		if (!refundRecordRedisRepository.isHit("Refund_member " + orderNumber)) {
@@ -137,6 +158,9 @@ public class RefundRecordMemberServiceImpl implements RefundRecordMemberService 
 		return refundRecordRedisRepository.readAll("Refund_member " + orderNumber);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Boolean createRefundRecord(Long orderNumber, Long refundId) {
 		if (!refundRecordRedisRepository.isHit("Refund_member " + orderNumber)) {

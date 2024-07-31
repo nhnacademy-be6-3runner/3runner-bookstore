@@ -30,6 +30,9 @@ public class MemberMessageServiceImpl implements MemberMessageService {
     private final MemberMessageRepository memberMessageRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long createMessage(MemberMessage memberMessage) {
         memberMessageRepository.save(memberMessage);
@@ -37,6 +40,9 @@ public class MemberMessageServiceImpl implements MemberMessageService {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<ReadMemberMessageResponse> readAll(Long memberId, int page, int size) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
@@ -53,6 +59,9 @@ public class MemberMessageServiceImpl implements MemberMessageService {
                 );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long countUnreadMessage(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
@@ -60,6 +69,9 @@ public class MemberMessageServiceImpl implements MemberMessageService {
         return memberMessageRepository.countByViewAtIsNull(member);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void readAlarm(Long memberMessageId) {
         MemberMessage memberMessage = memberMessageRepository

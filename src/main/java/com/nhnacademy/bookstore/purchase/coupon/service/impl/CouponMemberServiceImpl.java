@@ -37,6 +37,9 @@ public class CouponMemberServiceImpl implements CouponMemberService {
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ReadCouponFormResponse> readMemberCoupons(Long memberId) {
         Member member = memberRepository
@@ -57,6 +60,9 @@ public class CouponMemberServiceImpl implements CouponMemberService {
                 .getData();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long useCoupons(Long couponFormId, Long memberId) {
         Coupon coupon = couponRepository
@@ -72,6 +78,9 @@ public class CouponMemberServiceImpl implements CouponMemberService {
         return couponFormId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void issueBirthdayCoupon(Long memberId) {
@@ -106,10 +115,9 @@ public class CouponMemberServiceImpl implements CouponMemberService {
         }
     }
 
+
     /**
-     * 웰컴 쿠폰 발급 메소드.
-     *
-     * @param member 맴버
+     * {@inheritDoc}
      */
     @Override
     public void issueWelcomeCoupon(Member member) {
@@ -136,12 +144,18 @@ public class CouponMemberServiceImpl implements CouponMemberService {
         couponRepository.save(coupon);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long readCoupon(Long couponFormId) {
         Coupon coupon = couponRepository.findCouponByCouponFormId(couponFormId).orElseThrow(()->new CouponDoesNotExistException(couponFormId+" 해당 쿠폰 폼 아이디가 없습니다."));
         return coupon.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long registorCoupon(String code, Long memberId) {
         List<ReadCouponFormResponse> responses = couponControllerClient.readAllCouponForms().getBody().getData();
@@ -166,6 +180,9 @@ public class CouponMemberServiceImpl implements CouponMemberService {
         return coupon.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean registorCouponForBook(Long bookId, Long memberId) {
         List<ReadCouponFormResponse> responses = couponControllerClient.readAllCouponForms().getBody().getData();

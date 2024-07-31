@@ -28,11 +28,9 @@ public class CouponCustomRepositoryImpl implements CouponCustomRepository {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
+
     /**
-     * 쿠폰폼아이디에 해당하는 맴버아이디 읽기.
-     *
-     * @param couponFormIds 쿠폰폼아이디 리스트
-     * @return 쿠폰 dto 리스트
+     * {@inheritDoc}
      */
     @Override
     public List<CouponResponse> findMemberIdsByCouponFormIds(List<Long> couponFormIds) {

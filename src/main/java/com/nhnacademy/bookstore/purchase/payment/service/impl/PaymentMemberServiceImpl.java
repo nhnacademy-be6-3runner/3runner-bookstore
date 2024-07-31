@@ -44,6 +44,9 @@ public class PaymentMemberServiceImpl implements PaymentMemberService {
     private final BookRepository bookRepository;
     private final PointPolicyRepository pointPolicyRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long payment(CreatePaymentMemberRequest createPaymentMemberRequest) {
         PointPolicy pointPolicy = pointPolicyRepository

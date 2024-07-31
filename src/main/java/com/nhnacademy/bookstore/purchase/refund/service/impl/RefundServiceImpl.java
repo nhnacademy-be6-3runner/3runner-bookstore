@@ -60,6 +60,9 @@ public class RefundServiceImpl implements RefundService {
 	private final BookRepository bookRepository;
 	private final CouponRepository couponRepository;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String readTossOrderId(String orderId) {
 		Purchase purchase = purchaseRepository.findPurchaseByOrderNumber(UUID.fromString(orderId))
@@ -68,6 +71,9 @@ public class RefundServiceImpl implements RefundService {
 		return payment.getTossOrderId();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String readTossOrderID(Long purchaseId) {
 		Purchase purchase = purchaseRepository.findById(purchaseId)
@@ -76,6 +82,9 @@ public class RefundServiceImpl implements RefundService {
 		return payment.getTossOrderId();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long createRefund(Long orderId, String refundContent, Integer price, Long memberId) {
 
@@ -97,6 +106,9 @@ public class RefundServiceImpl implements RefundService {
 		return refund.getId();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Boolean updateSuccessRefund(Long refundId) {
 
@@ -159,6 +171,9 @@ public class RefundServiceImpl implements RefundService {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Boolean updateRefundRejected(Long refundId) {
 		Refund refund = refundRepository.findById(refundId).orElse(null);
@@ -177,11 +192,17 @@ public class RefundServiceImpl implements RefundService {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<ReadRefundResponse> readRefundListAll() {
 		return refundCustomRepository.readRefundAll();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long createRefundCancelPartPayment(Long memberId, Object orderNumber, Integer price) {
 

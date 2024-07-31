@@ -19,16 +19,18 @@ import jakarta.persistence.EntityManager;
 @Repository
 public class RefundCustomRepositoryImpl implements RefundCustomRepository {
 	private final JPAQueryFactory jpaQueryFactory;
-	private final QRefund qRefund = QRefund.refund;
-	private final QRefundRecord qRefundRecord = QRefundRecord.refundRecord;
-	private final QPurchaseBook qPurchaseBook = QPurchaseBook.purchaseBook;
-	private final QPurchase qPurchase = QPurchase.purchase;
+	private static final QRefund qRefund = QRefund.refund;
+	private static final QRefundRecord qRefundRecord = QRefundRecord.refundRecord;
+	private static final QPurchaseBook qPurchaseBook = QPurchaseBook.purchaseBook;
+	private static final QPurchase qPurchase = QPurchase.purchase;
 
 	public RefundCustomRepositoryImpl(EntityManager entityManager) {
 		this.jpaQueryFactory = new JPAQueryFactory(entityManager);
 	}
 
-
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<ReadRefundResponse> readRefundAll() {
 		QRefundRecord subRefundRecord = new QRefundRecord("subRefundRecord");
 

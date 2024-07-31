@@ -34,11 +34,9 @@ public class PurchaseGuestServiceImpl implements PurchaseGuestService {
 	private final PurchaseRepository purchaseRepository;
 	private final PasswordEncoder encoder;
 
+
 	/**
-	 * 비회원 주문 생성
-	 *
-	 * @param createPurchaseRequest 생성 폼
-	 * @return 주문아이디
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Long createPurchase(CreatePurchaseRequest createPurchaseRequest) {
@@ -66,10 +64,7 @@ public class PurchaseGuestServiceImpl implements PurchaseGuestService {
 	}
 
 	/**
-	 * 비회원 주문 업데이트.
-	 *
-	 * @param updatePurchaseGuestRequest 업데이트 폼
-	 * @return 주문아이디
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Long updatePurchase(UpdatePurchaseGuestRequest updatePurchaseGuestRequest) {
@@ -84,13 +79,8 @@ public class PurchaseGuestServiceImpl implements PurchaseGuestService {
 	}
 
 	/**
-	 * 비회원 주문 조회
-	 *
-	 * @param orderNumber 주문번호
-	 * @param password 주문 비밀번호
-	 * @return 비회원 주문
+	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("checkstyle:WhitespaceAround")
 	@Override
 	public ReadPurchaseResponse readPurchase(UUID orderNumber, String password) {
 		if (Boolean.FALSE.equals(validateGuest(orderNumber, password))) {
@@ -116,10 +106,7 @@ public class PurchaseGuestServiceImpl implements PurchaseGuestService {
 	}
 
 	/**
-	 * 비회원 주문 삭제.
-	 *
-	 * @param orderNumber 주문번호
-	 * @param password 주문 비밀번호
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void deletePurchase(UUID orderNumber, String password) {
@@ -148,13 +135,7 @@ public class PurchaseGuestServiceImpl implements PurchaseGuestService {
 	}
 
 	/**
-	 * 비회원 주문 인증
-	 *
-	 * @author 정주혁
-	 *
-	 * @param orderNumber 주문
-	 * @param password 비밀 번호
-	 * @return 인증->완 boolean 불가-> false
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Boolean validateGuest(UUID orderNumber, String password) {
