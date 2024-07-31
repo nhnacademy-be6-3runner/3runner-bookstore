@@ -1,8 +1,11 @@
 package com.nhnacademy.bookstore.book.book.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nhnacademy.bookstore.book.book.service.ApiBookService;
@@ -24,13 +27,17 @@ public class ApiBookController {
 
 	private final ApiBookService apiBookService;
 
+	/**
+	 * 알라딘 API 로 책을 추가하는 메소드.
+	 *
+	 * @param isbnId 추가할 책의 isbn
+	 * @return 결과
+	 */
 	@GetMapping(value = "/{isbnId}")
+	@ResponseStatus(HttpStatus.CREATED)
 	public ApiResponse<Void> books(@PathVariable String isbnId) {
-		log.info("API books in");
-
 		apiBookService.save(isbnId);
-
-		return new ApiResponse<>(new ApiResponse.Header(true, 201));
+		return ApiResponse.success(null);
 	}
 
 }

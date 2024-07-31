@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.book.book.service;
 
+import com.nhnacademy.bookstore.book.book.dto.response.UserReadBookResponse;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -30,7 +31,7 @@ public interface BookService {
 	 * @param bookId book entity id param
 	 * @return Book
 	 */
-	public ReadBookResponse readBookById(Long bookId);
+	UserReadBookResponse readBookById(Long bookId);
 
 	void updateBook(Long bookId, CreateBookRequest createBookRequest);
 

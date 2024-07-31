@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nhnacademy.bookstore.book.book.dto.request.CreateBookRequest;
@@ -58,9 +60,10 @@ public class BookController {
 	 *
 	 * @param createBookRequest request form
 	 * @param bindingResult     binding result
-	 * @return ApiResponse<>
+	 * @return ApiResponse 성공 값
 	 */
 	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
 	public ApiResponse<Void> createBook(@Valid @RequestBody CreateBookRequest createBookRequest,
 		BindingResult bindingResult) {
 		ValidationUtils.validateBindingResult(bindingResult,
@@ -68,7 +71,7 @@ public class BookController {
 
 		bookService.createBook(createBookRequest);
 
-		return new ApiResponse<>(new ApiResponse.Header(true, 201));
+		return ApiResponse.createSuccess(null);
 	}
 
 	/**
@@ -108,32 +111,8 @@ public class BookController {
 	 */
 	@GetMapping("/{bookId}")
 	public ApiResponse<UserReadBookResponse> readBook(@PathVariable("bookId") Long bookId) {
-		ReadBookResponse detailBook = bookService.readBookById(bookId);
-		List<CategoryParentWithChildrenResponse> categoryList = bookCategoryService.readBookWithCategoryList(bookId);
-
-		List<ReadTagByBookResponse> tagList =
-			bookTagService.readTagByBookId(
-				ReadBookIdRequest.builder().bookId(bookId).build());
-
-		UserReadBookResponse book = UserReadBookResponse.builder()
-			.id(detailBook.id())
-			.title(detailBook.title())
-			.description(detailBook.description())
-			.publishedDate(detailBook.publishedDate())
-			.price(detailBook.price())
-			.quantity(detailBook.quantity())
-			.sellingPrice(detailBook.sellingPrice())
-			.viewCount(detailBook.viewCount())
-			.packing(detailBook.packing())
-			.author(detailBook.author())
-			.isbn(detailBook.isbn())
-			.publisher(detailBook.publisher())
-			.imagePath(detailBook.imagePath())
-			.categoryList(categoryList)
-			.tagList(tagList)
-			.build();
-		bookService.addView(bookId);
-		return ApiResponse.success(book);
+		UserReadBookResponse detailBook = bookService.readBookById(bookId);
+		return ApiResponse.success(detailBook);
 	}
 
 	/**
@@ -163,6 +142,7 @@ public class BookController {
 	 * @return 삭제
 	 */
 	@DeleteMapping("/{bookId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ApiResponse<Void> deleteBook(@PathVariable Long bookId) {
 		bookService.deleteBook(bookId);
 
@@ -193,10 +173,8 @@ public class BookController {
 		@RequestParam(defaultValue = "10") int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		Page<BookManagementResponse> bookList = bookService.readAllAdminBooks(pageable);
-		return new ApiResponse<>(
-			new ApiResponse.Header(true, 200),
-			new ApiResponse.Body<>(bookList)
-		);
+
+		return ApiResponse.success(bookList);
 	}
 
 }

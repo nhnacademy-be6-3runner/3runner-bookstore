@@ -19,8 +19,7 @@ public class BookCategoryController {
 
     @GetMapping
     public ApiResponse<List<CategoryParentWithChildrenResponse>> readCategories(
-            @PathVariable Long bookId
-    ) {
+            @PathVariable Long bookId) {
         return ApiResponse.success(bookCategoryService.readBookWithCategoryList(bookId));
     }
 }

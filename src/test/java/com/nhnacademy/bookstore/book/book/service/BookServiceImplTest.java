@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import com.nhnacademy.bookstore.book.book.dto.response.UserReadBookResponse;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -121,7 +122,7 @@ class BookServiceImplTest {
 
 		when(bookRepository.readDetailBook(anyLong())).thenReturn(readBookResponse);
 
-		ReadBookResponse foundBook = bookService.readBookById(1L);
+		UserReadBookResponse foundBook = bookService.readBookById(1L);
 
 		assertEquals(readBookResponse.id(), foundBook.id());
 	}

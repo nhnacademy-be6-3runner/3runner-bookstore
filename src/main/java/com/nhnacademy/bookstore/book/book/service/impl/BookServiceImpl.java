@@ -1,5 +1,9 @@
 package com.nhnacademy.bookstore.book.book.service.impl;
 
+import com.nhnacademy.bookstore.book.book.dto.response.UserReadBookResponse;
+import com.nhnacademy.bookstore.book.booktag.dto.request.ReadBookIdRequest;
+import com.nhnacademy.bookstore.book.booktag.dto.response.ReadTagByBookResponse;
+import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -93,11 +97,35 @@ public class BookServiceImpl implements BookService {
 	 * @author 한민기
 	 */
 	@Override
-	public ReadBookResponse readBookById(Long bookId) {
-		ReadBookResponse book = bookRepository.readDetailBook(bookId);
-		if (Objects.isNull(book)) {
+	@Transactional
+	public UserReadBookResponse readBookById(Long bookId) {
+		ReadBookResponse detailBook = bookRepository.readDetailBook(bookId);
+		if (Objects.isNull(detailBook)) {
 			throw new BookDoesNotExistException("요청하신 책이 존재하지 않습니다.");
 		}
+		List<CategoryParentWithChildrenResponse> categoryList = bookCategoryService.readBookWithCategoryList(bookId);
+
+		List<ReadTagByBookResponse> tagList =
+			bookTagService.readTagByBookId(
+				ReadBookIdRequest.builder().bookId(bookId).build());
+		UserReadBookResponse book = UserReadBookResponse.builder()
+			.id(detailBook.id())
+			.title(detailBook.title())
+			.description(detailBook.description())
+			.publishedDate(detailBook.publishedDate())
+			.price(detailBook.price())
+			.quantity(detailBook.quantity())
+			.sellingPrice(detailBook.sellingPrice())
+			.viewCount(detailBook.viewCount())
+			.packing(detailBook.packing())
+			.author(detailBook.author())
+			.isbn(detailBook.isbn())
+			.publisher(detailBook.publisher())
+			.imagePath(detailBook.imagePath())
+			.categoryList(categoryList)
+			.tagList(tagList)
+			.build();
+		bookRepository.viewBook(bookId);
 		return book;
 	}
 
@@ -170,6 +198,7 @@ public class BookServiceImpl implements BookService {
 	 * @author 한민기
 	 */
 	@Override
+	@Transactional
 	public void deleteBook(Long bookId) {
 		bookRepository.deleteById(bookId);
 		bookRedisRepository.deleteBook(bookId);
@@ -205,6 +234,7 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
+	@Transactional
 	public void addView(Long bookId) {
 		Book book = bookRepository.findById(bookId)
 			.orElseThrow(() -> new BookDoesNotExistException("요청하신 책이 존재하지 않습니다."));
