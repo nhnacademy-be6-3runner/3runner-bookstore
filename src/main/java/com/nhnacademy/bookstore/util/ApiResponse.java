@@ -65,6 +65,12 @@ public class ApiResponse<T> {
         );
     }
 
+    public static <T> ApiResponse<T> createSuccess() {
+        return new ApiResponse<>(
+            new Header(true, HttpStatus.CREATED.value())
+        );
+    }
+
 
 
     public static <T> ApiResponse<T> fail(int errorCode, Body<T> body) {

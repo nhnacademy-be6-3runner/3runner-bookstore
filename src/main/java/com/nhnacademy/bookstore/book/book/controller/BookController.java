@@ -23,16 +23,10 @@ import com.nhnacademy.bookstore.book.book.dto.request.CreateBookRequest;
 import com.nhnacademy.bookstore.book.book.dto.response.BookForCouponResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.BookManagementResponse;
-import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.UserReadBookResponse;
 import com.nhnacademy.bookstore.book.book.exception.CreateBookRequestFormException;
 import com.nhnacademy.bookstore.book.book.exception.UpdateBookRequestFormException;
 import com.nhnacademy.bookstore.book.book.service.BookService;
-import com.nhnacademy.bookstore.book.bookcategory.service.BookCategoryService;
-import com.nhnacademy.bookstore.book.booktag.dto.request.ReadBookIdRequest;
-import com.nhnacademy.bookstore.book.booktag.dto.response.ReadTagByBookResponse;
-import com.nhnacademy.bookstore.book.booktag.service.BookTagService;
-import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
 import com.nhnacademy.bookstore.util.ApiResponse;
 import com.nhnacademy.bookstore.util.ValidationUtils;
 
@@ -52,8 +46,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BookController {
 	private final BookService bookService;
-	private final BookTagService bookTagService;
-	private final BookCategoryService bookCategoryService;
 
 	/**
 	 * 책 등록 요청 처리.
@@ -71,7 +63,7 @@ public class BookController {
 
 		bookService.createBook(createBookRequest);
 
-		return ApiResponse.createSuccess(null);
+		return ApiResponse.createSuccess();
 	}
 
 	/**

@@ -10,7 +10,6 @@ import com.nhnacademy.bookstore.book.book.dto.request.CreateBookRequest;
 import com.nhnacademy.bookstore.book.book.dto.response.BookForCouponResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.BookManagementResponse;
-import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
 
 /**
  * 책 테이블 CRUD 서비스.
