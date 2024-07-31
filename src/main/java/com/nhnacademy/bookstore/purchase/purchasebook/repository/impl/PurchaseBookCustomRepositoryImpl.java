@@ -27,34 +27,31 @@ import jakarta.persistence.EntityManager;
 @Repository
 public class PurchaseBookCustomRepositoryImpl implements PurchaseBookCustomRepository {
 	private final JPAQueryFactory jpaQueryFactory;
-	private final QPurchaseBook qPurchaseBook = QPurchaseBook.purchaseBook;
-	private final QBook qBook = QBook.book;
-	private final QPurchase qPurchase = QPurchase.purchase;
-	private final QTotalImage qTotalImage = QTotalImage.totalImage;
-	private final QBookImage qBookImage = QBookImage.bookImage;
+	private static final  QPurchaseBook qPurchaseBook = QPurchaseBook.purchaseBook;
+	private static final QBook qBook = QBook.book;
+	private static final QPurchase qPurchase = QPurchase.purchase;
+	private static final QTotalImage qTotalImage = QTotalImage.totalImage;
+	private static final QBookImage qBookImage = QBookImage.bookImage;
 
 	public PurchaseBookCustomRepositoryImpl(EntityManager entityManager) {
 		this.jpaQueryFactory = new JPAQueryFactory(entityManager);
 	}
 
 	/**
-	 * 주문 id(PurchaseID(Long)) 로 주문 책 dto로 변환해서 불러오기 (FetchJoin)
-	 *
-	 * @param purchaseId 조회할 주문 id
-	 * @return Page<ReadPurchaseBookResponse>(책dto와 주문 dto가 결합된 값)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public List<ReadPurchaseBookResponse> readBookPurchaseResponses(Long purchaseId) {
 		return jpaQueryFactory.select(
 				Projections.constructor(ReadPurchaseBookResponse.class,
 					Projections.constructor(ReadBookByPurchase.class,
-						qPurchaseBook.book.title
-						, qPurchaseBook.book.price
-						, qPurchaseBook.book.author
-						, qPurchaseBook.book.sellingPrice
-						, qPurchaseBook.book.packing
-						, qPurchaseBook.book.publisher
-						, qTotalImage.url),
+						qPurchaseBook.book.title,
+						qPurchaseBook.book.price,
+						qPurchaseBook.book.author,
+						qPurchaseBook.book.sellingPrice,
+						qPurchaseBook.book.packing,
+						qPurchaseBook.book.publisher,
+						qTotalImage.url),
 					qPurchaseBook.id,
 					qPurchaseBook.quantity,
 					qPurchaseBook.price
@@ -71,23 +68,20 @@ public class PurchaseBookCustomRepositoryImpl implements PurchaseBookCustomRepos
 	}
 
 	/**
-	 * 주문 id(orderNumber(UUID)) 로 주문 책 dto로 변환해서 불러오기(FetchJoin)
-	 *
-	 * @param purchaseId 조회할 주문 id
-	 * @return Page<ReadPurchaseBookResponse>(책dto와 주문 dto가 결합된 값)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public List<ReadPurchaseBookResponse> readGuestBookPurchaseResponses(String purchaseId) {
 		return jpaQueryFactory.select(
 				Projections.constructor(ReadPurchaseBookResponse.class,
 					Projections.constructor(ReadBookByPurchase.class,
-						qPurchaseBook.book.title
-						, qPurchaseBook.book.price
-						, qPurchaseBook.book.author
-						, qPurchaseBook.book.sellingPrice
-						, qPurchaseBook.book.packing
-						, qPurchaseBook.book.publisher
-						, qTotalImage.url),
+						qPurchaseBook.book.title,
+						qPurchaseBook.book.price,
+						qPurchaseBook.book.author,
+						qPurchaseBook.book.sellingPrice,
+						qPurchaseBook.book.packing,
+						qPurchaseBook.book.publisher,
+						qTotalImage.url),
 					qPurchaseBook.id,
 					qPurchaseBook.quantity,
 					qPurchaseBook.price
@@ -103,18 +97,21 @@ public class PurchaseBookCustomRepositoryImpl implements PurchaseBookCustomRepos
 			.fetch();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ReadPurchaseBookResponse readPurchaseBookResponse(Long purchaseBookId) {
 		return jpaQueryFactory.select(
 				Projections.constructor(ReadPurchaseBookResponse.class,
 					Projections.constructor(ReadBookByPurchase.class,
-						qPurchaseBook.book.title
-						, qPurchaseBook.book.price
-						, qPurchaseBook.book.author
-						, qPurchaseBook.book.sellingPrice
-						, qPurchaseBook.book.packing
-						, qPurchaseBook.book.publisher
-						, qTotalImage.url),
+						qPurchaseBook.book.title,
+						qPurchaseBook.book.price,
+						qPurchaseBook.book.author,
+						qPurchaseBook.book.sellingPrice,
+						qPurchaseBook.book.packing,
+						qPurchaseBook.book.publisher,
+						qTotalImage.url),
 					qPurchaseBook.id,
 					qPurchaseBook.quantity,
 					qPurchaseBook.price

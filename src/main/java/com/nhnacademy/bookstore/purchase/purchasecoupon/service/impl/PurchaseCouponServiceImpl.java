@@ -38,11 +38,10 @@ public class PurchaseCouponServiceImpl implements PurchaseCouponService {
     private final PurchaseCouponRepository purchaseCouponRepository;
     private final CouponControllerClient couponControllerClient;
 
+
+
     /**
-     * 주문쿠폰 찾기 로직
-     *
-     * @param purchaseId 주문아이디
-     * @return 주문쿠폰Dto 리스트
+     * {@inheritDoc}
      */
     @Override
     public List<ReadPurchaseCouponResponse> read(Long purchaseId) {
@@ -62,12 +61,7 @@ public class PurchaseCouponServiceImpl implements PurchaseCouponService {
     }
 
     /**
-     * 주문쿠폰 만들기.
-     *
-     * @param purchaseId 주문아이디
-     * @param couponFormId 쿠폰폼아이디
-     * @param discountPrice 할인가격
-     * @return 주문쿠폰 아이디
+     * {@inheritDoc}
      */
     @Override
     public Long create(Long purchaseId, Long couponFormId, int discountPrice) {
@@ -88,6 +82,9 @@ public class PurchaseCouponServiceImpl implements PurchaseCouponService {
         return purchaseCoupon.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<ReadPurchaseCouponDetailResponse> readByMemberId(Long memberId, Pageable pageable) {
         List<ReadPurchaseCouponDetailResponse> responses = new ArrayList<>();

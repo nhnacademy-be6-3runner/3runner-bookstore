@@ -21,6 +21,9 @@ import java.util.List;
 public class PointPolicyServiceImpl implements PointPolicyService {
     private final PointPolicyRepository pointPolicyRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long save(String policyName, Integer policyValue) {
         PointPolicy pointPolicy = new PointPolicy(policyName, policyValue);
@@ -28,6 +31,9 @@ public class PointPolicyServiceImpl implements PointPolicyService {
         return pointPolicy.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long update(String policyName, Integer policyValue) {
         PointPolicy pointPolicy = pointPolicyRepository
@@ -38,6 +44,9 @@ public class PointPolicyServiceImpl implements PointPolicyService {
         return pointPolicy.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<PointPolicyResponseRequest> readAll() {
         return pointPolicyRepository
@@ -48,6 +57,9 @@ public class PointPolicyServiceImpl implements PointPolicyService {
                 .toList();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PointPolicyResponseRequest read(String key) {
         PointPolicy pointPolicy = pointPolicyRepository.findByPolicyName(key).orElseThrow();

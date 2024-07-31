@@ -10,6 +10,13 @@ import java.util.List;
  * @author 김병우
  */
 public interface CouponCustomRepository {
+
+    /**
+     * 쿠폰폼아이디에 해당하는 맴버아이디 읽기.
+     *
+     * @param couponFormIds 쿠폰폼아이디 리스트
+     * @return 쿠폰 dto 리스트
+     */
     @Transactional
     List<CouponResponse> findMemberIdsByCouponFormIds(List<Long> couponFormIds);
 }

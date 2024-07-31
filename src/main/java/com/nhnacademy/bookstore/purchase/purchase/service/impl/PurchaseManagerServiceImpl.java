@@ -33,8 +33,7 @@ public class PurchaseManagerServiceImpl implements PurchaseManagerService {
 	private final PurchaseRepository purchaseRepository;
 
 	/**
-	 * 모든 주문 조회 가져오기
-	 * @return 모든 주문 list
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Page<ReadPurchaseResponse> readPurchaseAll(Pageable pageable) {
@@ -58,11 +57,7 @@ public class PurchaseManagerServiceImpl implements PurchaseManagerService {
 	}
 
 	/**
-	 * 주문 상태 업데이트
-	 *
-	 * @param purchaseId 수정할 주문
-	 * @param status 주문 상태
-	 * @return 수정된 주문 id
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Long updatePurchaseStatus(String purchaseId, String status) {

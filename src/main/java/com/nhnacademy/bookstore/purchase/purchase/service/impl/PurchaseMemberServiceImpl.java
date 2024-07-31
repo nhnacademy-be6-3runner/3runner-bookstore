@@ -35,13 +35,9 @@ public class PurchaseMemberServiceImpl implements PurchaseMemberService {
 	private final MemberService memberService;
 	private final PasswordEncoder passwordEncoder;
 
-    /**
-     * 주문 생성.
-     *
-     * @param createPurchaseRequest 주문 생성 폼
-     * @param memberId 회원 아이디
-     * @return purchaseId
-     */
+	/**
+	 * {@inheritDoc}
+	 */
     @Override
     public Long createPurchase(CreatePurchaseRequest createPurchaseRequest, Long memberId) {
 		Purchase purchase = new Purchase(
@@ -69,12 +65,7 @@ public class PurchaseMemberServiceImpl implements PurchaseMemberService {
     }
 
 	/**
-	 * 주문 상태 업데이트.
-	 *
-	 * @param updatePurchaseRequest 주문수정폼
-	 * @param memberId 맴버아이디
-	 * @param purchaseId 주문아이디
-	 * @return purchaseId
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Long updatePurchase(UpdatePurchaseMemberRequest updatePurchaseRequest, Long memberId, Long purchaseId) {
@@ -93,13 +84,9 @@ public class PurchaseMemberServiceImpl implements PurchaseMemberService {
 	}
 
 
-    /**
-     * 회원 주문 찾기.
-     *
-     * @param MemberId 맴버 아이디
-     * @param purchaseId 주문 아이디
-     * @return ReadPurchaseResponse
-     */
+	/**
+	 * {@inheritDoc}
+	 */
     @Override
     public ReadPurchaseResponse readPurchase(Long MemberId, Long purchaseId) {
         List<Purchase> purchaseList = purchaseRepository.findByMember(memberService.readById(MemberId));
@@ -124,10 +111,7 @@ public class PurchaseMemberServiceImpl implements PurchaseMemberService {
     }
 
 	/**
-	 * 회원 주문 삭제.
-	 *
-	 * @param MemberId 회원 아이디
-	 * @param purchaseId 주문 아이디
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void deletePurchase(Long MemberId, Long purchaseId) {

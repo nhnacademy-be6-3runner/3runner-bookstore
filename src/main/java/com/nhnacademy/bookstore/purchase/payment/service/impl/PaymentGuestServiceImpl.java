@@ -33,6 +33,9 @@ public class PaymentGuestServiceImpl implements PaymentGuestService {
     private final PurchaseRepository purchaseRepository;
     private final BookRepository bookRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long payment(CreatePaymentGuestRequest createPaymentGuestRequest) {
 
