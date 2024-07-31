@@ -1,11 +1,16 @@
 package com.nhnacademy.bookstore.book.book.controller;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.nhnacademy.bookstore.book.book.dto.response.UserReadBookResponse;
+import com.nhnacademy.bookstore.book.booktag.dto.response.ReadTagByBookResponse;
+import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +71,7 @@ class BookControllerTest extends BaseDocumentTest {
 				.accept(MediaType.APPLICATION_JSON)
 			)
 			.andExpect(status().isCreated())
-			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,
+			.andDo(document(snippetPath,
 				"도서 폼을 생성하는 API",
 				requestFields(
 					fieldWithPath("title").description("책 제목"),
@@ -119,7 +124,7 @@ class BookControllerTest extends BaseDocumentTest {
 				.accept(MediaType.APPLICATION_JSON)
 			)
 			.andExpect(status().isBadRequest())
-			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,
+			.andDo(document(snippetPath,
 				"도서 폼을 생성하는 API",
 				requestFields(
 					fieldWithPath("title").description("책 제목"),
@@ -147,87 +152,89 @@ class BookControllerTest extends BaseDocumentTest {
 			));
 
 	}
-	//
-	// @DisplayName("책 디테일 뷰 가져오기")
-	// @Test
-	// void readBook() throws Exception {
-	//
-	// 	CategoryParentWithChildrenResponse categoryParentWithChildrenResponse1 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(1L)
-	// 		.name("Test Category1")
-	// 		.build();
-	// 	CategoryParentWithChildrenResponse categoryParentWithChildrenResponse2 = CategoryParentWithChildrenResponse.builder()
-	// 		.id(2L)
-	// 		.name("Test Category1")
-	// 		.childrenList(List.of(categoryParentWithChildrenResponse1))
-	// 		.build();
-	//
-	// 	ReadBookResponse readBookResponse = ReadBookResponse.builder()
-	// 		.id(1L)
-	// 		.title("test Title")
-	// 		.description("Test description")
-	// 		.publishedDate(ZonedDateTime.now())
-	// 		.price(10000)
-	// 		.quantity(10)
-	// 		.sellingPrice(10000)
-	// 		.viewCount(777)
-	// 		.packing(true)
-	// 		.author("Test Author")
-	// 		.isbn("1234567890123")
-	// 		.publisher("Test Publisher")
-	// 		.imagePath("Test Image Path")
-	//
-	// 		.build();
-	//
-	// 	given(bookService.readBookById(anyLong())).willReturn(readBookResponse);
-	// 	given(bookCategoryService.readBookWithCategoryList(anyLong())).willReturn(
-	// 		List.of(categoryParentWithChildrenResponse2));
-	// 	given(bookTagService.readTagByBookId(any(ReadBookIdRequest.class))).willReturn(
-	// 		List.of(ReadTagByBookResponse.builder().id(1L).name("Test tag").build()));
-	//
-	// 	this.mockMvc.perform(RestDocumentationRequestBuilders.get("/bookstore/books/{bookId}", 1L)
-	// 			.accept(MediaType.APPLICATION_JSON)
-	// 		)
-	// 		.andExpect(status().isOk())
-	// 		.andDo(document(snippetPath,
-	// 			"아이디 통해 책을 조회하는 API",
-	// 			pathParameters(
-	// 				parameterWithName("bookId").description("책 아이디")
-	// 			),
-	// 			responseFields(
-	// 				fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
-	// 				fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-	// 				fieldWithPath("body.data.id").type(JsonFieldType.NUMBER).description("책 아이디"),
-	// 				fieldWithPath("body.data.title").type(JsonFieldType.STRING).description("책 제목"),
-	// 				fieldWithPath("body.data.description").type(JsonFieldType.STRING).description("책 설명"),
-	// 				fieldWithPath("body.data.publishedDate").type(JsonFieldType.STRING).description("출판 날짜"),
-	// 				fieldWithPath("body.data.price").type(JsonFieldType.NUMBER).description("책 가격"),
-	// 				fieldWithPath("body.data.quantity").type(JsonFieldType.NUMBER).description("수량"),
-	// 				fieldWithPath("body.data.sellingPrice").type(JsonFieldType.NUMBER).description("판매 가격"),
-	// 				fieldWithPath("body.data.viewCount").type(JsonFieldType.NUMBER).description("조회수"),
-	// 				fieldWithPath("body.data.packing").type(JsonFieldType.BOOLEAN).description("포장 여부"),
-	// 				fieldWithPath("body.data.author").type(JsonFieldType.STRING).description("저자"),
-	// 				fieldWithPath("body.data.isbn").type(JsonFieldType.STRING).description("ISBN 번호"),
-	// 				fieldWithPath("body.data.imagePath").type(JsonFieldType.STRING).description("책의 메인 이미지"),
-	// 				fieldWithPath("body.data.publisher").type(JsonFieldType.STRING).description("책의 출판사"),
-	// 				fieldWithPath("body.data.categoryList").type(JsonFieldType.ARRAY).description("카테고리 리스트"),
-	// 				fieldWithPath("body.data.categoryList[].id").type(JsonFieldType.NUMBER).description("카테고리 아이디"),
-	// 				fieldWithPath("body.data.categoryList[].name").type(JsonFieldType.STRING).description("카테고리 이름"),
-	// 				fieldWithPath("body.data.categoryList[].childrenList").type(JsonFieldType.ARRAY)
-	// 					.description("하위 카테고리 리스트"),
-	// 				fieldWithPath("body.data.categoryList[].childrenList[].id").type(JsonFieldType.NUMBER)
-	// 					.description("하위 카테고리 아이디"),
-	// 				fieldWithPath("body.data.categoryList[].childrenList[].name").type(JsonFieldType.STRING)
-	// 					.description("하위 카테고리 이름"),
-	// 				fieldWithPath("body.data.categoryList[].childrenList[].childrenList").type(JsonFieldType.NULL)
-	// 					.description("더 하위 카테고리 리스트"),
-	// 				fieldWithPath("body.data.tagList").type(JsonFieldType.ARRAY).description("태그 리스트"),
-	// 				fieldWithPath("body.data.tagList[].id").type(JsonFieldType.NUMBER).description("태그 아이디"),
-	// 				fieldWithPath("body.data.tagList[].name").type(JsonFieldType.STRING).description("태그 이름")
-	//
-	// 			)
-	// 		));
-	// }
+
+	@DisplayName("책 디테일 뷰 가져오기")
+	@Test
+	void readBook() throws Exception {
+
+		CategoryParentWithChildrenResponse categoryParentWithChildrenResponse1 = CategoryParentWithChildrenResponse.builder()
+			.id(1L)
+			.name("Test Category1")
+			.build();
+		CategoryParentWithChildrenResponse categoryParentWithChildrenResponse2 = CategoryParentWithChildrenResponse.builder()
+			.id(2L)
+			.name("Test Category1")
+			.childrenList(List.of(categoryParentWithChildrenResponse1))
+			.build();
+
+		ReadTagByBookResponse readTagByBookResponse1 = ReadTagByBookResponse.builder()
+			.id(1L)
+			.name("Test Tag1")
+			.build();
+
+		UserReadBookResponse readBookResponse = UserReadBookResponse.builder()
+			.id(1L)
+			.title("test Title")
+			.description("Test description")
+			.publishedDate(ZonedDateTime.now())
+			.price(10000)
+			.quantity(10)
+			.sellingPrice(10000)
+			.viewCount(777)
+			.packing(true)
+			.author("Test Author")
+			.isbn("1234567890123")
+			.publisher("Test Publisher")
+			.imagePath("Test Image Path")
+			.categoryList(List.of(categoryParentWithChildrenResponse2))
+			.tagList(List.of(readTagByBookResponse1))
+			.build();
+
+		given(bookService.readBookById(anyLong())).willReturn(readBookResponse);
+
+		this.mockMvc.perform(RestDocumentationRequestBuilders.get("/bookstore/books/{bookId}", 1L)
+				.accept(MediaType.APPLICATION_JSON)
+			)
+			.andExpect(status().isOk())
+			.andDo(document(snippetPath,
+				"아이디 통해 책을 조회하는 API",
+				pathParameters(
+					parameterWithName("bookId").description("책 아이디")
+				),
+				responseFields(
+					fieldWithPath("header.resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
+					fieldWithPath("header.successful").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+					fieldWithPath("body.data.id").type(JsonFieldType.NUMBER).description("책 아이디"),
+					fieldWithPath("body.data.title").type(JsonFieldType.STRING).description("책 제목"),
+					fieldWithPath("body.data.description").type(JsonFieldType.STRING).description("책 설명"),
+					fieldWithPath("body.data.publishedDate").type(JsonFieldType.STRING).description("출판 날짜"),
+					fieldWithPath("body.data.price").type(JsonFieldType.NUMBER).description("책 가격"),
+					fieldWithPath("body.data.quantity").type(JsonFieldType.NUMBER).description("수량"),
+					fieldWithPath("body.data.sellingPrice").type(JsonFieldType.NUMBER).description("판매 가격"),
+					fieldWithPath("body.data.viewCount").type(JsonFieldType.NUMBER).description("조회수"),
+					fieldWithPath("body.data.packing").type(JsonFieldType.BOOLEAN).description("포장 여부"),
+					fieldWithPath("body.data.author").type(JsonFieldType.STRING).description("저자"),
+					fieldWithPath("body.data.isbn").type(JsonFieldType.STRING).description("ISBN 번호"),
+					fieldWithPath("body.data.imagePath").type(JsonFieldType.STRING).description("책의 메인 이미지"),
+					fieldWithPath("body.data.publisher").type(JsonFieldType.STRING).description("책의 출판사"),
+					fieldWithPath("body.data.categoryList").type(JsonFieldType.ARRAY).description("카테고리 리스트"),
+					fieldWithPath("body.data.categoryList[].id").type(JsonFieldType.NUMBER).description("카테고리 아이디"),
+					fieldWithPath("body.data.categoryList[].name").type(JsonFieldType.STRING).description("카테고리 이름"),
+					fieldWithPath("body.data.categoryList[].childrenList").type(JsonFieldType.ARRAY)
+						.description("하위 카테고리 리스트"),
+					fieldWithPath("body.data.categoryList[].childrenList[].id").type(JsonFieldType.NUMBER)
+						.description("하위 카테고리 아이디"),
+					fieldWithPath("body.data.categoryList[].childrenList[].name").type(JsonFieldType.STRING)
+						.description("하위 카테고리 이름"),
+					fieldWithPath("body.data.categoryList[].childrenList[].childrenList").type(JsonFieldType.NULL)
+						.description("더 하위 카테고리 리스트"),
+					fieldWithPath("body.data.tagList").type(JsonFieldType.ARRAY).description("태그 리스트"),
+					fieldWithPath("body.data.tagList[].id").type(JsonFieldType.NUMBER).description("태그 아이디"),
+					fieldWithPath("body.data.tagList[].name").type(JsonFieldType.STRING).description("태그 이름")
+
+				)
+			));
+	}
 
 	@DisplayName("도서 페이지 전체 조회")
 	@Test
@@ -271,7 +278,7 @@ class BookControllerTest extends BaseDocumentTest {
 					.accept(MediaType.APPLICATION_JSON)
 			)
 			.andExpect(status().isOk())
-			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,
+			.andDo(document(snippetPath,
 				"도서 폼을 생성하는 API",
 				queryParameters(
 					parameterWithName("page").description("페이지 번호"),
@@ -348,7 +355,7 @@ class BookControllerTest extends BaseDocumentTest {
 				.accept(MediaType.APPLICATION_JSON)
 			)
 			.andExpect(status().isOk())
-			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,
+			.andDo(document(snippetPath,
 				"책을 업데이트하는 API",
 				pathParameters(
 					parameterWithName("bookId").description("책 아이디")
@@ -386,7 +393,7 @@ class BookControllerTest extends BaseDocumentTest {
 				.accept(MediaType.APPLICATION_JSON)
 			)
 			.andExpect(status().isNoContent())
-			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,
+			.andDo(document(snippetPath,
 				"책을 삭제하는 API",
 				pathParameters(
 					parameterWithName("bookId").description("책 아이디")
@@ -418,7 +425,7 @@ class BookControllerTest extends BaseDocumentTest {
 					.accept(MediaType.APPLICATION_JSON)
 			)
 			.andExpect(status().isOk())
-			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,
+			.andDo(document(snippetPath,
 				"쿠폰을 위한 모든 책을 조회하는 API",
 				queryParameters(
 					parameterWithName("ids").description("책 ID 리스트")
@@ -457,7 +464,7 @@ class BookControllerTest extends BaseDocumentTest {
 					.accept(MediaType.APPLICATION_JSON)
 			)
 			.andExpect(status().isOk())
-			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,
+			.andDo(document(snippetPath,
 				"관리자 페이지용 모든 책을 조회하는 API",
 				queryParameters(
 					parameterWithName("page").description("페이지 번호"),
