@@ -1,13 +1,11 @@
 package com.nhnacademy.bookstore.book.book.controller;
 
-import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,13 +28,7 @@ import com.nhnacademy.bookstore.book.book.dto.request.CreateBookRequest;
 import com.nhnacademy.bookstore.book.book.dto.response.BookForCouponResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.book.dto.response.BookManagementResponse;
-import com.nhnacademy.bookstore.book.book.dto.response.ReadBookResponse;
 import com.nhnacademy.bookstore.book.book.service.BookService;
-import com.nhnacademy.bookstore.book.bookcategory.service.BookCategoryService;
-import com.nhnacademy.bookstore.book.booktag.dto.request.ReadBookIdRequest;
-import com.nhnacademy.bookstore.book.booktag.dto.response.ReadTagByBookResponse;
-import com.nhnacademy.bookstore.book.booktag.service.BookTagService;
-import com.nhnacademy.bookstore.book.category.dto.response.CategoryParentWithChildrenResponse;
 
 @WebMvcTest(
 	//아래에 테스트 코드를 작성할 controller 클래스 정의
@@ -48,11 +40,6 @@ class BookControllerTest extends BaseDocumentTest {
 
 	@MockBean
 	private BookService bookService;
-	@MockBean
-	private BookTagService bookTagService;
-	@MockBean
-	private BookCategoryService bookCategoryService;
-
 	@DisplayName("책 만들기")
 	@Test
 	void create() throws Exception {
@@ -78,7 +65,7 @@ class BookControllerTest extends BaseDocumentTest {
 				.content(requestBody)
 				.accept(MediaType.APPLICATION_JSON)
 			)
-			.andExpect(status().isOk())
+			.andExpect(status().isCreated())
 			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,
 				"도서 폼을 생성하는 API",
 				requestFields(
@@ -398,7 +385,7 @@ class BookControllerTest extends BaseDocumentTest {
 		this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/bookstore/books/{bookId}", 1L)
 				.accept(MediaType.APPLICATION_JSON)
 			)
-			.andExpect(status().isOk())
+			.andExpect(status().isNoContent())
 			.andDo(MockMvcRestDocumentationWrapper.document(snippetPath,
 				"책을 삭제하는 API",
 				pathParameters(
