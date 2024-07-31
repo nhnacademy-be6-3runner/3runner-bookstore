@@ -27,7 +27,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 
-import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper;
 import com.nhnacademy.bookstore.BaseDocumentTest;
 import com.nhnacademy.bookstore.book.book.dto.request.CreateBookRequest;
 import com.nhnacademy.bookstore.book.book.dto.response.BookForCouponResponse;
@@ -36,7 +35,6 @@ import com.nhnacademy.bookstore.book.book.dto.response.BookManagementResponse;
 import com.nhnacademy.bookstore.book.book.service.BookService;
 
 @WebMvcTest(
-	//아래에 테스트 코드를 작성할 controller 클래스 정의
 	controllers = {
 		BookController.class
 	}

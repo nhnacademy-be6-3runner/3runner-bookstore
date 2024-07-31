@@ -93,11 +93,6 @@ public class ApiResponse<T> {
                 new Header(false, HttpStatus.FORBIDDEN.value()),body
         );
     }
-    public static <T> ApiResponse<T> serverErrorFail(Body<T> body) {
-        return new ApiResponse<>(
-                new Header(false, HttpStatus.INTERNAL_SERVER_ERROR.value()),body
-        );
-    }
 
 
 }
