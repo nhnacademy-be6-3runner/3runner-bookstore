@@ -3,6 +3,7 @@ package com.nhnacademy.bookstore.book.book.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -13,12 +14,10 @@ import java.util.Optional;
 import org.jsoup.Jsoup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nhnacademy.bookstore.book.book.dto.response.AladinItem;
@@ -39,7 +38,6 @@ import com.nhnacademy.bookstore.entity.category.Category;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
 class ApiBookServiceImplMockTest {
 
 	@Mock
@@ -65,13 +63,10 @@ class ApiBookServiceImplMockTest {
 
 	@Test
 	void testRealAuthorName1() {
-		// Given
 		String author = "Test Author 지음";
 
-		// When
 		String result = apiBookServiceImpl.realAuthorName(author);
 
-		// Then
 		assertEquals("Test Author", result.trim());
 	}
 
@@ -171,9 +166,11 @@ class ApiBookServiceImplMockTest {
 
 		List<AladinItem> items = new ArrayList<>();
 		items.add(item);
-		ApiCreateBookResponse bookResponse = new ApiCreateBookResponse("Test Title",
-			"http://www.aladin.co.kr/shop/wproduct.aspx?ISBN=334061481",
-			items);
+		ApiCreateBookResponse bookResponse = ApiCreateBookResponse.builder()
+			.title("Test Title")
+			.link("http://www.aladin.co.kr/shop/wproduct.aspx?ISBN=334061481")
+			.item(items)
+			.build();
 
 		Book book = new Book(
 			bookResponse.title().substring(bookResponse.title().indexOf("-") + 2),

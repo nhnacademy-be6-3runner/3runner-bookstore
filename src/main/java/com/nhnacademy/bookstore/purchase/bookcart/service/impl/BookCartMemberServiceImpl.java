@@ -57,20 +57,14 @@ public class BookCartMemberServiceImpl implements BookCartMemberService {
         Optional<Cart> cartOptional = cartRepository
                 .findByMemberId(readAllCartMemberRequest.userId());
 
-        Cart cart = null;
-
-        if (cartOptional.isEmpty()) {
-            cart = new Cart(memberRepository
-                    .findById(readAllCartMemberRequest.userId())
-                    .orElseThrow(MemberNotExistsException::new));
-        } else {
-            cart = cartOptional.get();
-        }
+        Cart cart = cartOptional.orElseGet(() -> new Cart(memberRepository
+			.findById(readAllCartMemberRequest.userId())
+			.orElseThrow(MemberNotExistsException::new)));
 
         cartRepository.save(cart);
         List<ReadBookCartGuestResponse> redisResponses = bookCartRedisRepository.readAllHashName("Member" + readAllCartMemberRequest.userId());
 
-        if (redisResponses.size() == 0 ) {
+        if (redisResponses.isEmpty()) {
             List<BookCart> allBookCarts = bookCartRepository.findAllByCart(cart);
             for (BookCart bookCart : allBookCarts) {
 
