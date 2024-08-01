@@ -3,6 +3,10 @@ package com.nhnacademy.bookstore.book.book.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.nhnacademy.bookstore.book.book.repository.impl.ApiBookRepositoryImpl;
+import com.nhnacademy.bookstore.book.book.repository.impl.BookRedisRepositoryImpl;
+import com.nhnacademy.bookstore.book.bookcategory.repository.impl.BookCategoryCustomRepositoryImpl;
+import com.nhnacademy.bookstore.book.category.repository.impl.CategoryCustomRepositoryImpl;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -39,7 +43,6 @@ import com.nhnacademy.bookstore.entity.category.Category;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
 class ApiBookServiceImplMockTest {
 
 	@Mock
@@ -171,9 +174,11 @@ class ApiBookServiceImplMockTest {
 
 		List<AladinItem> items = new ArrayList<>();
 		items.add(item);
-		ApiCreateBookResponse bookResponse = new ApiCreateBookResponse("Test Title",
-			"http://www.aladin.co.kr/shop/wproduct.aspx?ISBN=334061481",
-			items);
+		ApiCreateBookResponse bookResponse = ApiCreateBookResponse.builder()
+			.title("Test Title")
+			.link("http://www.aladin.co.kr/shop/wproduct.aspx?ISBN=334061481")
+			.item(items)
+			.build();
 
 		Book book = new Book(
 			bookResponse.title().substring(bookResponse.title().indexOf("-") + 2),
