@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 import com.nhnacademy.bookstore.book.book.dto.response.BookListResponse;
 import com.nhnacademy.bookstore.book.category.dto.response.BookDetailCategoryResponse;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface BookCategoryCustomRepository {
 	/**

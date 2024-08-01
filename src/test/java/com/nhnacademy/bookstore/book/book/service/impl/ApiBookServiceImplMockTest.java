@@ -3,10 +3,7 @@ package com.nhnacademy.bookstore.book.book.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.nhnacademy.bookstore.book.book.repository.impl.ApiBookRepositoryImpl;
-import com.nhnacademy.bookstore.book.book.repository.impl.BookRedisRepositoryImpl;
-import com.nhnacademy.bookstore.book.bookcategory.repository.impl.BookCategoryCustomRepositoryImpl;
-import com.nhnacademy.bookstore.book.category.repository.impl.CategoryCustomRepositoryImpl;
+
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -17,12 +14,10 @@ import java.util.Optional;
 import org.jsoup.Jsoup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nhnacademy.bookstore.book.book.dto.response.AladinItem;
@@ -68,13 +63,10 @@ class ApiBookServiceImplMockTest {
 
 	@Test
 	void testRealAuthorName1() {
-		// Given
 		String author = "Test Author 지음";
 
-		// When
 		String result = apiBookServiceImpl.realAuthorName(author);
 
-		// Then
 		assertEquals("Test Author", result.trim());
 	}
 

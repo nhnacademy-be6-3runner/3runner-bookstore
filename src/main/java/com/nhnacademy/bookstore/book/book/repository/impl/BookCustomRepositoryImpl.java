@@ -101,30 +101,24 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
 				log.info("Sorting by property: {}", property);
 				log.info("Is ascending: {}", isAscending);
 
-				switch (property) {
-					case "viewCount":
-						return new OrderSpecifier<>(
-							isAscending ? Order.ASC : Order.DESC,
-							qBook.viewCount);
-					case "likes":
-						return new OrderSpecifier<>(
-							isAscending ? Order.ASC : Order.DESC,
-							qBookLike.count());
-					case "publishedDate":
-						return new OrderSpecifier<>(
-							isAscending ? Order.ASC : Order.DESC,
-							qBook.publishedDate);
-					case "price":
-						return new OrderSpecifier<>(
-							isAscending ? Order.ASC : Order.DESC,
-							qBook.price);
-					case "title":
-						return new OrderSpecifier<>(
-							isAscending ? Order.ASC : Order.DESC,
-							qBook.title);
-					default:
-						throw new IllegalArgumentException("정렬 기준이 잘못되었습니다!!: " + property);
-				}
+				return switch (property) {
+					case "viewCount" -> new OrderSpecifier<>(
+						isAscending ? Order.ASC : Order.DESC,
+						qBook.viewCount);
+					case "likes" -> new OrderSpecifier<>(
+						isAscending ? Order.ASC : Order.DESC,
+						qBookLike.count());
+					case "publishedDate" -> new OrderSpecifier<>(
+						isAscending ? Order.ASC : Order.DESC,
+						qBook.publishedDate);
+					case "price" -> new OrderSpecifier<>(
+						isAscending ? Order.ASC : Order.DESC,
+						qBook.price);
+					case "title" -> new OrderSpecifier<>(
+						isAscending ? Order.ASC : Order.DESC,
+						qBook.title);
+					default -> throw new IllegalArgumentException("정렬 기준이 잘못되었습니다!!: " + property);
+				};
 			})
 			.collect(Collectors.toList());
 

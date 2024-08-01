@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 public class BookCategoryCustomRepositoryImpl implements BookCategoryCustomRepository {
 	private final JPAQueryFactory jpaQueryFactory;
-	private final QCategory qCategory = QCategory.category;
 	private final QBookCategory qBookCategory = QBookCategory.bookCategory;
 	private final QBookImage qBookImage = QBookImage.bookImage;
 	private final QBook qBook = QBook.book;
