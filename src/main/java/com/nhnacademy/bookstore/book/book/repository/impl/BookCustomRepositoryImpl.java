@@ -50,6 +50,9 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
 		this.jpaQueryFactory = new JPAQueryFactory(entityManager);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Page<BookListResponse> readBookList(Pageable pageable) {
 		List<BookListResponse> content = jpaQueryFactory.select(
@@ -131,12 +134,10 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
 		return orders.toArray(new OrderSpecifier[0]);
 	}
 
+
+
 	/**
-	 * 도서 상세 보기 쿼리입니다.
-	 *
-	 * @param bookId 북 아이디
-	 * @return 도서 상세 정보
-	 * @author 한민기
+	 * {@inheritDoc}
 	 */
 	@Override
 	public ReadBookResponse readDetailBook(Long bookId) {
@@ -170,11 +171,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
 	}
 
 	/**
-	 * 관리자 페이지에서 도서 정보를 불러오는 쿼리입니다.
-	 *
-	 * @param pageable 페이지 객체
-	 * @return 도서 리스트
-	 * @author 한민기
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Page<BookManagementResponse> readAdminBookList(Pageable pageable) {
@@ -199,6 +196,9 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
 		return new PageImpl<>(content, pageable, total);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Page<BookListResponse> readCategoryAllBookList(Pageable pageable, Long categoryId) {
 		List<BookListResponse> content = jpaQueryFactory.select(

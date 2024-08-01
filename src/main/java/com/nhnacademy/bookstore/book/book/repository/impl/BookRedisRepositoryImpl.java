@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 책의 변경내용을 batch sever 로 이동하기 위해 redis 에 저장
+ *
+ * @author 한민기
  */
 @Slf4j
 @Repository
@@ -26,6 +28,10 @@ public class BookRedisRepositoryImpl implements BookRedisRepository {
 	private static final String DEFAULT_BOOK_KEY = "bookDocument";
 	private static final String IndexName = "3runner_book_alias";
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void createBook(Book book) {
 		String body = " {\"index\": {\"_index\": \""
@@ -38,6 +44,9 @@ public class BookRedisRepositoryImpl implements BookRedisRepository {
 		redisTemplate.opsForHash().put(DEFAULT_BOOK_KEY, String.valueOf(UUID.randomUUID()), body);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void updateBook(Book book) {
 		String body = " {\"update\": {\"_index\": \""
@@ -52,6 +61,9 @@ public class BookRedisRepositoryImpl implements BookRedisRepository {
 		redisTemplate.opsForHash().put(DEFAULT_BOOK_KEY, String.valueOf(UUID.randomUUID()), body);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteBook(long bookId) {
 		String body = " {\"delete\": {\"_index\": \""
@@ -64,7 +76,8 @@ public class BookRedisRepositoryImpl implements BookRedisRepository {
 	}
 
 	/**
-	 * 책 관련 정보를 elastic search query Body 형식으로 변환
+	 * 책 관련 정보를 elastic search query Body 형식으로 변환.
+	 *
 	 * @param book 책
 	 * @return elastic search query Body
 	 */

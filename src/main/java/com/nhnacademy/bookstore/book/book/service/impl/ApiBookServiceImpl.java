@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -50,30 +51,24 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ApiBookServiceImpl implements ApiBookService {
 
-	@Autowired
-	private ApiBookRepository apiBookRepository;
-	@Autowired
-	private BookRepository bookRepository;
-	@Autowired
-	private CategoryRepository categoryRepository;
-	@Autowired
-	private BookCategoryRepository bookCategoryRepository;
-	@Autowired
-	private ImageService imageService;
-	@Autowired
-	private BookRedisRepository redisRepository;
+	private final ApiBookRepository apiBookRepository;
+	private final BookRepository bookRepository;
+	private final CategoryRepository categoryRepository;
+	private final BookCategoryRepository bookCategoryRepository;
+	private final ImageService imageService;
+	private final BookRedisRepository redisRepository;
 
 	private static final String DETAIL_VIEW_FRONT = "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=";
 
 	private static final String DEFAULT_DESCRIPTION_IMAGE_BEFORE = "<p><br><img src=\"/api/images/book/download?fileName=";
 	private static final String DEFAULT_DESCRIPTION_IMAGE_AFTER = "\" alt=\"image alt attribute\" contenteditable=\"false\"><br></p>";
 
+
 	/**
-	 * Api 로 받아온 책을 저장하는 코드
-	 *
-	 * @param isbnId 저장할 책의 isbn13
+	 * {@inheritDoc}
 	 */
 	@Transactional
 	@Override
@@ -108,7 +103,6 @@ public class ApiBookServiceImpl implements ApiBookService {
 		bookRepository.save(book);
 		for (String categoryName : categories) {
 			Category category = categoryRepository.findByName(categoryName).orElse(null);
-			// Optional<Category> category = categoryRepository.findByName(categoryName);
 
 			if (Objects.isNull(category)) {
 				throw new CategoryNotFoundException(categoryName);

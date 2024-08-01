@@ -43,11 +43,7 @@ public class BookCategoryCustomRepositoryImpl implements BookCategoryCustomRepos
 	}
 
 	/**
-	 * 카테고리로 도서 조회 메서드
-	 *
-	 * @param categoryId 조회할 카테고리 아이디
-	 * @param pageable   페이지
-	 * @return 조회된 도서 list
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Page<BookListResponse> categoryWithBookList(Long categoryId, Pageable pageable) {
@@ -75,11 +71,9 @@ public class BookCategoryCustomRepositoryImpl implements BookCategoryCustomRepos
 		return new PageImpl<>(content, pageable, totalCount);
 	}
 
+
 	/**
-	 * 도서 아이디로 카테고리 list 조회 리스트
-	 *
-	 * @param bookId 도서 아이디
-	 * @return 카테고리 list
+	 * {@inheritDoc}
 	 */
 	@Override
 	public List<BookDetailCategoryResponse> bookWithCategoryList(Long bookId) {
@@ -100,11 +94,7 @@ public class BookCategoryCustomRepositoryImpl implements BookCategoryCustomRepos
 	}
 
 	/**
-	 * 카테고리 리스트로 도서 조회 메서드
-	 *
-	 * @param categoryList 조회할 카테고리 아이디 리스트
-	 * @param pageable     페이지
-	 * @return 조회된 도서 list
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Page<BookListResponse> categoriesWithBookList(List<Long> categoryList, Pageable pageable) {
