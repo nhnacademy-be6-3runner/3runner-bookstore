@@ -1,5 +1,6 @@
 package com.nhnacademy.bookstore.global.appender.request;
 
+import lombok.Getter;
 import lombok.Setter;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Setter;
  * 일단 필수만 추가했음
  */
 @Setter
+@Getter
 public class LogCrashRequest {
 	String projectName;
 	String projectVersion;
