@@ -18,12 +18,12 @@ import ch.qos.logback.core.AppenderBase;
 @Slf4j
 public class LogCrashAppender extends AppenderBase<ILoggingEvent> {
 	private static final ObjectMapper objectMapper = new ObjectMapper();
+	private static final RestTemplate restTemplate = new RestTemplate();
 
 	private String url;
 
 	@Override
 	protected void append(ILoggingEvent iLoggingEvent) {
-		final var restTemplate = new RestTemplate();
 
 		LogCrashRequest request = new LogCrashRequest(iLoggingEvent.getFormattedMessage());
 
@@ -37,5 +37,4 @@ public class LogCrashAppender extends AppenderBase<ILoggingEvent> {
 			throw new RuntimeException(e);
 		}
 	}
-
 }
