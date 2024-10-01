@@ -65,6 +65,7 @@ public class BookCategoryCustomRepositoryImpl implements BookCategoryCustomRepos
 			.from(qBookCategory)
 			.where(qBookCategory.category.id.eq(categoryId))
 			.fetchOne();
+
 		totalCount = totalCount != null ? totalCount : 0L;
 
 		return new PageImpl<>(content, pageable, totalCount);
@@ -111,6 +112,7 @@ public class BookCategoryCustomRepositoryImpl implements BookCategoryCustomRepos
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
+
 		Long totalCount = jpaQueryFactory.select(qBookCategory.count())
 			.from(qBookCategory)
 			.where(qBookCategory.category.id.in(categoryList))

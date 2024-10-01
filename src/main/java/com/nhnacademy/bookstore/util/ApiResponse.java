@@ -72,7 +72,6 @@ public class ApiResponse<T> {
     }
 
 
-
     public static <T> ApiResponse<T> fail(int errorCode, Body<T> body) {
         return new ApiResponse<>(
                 new Header(false, errorCode),body

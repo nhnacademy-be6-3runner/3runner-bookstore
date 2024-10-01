@@ -81,6 +81,7 @@ db:
   max-idle: 10
   min-idle: 10
 
+
 management:
   endpoints:
     web:
